@@ -1,51 +1,25 @@
 from flask import jsonify, request
-from sqlalchemy.sql import text
-
+from flask_cors import CORS
 from app import app, db
-from app.models.greeting import Greet
+from app.models.test import User
 
-from flask_restx import Api, Resource, fields
-from flask_cors import cross_origin
+CORS(app)
 
-api = Api(app)
-
-
-
-@api.route("/crash")
-class Crash(Resource):
-    @cross_origin(origin="*", headers=["Content-Type"])
-    def get(self):
-        return {"error": "Crashed the API"}, 500
-
-@api.route("/messages")
-class Message(Resource):
-    @cross_origin(origin="*", headers=["Content-Type"])
-    def get(self):
-        try:
-            messages = Greet.query.all()
-            response = [msg.to_dict() for msg in messages]
-            return response, 200
-        except Exception as e:
-            error_message = "An error occurred while retrieving messages: {}".format(str(e))
-            return {"error": error_message}, 500
-
-greeting_model = api.model("Greeting", {
-    "message": fields.String(description="The message to send.")
-})
+@app.route('/home', methods=['GET'])
+def get_data():
+    data = {
+        'key': 'test',
+        'number': 123
+    }
+    return jsonify(data)
 
 
-@api.route("/send")
-class SendMessage(Resource):
-    @api.expect(greeting_model)
-    @cross_origin(origin="*", headers=["Content-Type"])
-    def post(self):
-        """
-        Send a message.
-        """
-        data = request.get_json()
-        message = data.get("message")
-        if not message:
-            return {"message": "Failed to send. No message provided."}, 400
-        db.session.add(Greet(msg=message))
-        db.session.commit()
-        return {"message": "Message sent successfully."}, 200
+@app.route('/sent/data', methods=['POST'])
+def post_data():
+    data = request.json# Print the full traceback
+    print(data)
+    # new_user = User(fname=data['Fname'],lname=data['Lname'])
+    # db.session.add(new_user)
+    # db.session.commit()
+    print("//////////////**********/////////////")
+    return jsonify({"message": "An error occurred", "error": str()}), 201
