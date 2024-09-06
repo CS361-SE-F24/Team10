@@ -1,9 +1,7 @@
 from flask.cli import FlaskGroup
-from werkzeug.security import generate_password_hash
-
-
 from app import app, db
-from app.models.test import User
+from app.models.user import User
+from app.models.student import Student  # Ensure this is imported
 
 cli = FlaskGroup(app)
 
@@ -17,7 +15,8 @@ def create_db():
 
 @cli.command("seed_db")
 def seed_db():
-    db.session.add(User(fname="Pmang",lname="Gone"))
+    # db.session.add(User(fname="Pmang", lname="Gone"))
+    db.session.add(Student(stdID="650510642", name="Saran Jatupornpitakkul", status="study", email="Saran_jatuporn@cmu.ac.th", tel="0984892124"))
     db.session.commit()
 
 

@@ -9,5 +9,6 @@
       "database": "hello_flask_dev",
       "username": "hello_flask"
     }
-  ]
+  ],
+  "makefile.configureOnOpen": false
 }

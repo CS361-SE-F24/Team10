@@ -17,7 +17,7 @@ app.url_map.strict_slashes = False
 app.config["DEBUG"] = True
 app.config["SECRET_KEY"] = "XXXXX"
 app.config["JSON_AS_ASCII"] = False
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite://")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///mydatabase.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 if app.debug:

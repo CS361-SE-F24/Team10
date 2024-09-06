@@ -1,5 +1,5 @@
 version: "3.9"
-name: "3stack-rfp"
+# name: "Team10"
 services:
   frontend:
     container_name: frontend
