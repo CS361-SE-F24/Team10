@@ -3,13 +3,25 @@ from flask_cors import CORS
 from app import app, db
 from app.models.user import User
 from app.models.student import Student
+from app.models.study_plan import Study_plan
 import traceback
 import secrets
 import string
+from flask_mail import Mail,Message
+
+# Configure the mail server
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Replace with your mail server
+app.config['MAIL_PORT'] = 587  # Usually 465 for SSL, 587 for TLS
+app.config['MAIL_USERNAME'] = 'taruuiop@gmail.com'
+app.config['MAIL_PASSWORD'] = 'lmup hwpn dhdv cacx' #'pejz mjje kyyt igax'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
 
 
 CORS(app)
-
+# mail = Mail(app)
 @app.route('/home', methods=['GET'])
 def get_data():
     data = {
@@ -59,9 +71,12 @@ def addStudent():
         )
         name_sp = data['name'].split(' ')
         new_user = User(email=data['email'], password=generate_random_password(),fname=name_sp[0],lname=name_sp[1],isAdmin=False)
-
+        #########################################
+        new_plan = Study_plan(planName="Kora",testEng=False,study_planID=data['stdID'],n1=0,n2=0,finished=False,comprehension=False,quality=False,core=0,select=0,free=0)
+        ##################################3
         db.session.add(new_student)
         db.session.add(new_user)
+        db.session.add(new_plan)
         db.session.commit()
 
         # Return a valid response
@@ -84,3 +99,19 @@ def generate_random_password(length=12):
     password = ''.join(secrets.choice(alphabet) for _ in range(length))
     
     return password
+
+@app.route('/send-email', methods=['POST'])
+def send_email():
+    try:
+        msg = Message(
+            subject="Hello from Thars!!!",
+            body="โปรเจคจะรอดมั้ย",
+            sender="taruuiop@gmail.com",
+            recipients=["saran_jatuporn@cmu.ac.th","arnarock6696@gmail.com","web.worawan@gmail.com","worawan_kh@cmu.ac.th"]
+        )
+        
+        mail.send(msg)
+        return "Email sent successfully!"
+    except Exception as e:
+        app.logger.error("An error occurred while sending the email: %s", str(e))
+        return "Failed to send email", 500
