@@ -22,11 +22,6 @@ export const Addstudent = () => {
       });
   };
 
-  const HandleChange = (event) => {
-    console.log(event.target.value, "/////", studentName);
-    setStudentName(event.target.value);
-  };
-
   return (
     <div className="Addstudent">
       <form onSubmit={AddNewStudent}>

@@ -5,6 +5,7 @@ import { Navbar } from "./Page/Navbar"; // Make sure to adjust the import path b
 import { Login } from "./Page/Login";
 import { Addstudent } from "./Page/Addstudent";
 import { TestSend } from "./Page/Test_send_email";
+import { Admin } from "./Page/Admin";
 
 function App() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ function App() {
         {/* Define the route for the root path if needed */}
         <Route path="/test" element={<TestSend />} />
         <Route path="/" element={<Login />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </>
   );

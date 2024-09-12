@@ -25,7 +25,7 @@ CORS(app)
 @app.route('/home', methods=['GET'])
 def get_data():
     data = {
-        'key': 'Title',
+        'key': 'Web',
         'number': 650510642
     }
     return jsonify(data)
@@ -103,11 +103,15 @@ def generate_random_password(length=12):
 @app.route('/send-email', methods=['POST'])
 def send_email():
     try:
+        generated_password = generate_random_password()
         msg = Message(
             subject="Hello from Thars!!!",
-            body="โปรเจคจะรอดมั้ย",
+            body=f"""โปรเจคจะรอดมั้ย
+                    email: "arnarock6696@gmail.com"
+                    password: {generated_password}
+                    """,
             sender="taruuiop@gmail.com",
-            recipients=["saran_jatuporn@cmu.ac.th","arnarock6696@gmail.com","web.worawan@gmail.com","worawan_kh@cmu.ac.th"]
+            recipients=["arnarock6696@gmail.com"]
         )
         
         mail.send(msg)
