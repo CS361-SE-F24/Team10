@@ -1,0 +1,77 @@
+.container {
+  text-align: center;
+  margin: 50px;
+  border-radius: 15px;
+  background-color: #dbf0ff;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group-inline {
+  display: flex;
+  gap: 0;
+  align-items: flex-start; /* ปรับแนวแนวตั้ง */
+  justify-content: space-between; /* ปรับแนวนอน */
+}
+
+.form-group-inline > .form-group {
+  flex: 1;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+input, select, textarea {
+  width: 50%; /* ปรับขนาดให้พอดีกับพื้นที่ที่กำหนด */
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+}
+
+button {
+  border-radius: 8px;
+  padding: 10px 20px;
+  border: solid black;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.image-upload-container {
+  text-align: center;
+}
+
+.uploaded-image {
+  max-width: 15%;
+  height: auto;
+  border: 1px solid #000000;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.file-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.file-input-label {
+  margin: 0;
+}
+
+.file-input {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+
