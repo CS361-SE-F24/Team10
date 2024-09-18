@@ -1,0 +1,70 @@
+.progress-bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* ชิดซ้าย */
+  background-color: transparent !important;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ชิดซ้าย */
+  margin-bottom: 10px;
+  background-color: transparent !important;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  border: 2px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.line {
+  width: 4px;
+  height: 40px;
+  background-color: #e0e0e0;
+}
+
+.completed .line {
+  background-color: orange;
+}
+
+.completed .circle {
+  background-color: orange;
+  border-color: orange;
+  color: white;
+}
+
+.active .circle {
+  background-color: #ffcc00;
+  border-color: #ffcc00;
+  color: white;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #45a049;
+}

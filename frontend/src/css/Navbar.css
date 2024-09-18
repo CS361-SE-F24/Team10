@@ -1,3 +1,45 @@
-nav {
-  background-color: rgb(137, 226, 43);
+/* Navbar อันแรก */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: #11009E;
+  /* padding: 10px; */
+}
+
+.brand {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  /* padding: 14px 20px; */
+}
+
+.navbar a:hover {
+  background-color: #11009E;
+}
+
+/* Navbar อันที่สอง */
+.navbar-second {
+  display: flex;
+  justify-content: space-between; /* จัดกลาง */
+  background-color: #D9E3FF;
+  padding: 10px;
+}
+
+.menu {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-second a {
+  color: white;
+  text-decoration: none;
+  padding: 14px 20px;
+}
+
+.navbar-second a:hover {
+  background-color: #666;
 }

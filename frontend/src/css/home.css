@@ -1,0 +1,58 @@
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    /* position: fixed; */
+    top: 0;
+    left: 0;
+    background-color: #11009E;
+    padding-top: 20px;
+    color: white;
+}
+
+.progressbar {
+    width: 100%;
+    background-color: #e0e0df;
+    border-radius: 25px;
+    position: relative;
+    margin: 20px 0;
+}
+
+.progress-bar {
+    height: 10px;
+    background-color: #76c7c0;
+    border-radius: 25px;
+    transition: width 0.3s ease-in-out;
+}
+
+.steps-container {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
+    top: 15px;
+}
+
+.step {
+    position: relative;
+    z-index: 1;
+    padding: 5px 10px;
+    border-radius: 50%;
+    background-color: #e0e0df;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.step.completed {
+    background-color: #76c7c0;
+}
+
+.navigation-buttons {
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}

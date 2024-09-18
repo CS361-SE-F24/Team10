@@ -4,23 +4,23 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
-  const Login = (event) =>{
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    axios
-      .post("http://localhost:56733/addstudent", newStudent)
-      //เมื่อทำการ response จะเข้า then ถ้าไม่ก็จะไปเข้าcatch
-      .then((response) => {
-        console.log(response.data);
-        alert("Data sent successfully");
+  // const Login = (event) =>{
+  //   event.preventDefault();
+  //   const formData = new FormData(event.currentTarget);
+  //   const data = Object.fromEntries(formData.entries());
+  //   axios
+  //     .post("http://localhost:56733/addstudent", newStudent)
+  //     //เมื่อทำการ response จะเข้า then ถ้าไม่ก็จะไปเข้าcatch
+  //     .then((response) => {
+  //       console.log(response.data);
+  //       alert("Data sent successfully");
 
-        navigate("/admin");
-      })
-      .catch((error) => {
-        console.error("There was an error sending the data!", error);
-      });
-  } 
+  //       navigate("/admin");
+  //     })
+  //     .catch((error) => {
+  //       console.error("There was an error sending the data!", error);
+  // //     });
+  // } 
 
   return (
     <div className="container">

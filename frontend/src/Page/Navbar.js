@@ -5,21 +5,28 @@ import "../css/Navbar.css"
 
 export const Navbar = () => {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/home">Home</Link>
-        </li>
-        <li>
-          <Link to="/addstudent">Addstudent</Link>
-        </li>
-        <li>
-          <Link to="/addadmin">Addadmin</Link>
-        </li>
-        <li>
-          <Link to="/studentfix">Fixstudent</Link>
-        </li>
-      </ul>
-    </nav>
+    <div>
+      {/* Navbar อันแรก */}
+      <div className="navbar">
+        <div className="brand">
+          <Link to="/home">HOME</Link>
+          <Link to="/blog">BACK</Link>
+        </div>
+        <div>
+          <Link to="/">LOGOUT</Link>
+        </div>
+      </div>
+      
+      {/* Navbar อันที่สอง */}
+      <div className="navbar-second">
+        <div className="menu">
+            COMPUTER SCIENCE CMU<br />
+            STUDENT PROGRESS TRACKING SYSTEM
+          {/* <Link to="/profile">Profile</Link>
+          <Link to="/settings">Settings</Link>
+          <Link to="/help">Help</Link> */}
+        </div>
+      </div>
+    </div>
   );
 };

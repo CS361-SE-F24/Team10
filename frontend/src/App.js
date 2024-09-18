@@ -1,5 +1,5 @@
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import { Home } from "./Page/home";
+import {Home} from "./Page/home"
 // import { Addstudent } from "./Page/Addstudent";
 import { Navbar } from "./Page/Navbar"; // Make sure to adjust the import path based on your folder structure
 import { Login } from "./Page/Login";
@@ -9,7 +9,7 @@ import {StudentFixinformation} from "./Page/StudentFix";
 import { TestSend } from "./Page/Test_send_email";
 import { Admin } from "./Page/Admin";
 import { Data } from "./Page/Data";
-
+import { ProgressBar} from "./Page/progressbar"
 function App() {
   const navigate = useNavigate();
   const location = useLocation(); // Use the hook to get the current path
@@ -29,6 +29,8 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/data" element={<Data />} />
+        <Route path="/progressbar" element={<ProgressBar />} />
+
       </Routes>
     </>
   );
