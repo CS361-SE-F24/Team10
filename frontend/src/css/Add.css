@@ -1,4 +1,4 @@
-.container {
+.containers {
   text-align: center;
   margin: 50px;
   border-radius: 15px;
@@ -23,8 +23,7 @@
   padding: 0;
 }
 
-
-input, select, textarea {
+.input_select_text{
   width: 50%; /* ปรับขนาดให้พอดีกับพื้นที่ที่กำหนด */
   padding: 10px;
   margin-top: 5px;
@@ -33,7 +32,7 @@ input, select, textarea {
   box-sizing: border-box;
 }
 
-button {
+.button_add {
   border-radius: 8px;
   padding: 10px 20px;
   border: solid black;
@@ -41,6 +40,7 @@ button {
   color: white;
   cursor: pointer;
 }
+
 
 button:hover {
   background-color: #0056b3;

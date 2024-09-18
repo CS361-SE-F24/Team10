@@ -30,6 +30,24 @@ td {
   color: rgb(0, 0, 0);
 }
 
-div{
+.admin-container{
     border-radius: 15px;
+}
+
+.contain {
+  display: flex;
+  justify-content: flex-end; /* Align horizontally to the right */
+  align-items: flex-end;     /* Align vertically to the bottom */
+  /* height: 100px;             Give height to show the bottom alignment */
+  margin-bottom: 20px;
+  
+}
+
+.contain button {
+  border-radius: 8px;
+  padding: 10px 20px;
+  border: solid black;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  background-color: #D9E3FF;
 }

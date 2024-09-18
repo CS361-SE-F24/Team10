@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../css/Add.css";
 
 export const Addstudent = () => {
   const [studentName, setStudentName] = useState("");
-
+  const navigate = useNavigate();
   const AddNewStudent = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -16,6 +17,8 @@ export const Addstudent = () => {
       .then((response) => {
         console.log(response.data);
         alert("Data sent successfully");
+
+        navigate("/admin");
       })
       .catch((error) => {
         console.error("There was an error sending the data!", error);
@@ -58,29 +61,31 @@ export const Addstudent = () => {
   };
 
   return (
-    <div className="container">
-      <br />
-      {/* แสดงรูปภาพ */}
-      <img 
-        src={formData.image || 'pic.png'} 
-        className="uploaded-image" 
-        alt="Display" 
-      />
-      <br />
+    <div className="containers">
       <form onSubmit={AddNewStudent}>
         <div className="form-group">
-          <label htmlFor="image">Picture!!</label><br />
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={HandleFileChange} 
-            style={{ marginBottom: '10px' }}
-            required
+        <label htmlFor="imageUpload">
+          <img 
+            src={formData.image || 'pic.png'} 
+            className="uploaded-image" 
+            alt="Display"
+            style={{ cursor: 'pointer', width: '150px', height: '150px' }} 
           />
+        </label>
+        {/* Hidden file input className = "input_select_text" */}
+        <input className = "input_select_text" 
+          id="imageUpload" 
+          type="file" 
+          accept="image/*" 
+          // name="picture" 
+          onChange={HandleFileChange} 
+          style={{ display: 'none' }} 
+          required 
+        />
         </div>
         <div className="form-group">
           <label htmlFor="name">Name</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="text" 
             id="name" 
             name="name" 
@@ -91,7 +96,7 @@ export const Addstudent = () => {
         </div>
         <div className="form-group">
           <label htmlFor="stdID">StudentID</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="text" 
             id="stdID" 
             name="stdID" 
@@ -102,7 +107,7 @@ export const Addstudent = () => {
         </div>
         <div className="form-group">
           <label htmlFor="tel">Tel</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="text" 
             id="tel" 
             name="tel" 
@@ -113,7 +118,7 @@ export const Addstudent = () => {
         </div>
         <div className="form-group">
           <label htmlFor="email">Email</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="email" 
             id="email" 
             name="email" 
@@ -124,7 +129,7 @@ export const Addstudent = () => {
         </div>
         <div className="form-group">
           <label htmlFor="degree">Degree</label><br />
-          <select 
+          <select className = "input_select_text"
             id="degree" 
             name="degree" 
             value={formData.degree} 
@@ -132,16 +137,16 @@ export const Addstudent = () => {
             required
           >
             <option value="">Select Degree</option>
-            <option value="Master_Degree1">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
-            <option value="Master_Degree2">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
-            <option value="Master_Degree3">ปริญญาโทแบบ 2(แผน ข)</option>
+            <option value="Master_Degree (แผน ก แบบ ก 1)">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
+            <option value="Master_Degree (แผน ก แบบ ก 2)">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
+            <option value="Master_Degree3 (แผน ข)">ปริญญาโทแบบ 3(แผน ข)</option>
             <option value="PhD1.1">ปริญญาเอกหลักสูตรแบบ 1.1</option>
             <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option>
           </select>
         </div>
         <div className="form-group">
           <label htmlFor="advisor">Teacher Advisor</label><br />
-          <select 
+          <select className = "input_select_text"
             id="advisor" 
             name="advisor" 
             value={formData.advisor} 
@@ -158,7 +163,7 @@ export const Addstudent = () => {
         </div>
         <div className="form-group">
           <label htmlFor="email_advisor">Email Advisor</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="email" 
             id="email_advisor" 
             name="email_advisor" 
@@ -167,7 +172,7 @@ export const Addstudent = () => {
             required 
           />
         </div>
-        <button type="submit">เพิ่มนักศึกษา</button>
+        <button className = "button_add" type="submit">เพิ่มนักศึกษา</button>
       </form>
       <br />
     </div>

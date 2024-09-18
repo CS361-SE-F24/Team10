@@ -1,0 +1,55 @@
+.item {
+  width: 100%;
+  height: 550px;
+  max-width: 850px;
+  box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.4);
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  /* z-index: 1000; */
+}
+
+/* Ensure contact and submit-form fill their respective columns */
+.contact {
+background-image: url("../../public/login.png");
+  /* background-size: cover; */
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+}
+
+.submit-form {
+  background: #11009E;
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+}
+
+/* Container for centering the item */
+.container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  min-height: 100vh; /* Make the container full height of the viewport */
+  width: 100%; /* Ensure full width */
+}
+
+/* Media Queries to maintain responsiveness */
+@media (max-width: 850px) {
+  .item {
+    grid-template-columns: 1fr; /* Stacks on smaller screens */
+  }
+  .contact {
+    display: none; /* Hide contact section on small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .item {
+    grid-template-columns: 1fr; /* Stacks on the smallest screens */
+  }
+  .contact {
+    display: none; /* Hide contact section on small screens */
+  }
+}

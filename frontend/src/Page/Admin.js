@@ -1,12 +1,13 @@
 import "../css/Admin.css";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export const Admin = () => {
   const [students, setStudents] = useState([]);  // Initialize as an empty array
   const [loading, setLoading] = useState(true);  // State to handle loading
   const [error, setError] = useState(null);      // State to handle errors
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -27,7 +28,13 @@ export const Admin = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="admin-container">
+      <div className="contain">
+        <button onClick={() =>{navigate("/addstudent")}}>เพิ่มนักศึกษา</button>
+      </div>
+      <div className="contain">
+        <button onClick={() =>{navigate("/addstudent")}}></button>
+      </div>
       <table>
         <thead>
           <tr>
