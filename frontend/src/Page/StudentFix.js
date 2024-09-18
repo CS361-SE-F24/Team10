@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../css/Add.css";
 
-export const Addstudent = () => {
-  const [studentName, setStudentName] = useState("");
+export const StudentFixinformation = () => {
+  const [studentfixname, setStudentfixName] = useState("");
 
-  const AddNewStudent = (event) => {
+  const StudentFix = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const newStudent = Object.fromEntries(formData.entries());
-    console.log(newStudent);
+    const newStudentfix = Object.fromEntries(formData.entries());
+    // console.log(formEntries);
     axios
-      .post("http://localhost:56733/addstudent", newStudent)
+      .post("http://localhost:56733/studentfix", newStudentfix)
       //เมื่อทำการ response จะเข้า then ถ้าไม่ก็จะไปเข้าcatch
       .then((response) => {
         console.log(response.data);
@@ -20,8 +20,8 @@ export const Addstudent = () => {
       .catch((error) => {
         console.error("There was an error sending the data!", error);
       });
-  };
 
+  };
   const [formData, setFormData] = useState({
     name: '',
     stdID: '',
@@ -33,7 +33,7 @@ export const Addstudent = () => {
     image: null, // เพิ่ม field สำหรับจัดเก็บรูปภาพ
   });
 
-  const HandleFileChange = (event) => {
+  const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
@@ -56,7 +56,6 @@ export const Addstudent = () => {
       [name]: value,
     });
   };
-
   return (
     <div className="container">
       <br />
@@ -67,13 +66,13 @@ export const Addstudent = () => {
         alt="Display" 
       />
       <br />
-      <form onSubmit={AddNewStudent}>
+      <form onSubmit={StudentFix}>
         <div className="form-group">
           <label htmlFor="image">Picture!!</label><br />
           <input 
             type="file" 
             accept="image/*" 
-            onChange={HandleFileChange} 
+            onChange={handleFileChange} 
             style={{ marginBottom: '10px' }}
             required
           />
@@ -167,9 +166,11 @@ export const Addstudent = () => {
             required 
           />
         </div>
-        <button type="submit">เพิ่มนักศึกษา</button>
+        <button type="submit">แก้ไขข้อมูล</button>
       </form>
       <br />
     </div>
   );
-};
+}
+
+  

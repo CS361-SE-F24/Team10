@@ -55,7 +55,7 @@ def addStudent():
     try:
         data = request.json  # Corrected request.json access
         email = data['email']
-
+        print(data)
         # Check if the email already exists in the database
         existing_student = Student.query.filter_by(email=email).first()
         if existing_student:
@@ -65,14 +65,14 @@ def addStudent():
         new_student = Student(
             stdID=data['stdID'], 
             name=data['name'], 
-            status=data['degree'], 
+            status="study", 
             email=email, 
-            tel=data['phone']
+            tel=data['tel']
         )
         name_sp = data['name'].split(' ')
         new_user = User(email=data['email'], password=generate_random_password(),fname=name_sp[0],lname=name_sp[1],isAdmin=False)
         #########################################
-        new_plan = Study_plan(planName="Kora",testEng=False,study_planID=data['stdID'],n1=0,n2=0,finished=False,comprehension=False,quality=False,core=0,select=0,free=0)
+        new_plan = Study_plan(planName=data['degree'],testEng=False,study_planID=data['stdID'],n1=0,n2=0,finished=False,comprehension=False,quality=False,core=0,select=0,free=0)
         ##################################3
         db.session.add(new_student)
         db.session.add(new_user)
@@ -91,10 +91,8 @@ def generate_random_password(length=12):
     # Ensure the length is at least 8 characters
     if length < 8:
         raise ValueError("Password length must be at least 8 characters")
-    
     # Define the possible characters in the password (A-Z, a-z, 0-9)
     alphabet = string.ascii_letters + string.digits
-    
     # Generate a secure random password
     password = ''.join(secrets.choice(alphabet) for _ in range(length))
     
@@ -119,3 +117,25 @@ def send_email():
     except Exception as e:
         app.logger.error("An error occurred while sending the email: %s", str(e))
         return "Failed to send email", 500
+
+@app.route('/data', methods=['GET'])
+def data():
+    students = Student.query.all()
+    # study_plan = Study_plan.query.filter_by(stdID=students.stdID).first()
+    result = []
+    no = 1
+    for student in students:
+        study_plan = Study_plan.query.filter_by(study_planID=student.stdID).first()
+        result.append({
+            'no': no,
+            'name': student.name,
+            'stdID': student.stdID,
+            'degree': study_plan.planName,
+            #######################
+            'progress': 0,
+            ########################
+        })
+        no += 1
+    print(result)
+    return jsonify(result)
+

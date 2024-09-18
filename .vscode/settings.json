@@ -5,10 +5,9 @@
       "server": "localhost",
       "port": 5432,
       "driver": "PostgreSQL",
-      "name": "database",
+      "name": "FlaskDB",
       "database": "hello_flask_dev",
       "username": "hello_flask"
     }
-  ],
-  "makefile.configureOnOpen": false
+  ]
 }

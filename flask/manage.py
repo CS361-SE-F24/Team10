@@ -16,7 +16,7 @@ def create_db():
 @cli.command("seed_db")
 def seed_db():
     # db.session.add(User(fname="Pmang", lname="Gone"))
-    db.session.add(Student(stdID="650510642", name="Saran Jatupornpitakkul", status="study", email="Saran_jatuporn@cmu.ac.th", tel="0984892124"))
+    # db.session.add(Student(stdID="650510642", name="Saran Jatupornpitakkul", status="study", email="Saran_jatuporn@cmu.ac.th", tel="0984892124"))
     db.session.commit()
 
 

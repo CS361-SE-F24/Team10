@@ -1,0 +1,35 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    /* background-color: blueviolet; */
+    color: white;
+     /* ทำให้ขอบโค้งมน */
+    /* overflow: hidden; เพื่อให้มุมโค้งมนสามารถใช้กับขอบตารางทั้งหมด */
+  }
+
+th,
+td {
+  padding: 15px;
+  text-align: center;
+  border: 1px solid rgb(0, 0, 0);
+}
+
+th {
+  background-color: darkblue;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+td {
+  color: rgb(0, 0, 0);
+}
+
+div{
+    border-radius: 15px;
+}
