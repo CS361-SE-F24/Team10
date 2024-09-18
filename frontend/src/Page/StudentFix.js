@@ -57,29 +57,31 @@ export const StudentFixinformation = () => {
     });
   };
   return (
-    <div className="container">
-      <br />
-      {/* แสดงรูปภาพ */}
-      <img 
-        src={formData.image || 'pic.png'} 
-        className="uploaded-image" 
-        alt="Display" 
-      />
+    <div className="containers">
       <br />
       <form onSubmit={StudentFix}>
-        <div className="form-group">
-          <label htmlFor="image">Picture!!</label><br />
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleFileChange} 
-            style={{ marginBottom: '10px' }}
-            required
+      <div className="form-group">
+        <label htmlFor="imageUpload">
+          <img 
+            src={formData.image || 'pic.png'} 
+            className="uploaded-image" 
+            alt="Display"
+            style={{ cursor: 'pointer', width: '200px', height: '200px' }} 
           />
+        </label>
+        <input className = "input_select_text" 
+          id="imageUpload" 
+          type="file" 
+          accept="image/*" 
+          // name="picture" 
+          onChange={handleFileChange} 
+          style={{ display: 'none' }} 
+          required 
+        />
         </div>
         <div className="form-group">
           <label htmlFor="name">Name</label><br />
-          <input 
+          <input className = "input_select_text"  
             type="text" 
             id="name" 
             name="name" 
@@ -90,7 +92,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="stdID">StudentID</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="text" 
             id="stdID" 
             name="stdID" 
@@ -101,7 +103,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="tel">Tel</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="text" 
             id="tel" 
             name="tel" 
@@ -112,7 +114,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="email">Email</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="email" 
             id="email" 
             name="email" 
@@ -123,7 +125,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="degree">Degree</label><br />
-          <select 
+          <select className = "input_select_text" 
             id="degree" 
             name="degree" 
             value={formData.degree} 
@@ -140,7 +142,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="advisor">Teacher Advisor</label><br />
-          <select 
+          <select className = "input_select_text" 
             id="advisor" 
             name="advisor" 
             value={formData.advisor} 
@@ -157,7 +159,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="email_advisor">Email Advisor</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="email" 
             id="email_advisor" 
             name="email_advisor" 
@@ -166,7 +168,7 @@ export const StudentFixinformation = () => {
             required 
           />
         </div>
-        <button type="submit">แก้ไขข้อมูล</button>
+        <button type="submit" className="button_add ">แก้ไขข้อมูล</button>
       </form>
       <br />
     </div>

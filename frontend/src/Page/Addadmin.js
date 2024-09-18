@@ -53,29 +53,31 @@ export const Addadmin= () => {
   };
 
   return (
-    <div className="container">
+    <div className="containers">
        <br />
-      {/* แสดงรูปภาพ */}
-      <img 
-        src={formData.image || 'pic.png'} 
-        className="uploaded-image" 
-        alt="Display" 
-      />
-      <br />
-      <form onSubmit={AddNewAdmin}>
+      <form onSubmit={Addadmin}>
       <div className="form-group">
-          <label htmlFor="image">Picture!!</label><br />
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleFileChange} 
-            style={{ marginBottom: '10px' }}
-            required
+        <label htmlFor="imageUpload">
+          <img 
+            src={formData.image || 'pic.png'} 
+            className="uploaded-image" 
+            alt="Display"
+            style={{ cursor: 'pointer', width: '200px', height: '200px' }} 
           />
+        </label>
+        <input className = "input_select_text" 
+          id="imageUpload" 
+          type="file" 
+          accept="image/*" 
+          // name="picture" 
+          onChange={handleFileChange} 
+          style={{ display: 'none' }} 
+          required 
+        />
         </div>
         <div className="form-group">
           <label htmlFor="name_admin">Name Admin</label><br />
-          <input 
+          <input className = "input_select_text"
             type="text" 
             id="name_admin" 
             name="name_admin" 
@@ -86,7 +88,7 @@ export const Addadmin= () => {
         </div>
         <div className="form-group">
           <label htmlFor="email_admin">Email</label><br />
-          <input 
+          <input className = "input_select_text"
             type="email" 
             id="email_admin" 
             name="email_admin" 
@@ -97,7 +99,7 @@ export const Addadmin= () => {
         </div>
         <div className="form-group">
           <label htmlFor="tel_admin">Tel</label><br />
-          <input 
+          <input className = "input_select_text"
             type="text" 
             id="tel_admin" 
             name="tel_admin" 
@@ -106,7 +108,7 @@ export const Addadmin= () => {
             required 
           />
         </div>
-        <button type="submit">เพิ่ม Admin</button>
+        <button type="submit" className="button_add" >เพิ่ม Admin</button>
       </form>
       <br />
     </div>
