@@ -81,6 +81,7 @@ def addStudent():
         db.session.add(new_plan)
         db.session.commit()
         send_email(data['email'],pw)
+        print("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
         # Return a valid response
         return jsonify({"message": "Student data received successfully", "data": data}), 200
     
