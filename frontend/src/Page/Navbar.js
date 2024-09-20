@@ -9,11 +9,11 @@ export const Navbar = () => {
       {/* Navbar อันแรก */}
       <div className="navbar">
         <div className="brand">
-          <Link to="/home">HOME</Link>
+          <Link to="/">HOME</Link>
           <Link to="/blog">BACK</Link>
         </div>
         <div>
-          <Link to="/">LOGOUT</Link>
+          <Link to="/logout">LOGOUT</Link>
         </div>
       </div>
       

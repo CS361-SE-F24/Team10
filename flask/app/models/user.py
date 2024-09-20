@@ -1,7 +1,7 @@
 from app import db
-from sqlalchemy_serializer import SerializerMixin
+from flask_login import UserMixin
 
-class User(db.Model, SerializerMixin):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)  # Ensuring the email is unique and not null

@@ -1,9 +1,55 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";  // Import useLocation
 import "../css/Add.css";
 
-export const StudentFixinformation = () => {
-  const [studentfixname, setStudentfixName] = useState("");
+export const StudentFixinformation = (props) => {
+  const location = useLocation();
+  const stdID = location.state?.stdID || props.stdID || "";
+  // const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  console.log(stdID)
+
+  const [formData, setFormData] = useState({
+    name: '',
+    stdID: stdID,
+    tel: '',
+    email: '',
+    degree: '',
+    advisor: '',
+    email_advisor: '',
+    image: null, // เพิ่ม field สำหรับจัดเก็บรูปภาพ
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:56733/currentstudent?stdID=${stdID}`);
+        console.log(response.data);
+        // setStudents(response.data);
+        const studentData = response.data;
+        setFormData({
+          name: studentData.name || '',
+          stdID: stdID,  // stdID is already available
+          tel: studentData.tel || '',
+          email: studentData.email || '',
+          degree: studentData.plan || '',  // Assuming "plan" corresponds to degree
+          advisor: '',  // Set a default value or use a field from the response if available
+          email_advisor: '',  // Same as advisor
+          image: null,  // No image in response; leave as null
+        });
+        console.log(formData.degree);
+        
+        setLoading(false);
+      } catch (err) {
+        setError("Error fetching data");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const StudentFix = (event) => {
     event.preventDefault();
@@ -22,16 +68,7 @@ export const StudentFixinformation = () => {
       });
 
   };
-  const [formData, setFormData] = useState({
-    name: '',
-    stdID: '',
-    tel: '',
-    email: '',
-    degree: '',
-    advisor: '',
-    email_advisor: '',
-    image: null, // เพิ่ม field สำหรับจัดเก็บรูปภาพ
-  });
+  
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
