@@ -47,10 +47,8 @@ export const Login = ({ setCurrentUser }) => {
         {/* Left Side */}
         <div className="submit-form">
           <form onSubmit={handleSubmit}>
-            <h4>Login Here</h4>
             <div>
               <p className="cs">cs cmu</p>
-              <br />
               <p className="hello">Hello,<br />Welcome!</p>
               <br />
               <div className="inputt">
