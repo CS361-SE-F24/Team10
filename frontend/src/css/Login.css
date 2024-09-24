@@ -2,9 +2,10 @@
   width: 100%;
   height: 550px;
   max-width: 850px;
-  box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px 10px rgba(108, 101, 101, 0.4);
   display: grid;
   grid-template-columns: 1.3fr 1fr;
+  color: aliceblue;
   /* z-index: 1000; */
 }
 
@@ -21,9 +22,66 @@ background-image: url("../../public/login.png");
 
 .submit-form {
   background: #11009E;
-  display: flex;
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
+  /* display: flex; */
+  /* justify-content: center; Center content horizontally */
+  /* align-items: center; Center content vertically */
+}
+
+.cs{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 10px;
+}
+
+.hello{
+    margin-top: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* padding-left: 50px; */
+    font-size: 50px;
+}
+
+.inputt{
+    margin-top: -50px;
+    padding-left: 70px;
+    justify-content: center;
+    align-items: center;
+}
+
+.inputt input[type="text"]{
+    padding: 8px 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    width: 250px;
+
+}
+
+.inputt input[type="password"]{
+    padding: 8px 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    width: 250px;
+
+}
+
+.inputt input::placeholder{
+    text-align: left;
+}
+
+.inputt button {
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none; /* Ensure no underline */
+    display: inline-block;
+    font-size: 16px;
+}fr
+
+.username{
+    text-align: start;
 }
 
 /* Container for centering the item */

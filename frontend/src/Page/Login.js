@@ -1,5 +1,6 @@
 import React from "react";
 import "../css/Login.css";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -27,25 +28,34 @@ export const Login = () => {
       <div className="item">
         {/* Right Side */}
         <div className="contact">
-          <p>Your contact information here</p>
           {/* Add more content as needed */}
         </div>
         {/* Left Side */}
         <div className="submit-form">
-          <h4>Login Here</h4>
           <form onSubmit={Login}>
             <div>
-              <label>Login</label>
-              <br />
-              <input type="email" name="email" />
-            </div>
-            <div>
-              <label>password</label>
-              <br />
-              <input type="text" name="password" />
-            </div>
-            <button type="submit">Login</button>
-          </form>
+              <p className="cs">cs cmu</p><br />
+              <p className="hello">Hello,<br />
+              Welcome !</p><br />
+              <div className="inputt">
+                <label>username</label><br />
+                <input type="text" classname="username" placeholder="example@cmu.ac.th" /><br />
+                <label className="font-bold">password</label><br />
+                <input  type="password" classname="password" placeholder="password"></input><br />
+                <input type="checkbox" /> Remember Me<br /><br />
+                <center>
+                <button className="submit">
+                      <Link to="/home">
+                      LOG IN
+                      </Link>
+                </button>
+                </center>
+              <br /><br />
+              </div>
+              
+              </div>
+            </form>
+           
         </div>
       </div>
     </div>

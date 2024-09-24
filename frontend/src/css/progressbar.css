@@ -49,11 +49,12 @@
   color: white;
 }
 
-button {
+.prev .next button{
   padding: 10px 20px;
   margin: 10px;
   border: none;
   border-radius: 5px;
+  text-decoration: none;
   background-color: #4caf50;
   color: white;
   cursor: pointer;

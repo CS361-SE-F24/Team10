@@ -33,10 +33,10 @@ export const ProgressBar = () => {
       </div>
 
       <div className="navigation-buttons">
-        <button onClick={prevStep} disabled={currentStep === 1}>
+        <button className='prev' onClick={prevStep} disabled={currentStep === 1}>
           Prev
         </button>
-        <button onClick={nextStep} disabled={currentStep === steps.length}>
+        <button className='next' onClick={nextStep} disabled={currentStep === steps.length}>
           Next
         </button>
       </div>
