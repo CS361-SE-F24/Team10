@@ -13,26 +13,26 @@ import { ProgressBar } from "./Page/progressbar";
 
 function App() {
   const navigate = useNavigate();
-  const location = useLocation(); // Use the hook to get the current path
+  const location = useLocation(); // Get current path
 
   // Retrieve from localStorage if exists
   const [currentUser, setCurrentUser] = useState(() => {
     const savedUser = localStorage.getItem("currentUser");
-    return savedUser ? JSON.parse(savedUser) : 0;
+    return savedUser ? JSON.parse(savedUser) : { id: 0, isAdmin: false };
   });
 
   console.log(currentUser);
 
   useEffect(() => {
     // Redirect to login if currentUser is 0 and not on the login page
-    if (currentUser === 0 && location.pathname !== "/login") {
+    if (currentUser.id === 0 && location.pathname !== "/login") {
       navigate("/login");
     }
   }, [currentUser, location.pathname, navigate]);
 
   useEffect(() => {
     // Save currentUser to localStorage whenever it changes
-    if (currentUser !== 0) {
+    if (currentUser.id !== 0) {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
     } else {
       localStorage.removeItem("currentUser"); // Clear when logged out

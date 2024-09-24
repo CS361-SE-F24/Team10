@@ -1,9 +1,9 @@
-import { React, useState,useEffect } from "react";
+import { React, useState } from "react";
 import "../css/Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export const Login = ({ setCurrentUser}) => {
+export const Login = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
@@ -16,8 +16,20 @@ export const Login = ({ setCurrentUser}) => {
       .post("http://localhost:56733/login", data)
       .then((response) => {
         alert("Login successful");
-        setCurrentUser(response.data.currentUser); // Set the current user
-        navigate("/admin"); // Navigate to the admin page
+
+        // Set the currentUser with both ID and isAdmin status
+        setCurrentUser({
+          id: response.data.currentUser,
+          isAdmin: response.data.isAdmin,
+        });
+
+        // Navigate based on user role
+        if (response.data.isAdmin) {
+          navigate("/admin");
+        } else {
+          navigate("/", { state: { stdID: response.data.stdID } });
+
+        }
       })
       .catch((error) => {
         setError("Invalid login credentials");
@@ -54,8 +66,9 @@ export const Login = ({ setCurrentUser}) => {
 export const Logout = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  // alert("Logout successful");
-  setCurrentUser(0); // Reset current user
+
+  // Reset current user and navigate to login page
+  setCurrentUser({ id: 0, isAdmin: false });
   navigate("/login");
 
   return (

@@ -24,6 +24,10 @@ export const Admin = () => {
     fetchData();
   }, []);
 
+  const handleView = (stdID) =>{
+    navigate('/', { state: { stdID } });
+  }
+
   // Function to handle edit
   const handleEdit = (stdID) => {
   navigate('/studentfix', { state: { stdID } }); // Using state to pass stdID
@@ -68,6 +72,7 @@ export const Admin = () => {
               <td>{student.progress}</td>
               <td>
                 <div>
+                  <button onClick={() => handleView(student.stdID)}>view</button>
                   <button onClick={() => handleEdit(student.stdID)}>edit</button>
                   <button onClick={() => handleDelete(student.stdID)}>delete</button>
                 </div>

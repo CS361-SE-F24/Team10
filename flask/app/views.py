@@ -14,7 +14,7 @@ from flask_mail import Mail,Message
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Replace with your mail server
 app.config['MAIL_PORT'] = 587  # Usually 465 for SSL, 587 for TLS
 app.config['MAIL_USERNAME'] = 'taruuiop@gmail.com'
-app.config['MAIL_PASSWORD'] = 'lmup hwpn dhdv cacx' #'pejz mjje kyyt igax'
+app.config['MAIL_PASSWORD'] = 'kvqo qrve mmcn uzyi' #'pejz mjje kyyt igax'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
@@ -106,14 +106,13 @@ def send_email(email,password):
     try:
         msg = Message(
             subject="Hello from Thars!!!",
-            body=f"""โปรเจคจะรอดมั้ย
-                    email: {email}
-                    password: {password}
-                    """,
+            body=f"""ทดสอบระบบงับเตง
+email: {email}
+password: {password}""",
             sender="taruuiop@gmail.com",
             recipients=[email]
         )
-        
+        print("sddddd")
         mail.send(msg)
         return "Email sent successfully!"
     except Exception as e:
@@ -153,13 +152,16 @@ def load_user(user_id):
 def login():
     data = request.json
     user = User.query.filter_by(email=data['email']).first()
+    student = Student.query.filter_by(email=data['email']).first()
     print(data['email'],data['password'])
     print("////////////////////////")
     print(user.email,user.password)
     if user and user.password == data['password']:
         login_user(user, remember=True)
         print(current_user)
-        return jsonify({"message": "Login successful", "isAdmin": user.isAdmin,"currentUser":user.id}), 200
+        if user.isAdmin:
+            return jsonify({"message": "Login successful", "isAdmin": user.isAdmin,"currentUser":user.id,"stdID":0}), 200
+        return jsonify({"message": "Login successful", "isAdmin": user.isAdmin,"currentUser":user.id,"stdID":student.stdID}), 200
     return jsonify({"message": "Invalid credentials"}), 401
 
 @app.route('/studentfix', methods=['POST'])
@@ -169,6 +171,7 @@ def studentfix():
 
 @app.route('/currentstudent', methods=['GET'])
 def currentstudent():
+    # User = request.json()
     stdID = request.args.get('stdID')  # Get stdID from query parameters
     student = Student.query.filter_by(stdID=stdID).first()
     plan = Study_plan.query.filter_by(study_planID=student.stdID).first()
