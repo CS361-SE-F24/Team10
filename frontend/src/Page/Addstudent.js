@@ -62,6 +62,7 @@ export const Addstudent = () => {
 
   return (
     <div className="containers">
+      <br />
       <form onSubmit={AddNewStudent}>
         <div className="form-group">
         <label htmlFor="imageUpload">
@@ -69,10 +70,9 @@ export const Addstudent = () => {
             src={formData.image || 'pic.png'} 
             className="uploaded-image" 
             alt="Display"
-            style={{ cursor: 'pointer', width: '150px', height: '150px' }} 
+            style={{ cursor: 'pointer', width: '200px', height: '200px' }} 
           />
         </label>
-        {/* Hidden file input className = "input_select_text" */}
         <input className = "input_select_text" 
           id="imageUpload" 
           type="file" 
@@ -172,7 +172,7 @@ export const Addstudent = () => {
             required 
           />
         </div>
-        <button className = "button_add" type="submit">เพิ่มนักศึกษา</button>
+        <button  type="submit" className="button_add">เพิ่มนักศึกษา</button>
       </form>
       <br />
     </div>

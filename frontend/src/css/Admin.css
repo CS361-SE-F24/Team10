@@ -1,53 +1,80 @@
 table {
-    border-collapse: collapse;
-    width: 100%;
-    /* background-color: blueviolet; */
-    color: white;
-     /* ทำให้ขอบโค้งมน */
-    /* overflow: hidden; เพื่อให้มุมโค้งมนสามารถใช้กับขอบตารางทั้งหมด */
-  }
+  border-collapse: collapse;
+  width: 100%;
+  color: black;
+  border-radius: 10px; /* Rounded corners */
+  overflow: hidden; /* Ensures rounded corners */
+  margin-top: 20px;
+}
 
 th,
 td {
-  padding: 15px;
+  padding: 10px 15px;
   text-align: center;
-  border: 1px solid rgb(0, 0, 0);
+  border: 1px solid #cccccc;
 }
 
 th {
-  background-color: darkblue;
+  background-color: #11009E; /* Dark blue header */
+  color: white;
 }
 
 tbody tr:nth-child(odd) {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #f2f2f2; /* Light gray for odd rows */
 }
 
 tbody tr:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #e6f2ff; /* Light blue for even rows */
 }
 
 td {
-  color: rgb(0, 0, 0);
+  color: #333333;
 }
 
-.admin-container{
-    border-radius: 15px;
+.admin-container {
+  border-radius: 15px;
+  padding: 20px;
+  margin: 0 auto;
 }
 
 .contain {
   display: flex;
-  justify-content: flex-end; /* Align horizontally to the right */
-  align-items: flex-end;     /* Align vertically to the bottom */
-  /* height: 100px;             Give height to show the bottom alignment */
+  justify-content: flex-end;
+  align-items: center;
   margin-bottom: 20px;
-  
 }
 
 .contain button {
   border-radius: 8px;
   padding: 10px 20px;
-  border: solid black;
-  color: rgb(0, 0, 0);
-  cursor: pointer;
+  border: solid black 1px;
+  color: #000000;
   background-color: #D9E3FF;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contain button:hover {
+  background-color: #a5cff9; /* Darker blue on hover */
+}
+
+button.edit, button.delete {
+  margin-right: 5px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  background-color: #4CAF50; /* Green for edit */
+  color: white;
+  border: none;
+}
+
+button.delete {
+  background-color: #f44336; /* Red for delete */
+}
+
+button.edit:hover {
+  background-color: #45a049;
+}
+
+button.delete:hover {
+  background-color: #d32f2f;
 }

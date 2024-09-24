@@ -1,9 +1,55 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";  // Import useLocation
 import "../css/Add.css";
 
-export const StudentFixinformation = () => {
-  const [studentfixname, setStudentfixName] = useState("");
+export const StudentFixinformation = (props) => {
+  const location = useLocation();
+  const stdID = location.state?.stdID || props.stdID || "";
+  // const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  console.log(stdID)
+
+  const [formData, setFormData] = useState({
+    name: '',
+    stdID: stdID,
+    tel: '',
+    email: '',
+    degree: '',
+    advisor: '',
+    email_advisor: '',
+    image: null, // เพิ่ม field สำหรับจัดเก็บรูปภาพ
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:56733/currentstudent?stdID=${stdID}`);
+        console.log(response.data);
+        // setStudents(response.data);
+        const studentData = response.data;
+        setFormData({
+          name: studentData.name || '',
+          stdID: stdID,  // stdID is already available
+          tel: studentData.tel || '',
+          email: studentData.email || '',
+          degree: studentData.plan || '',  // Assuming "plan" corresponds to degree
+          advisor: '',  // Set a default value or use a field from the response if available
+          email_advisor: '',  // Same as advisor
+          image: null,  // No image in response; leave as null
+        });
+        console.log(formData.degree);
+        
+        setLoading(false);
+      } catch (err) {
+        setError("Error fetching data");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const StudentFix = (event) => {
     event.preventDefault();
@@ -22,16 +68,7 @@ export const StudentFixinformation = () => {
       });
 
   };
-  const [formData, setFormData] = useState({
-    name: '',
-    stdID: '',
-    tel: '',
-    email: '',
-    degree: '',
-    advisor: '',
-    email_advisor: '',
-    image: null, // เพิ่ม field สำหรับจัดเก็บรูปภาพ
-  });
+  
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -57,29 +94,31 @@ export const StudentFixinformation = () => {
     });
   };
   return (
-    <div className="container">
-      <br />
-      {/* แสดงรูปภาพ */}
-      <img 
-        src={formData.image || 'pic.png'} 
-        className="uploaded-image" 
-        alt="Display" 
-      />
+    <div className="containers">
       <br />
       <form onSubmit={StudentFix}>
-        <div className="form-group">
-          <label htmlFor="image">Picture!!</label><br />
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleFileChange} 
-            style={{ marginBottom: '10px' }}
-            required
+      <div className="form-group">
+        <label htmlFor="imageUpload">
+          <img 
+            src={formData.image || 'pic.png'} 
+            className="uploaded-image" 
+            alt="Display"
+            style={{ cursor: 'pointer', width: '200px', height: '200px' }} 
           />
+        </label>
+        <input className = "input_select_text" 
+          id="imageUpload" 
+          type="file" 
+          accept="image/*" 
+          // name="picture" 
+          onChange={handleFileChange} 
+          style={{ display: 'none' }} 
+          required 
+        />
         </div>
         <div className="form-group">
           <label htmlFor="name">Name</label><br />
-          <input 
+          <input className = "input_select_text"  
             type="text" 
             id="name" 
             name="name" 
@@ -90,7 +129,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="stdID">StudentID</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="text" 
             id="stdID" 
             name="stdID" 
@@ -101,7 +140,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="tel">Tel</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="text" 
             id="tel" 
             name="tel" 
@@ -112,7 +151,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="email">Email</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="email" 
             id="email" 
             name="email" 
@@ -123,7 +162,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="degree">Degree</label><br />
-          <select 
+          <select className = "input_select_text" 
             id="degree" 
             name="degree" 
             value={formData.degree} 
@@ -140,7 +179,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="advisor">Teacher Advisor</label><br />
-          <select 
+          <select className = "input_select_text" 
             id="advisor" 
             name="advisor" 
             value={formData.advisor} 
@@ -157,7 +196,7 @@ export const StudentFixinformation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="email_advisor">Email Advisor</label><br />
-          <input 
+          <input className = "input_select_text" 
             type="email" 
             id="email_advisor" 
             name="email_advisor" 
@@ -166,7 +205,7 @@ export const StudentFixinformation = () => {
             required 
           />
         </div>
-        <button type="submit">แก้ไขข้อมูล</button>
+        <button type="submit" className="button_add ">แก้ไขข้อมูล</button>
       </form>
       <br />
     </div>

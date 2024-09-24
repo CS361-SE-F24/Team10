@@ -35,7 +35,7 @@
 .button_add {
   border-radius: 8px;
   padding: 10px 20px;
-  border: solid black;
+  border: 1px solid black;
   background-color: #007BFF;
   color: white;
   cursor: pointer;
