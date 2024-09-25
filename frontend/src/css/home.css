@@ -14,7 +14,7 @@
   }
   
 .rec {
-    height: 50vh;    
+    /* height: 50vh;     */
     width: 220px;
     background-color: white;
     text-align: center;
@@ -78,3 +78,8 @@
     cursor: pointer;
   }
   
+  .picture{
+    margin-top: 2vh;
+    width: 18vh;
+    height: 18vh;
+  }

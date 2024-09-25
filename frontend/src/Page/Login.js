@@ -1,8 +1,9 @@
-import { React, useState } from "react";
-import "../css/Login.css";
+import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../css/Login.css";
 
+// Login Component
 export const Login = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -49,22 +50,40 @@ export const Login = ({ setCurrentUser }) => {
           <form onSubmit={handleSubmit}>
             <div>
               <p className="cs">cs cmu</p>
-              <p className="hello">Hello,<br />Welcome!</p>
+              <p className="hello">
+                Hello,
+                <br />
+                Welcome!
+              </p>
               <br />
               <div className="inputt">
                 <label>Username</label>
                 <br />
-                <input type="text" className="username" placeholder="example@cmu.ac.th" required />
+                <input
+                  type="email"
+                  className="username"
+                  placeholder="example@cmu.ac.th"
+                  name="email"
+                  required
+                />
                 <br />
                 <label className="font-bold">Password</label>
                 <br />
-                <input type="password" className="password" placeholder="password" required />
+                <input
+                  type="password"
+                  className="password"
+                  placeholder="password"
+                  name="password"
+                  required
+                />
                 <br />
                 <input type="checkbox" /> Remember Me
                 <br />
                 <br />
                 <center>
-                  <button type="submit" className="submit">LOG IN</button>
+                  <button type="submit" className="submit">
+                    LOG IN
+                  </button>
                 </center>
                 <br />
                 <br />
@@ -79,20 +98,10 @@ export const Login = ({ setCurrentUser }) => {
   );
 };
 
+// Logout Component
 export const Logout = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-
-  const handleLogout = () => {
-    // Reset current user and navigate to login page
-    setCurrentUser({ id: 0, isAdmin: false });
-    navigate("/login");
-  };
-
-  return (
-    <div>
-      <button onClick={handleLogout}>Logout</button>
-      {error && <p className="error-message">{error}</p>}
-    </div>
-  );
+  setCurrentUser({ id: 0, isAdmin: false });
+  navigate("/login");
 };

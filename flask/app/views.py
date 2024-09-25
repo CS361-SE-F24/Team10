@@ -1,14 +1,18 @@
-from flask import jsonify, request
+from flask import jsonify, request,send_file,abort
 from flask_cors import CORS
 from flask_login import login_user, login_required, logout_user, current_user
 from app import app, db,login_manager
 from app.models.user import User
 from app.models.student import Student
 from app.models.study_plan import Study_plan
+from app.models.advisor import Advisor
+from app.models.upload import Upload
 import traceback
 import secrets
 import string
 from flask_mail import Mail,Message
+from io import BytesIO
+import base64
 
 # Configure the mail server
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Replace with your mail server
@@ -54,41 +58,76 @@ def post_data():
 @app.route('/addstudent', methods=['POST'])
 def addStudent():
     try:
-        data = request.json  # Corrected request.json access
-        email = data['email']
-        print(data)
+        data = request.form  # Accessing form data for text fields
+        file = request.files.get('picture')  # Getting the image file from the request
+        email = data.get('email')
+        
         # Check if the email already exists in the database
         existing_student = Student.query.filter_by(email=email).first()
         if existing_student:
             return jsonify({"message": "Email already exists", "data": email}), 409  # 409 Conflict
 
         # If the email doesn't exist, proceed to add the student
+        pw = generate_random_password()
+        name_sp = data.get('name').split(' ')
+        advisor = Advisor.query.filter_by(name=data.get('advisor')).first()
+        if not advisor:
+            return jsonify({"message": "Advisor not found", "advisor": data.get('advisor')}), 404
+
+        # Saving the student data
         new_student = Student(
-            stdID=data['stdID'], 
-            name=data['name'], 
+            stdID=data.get('stdID'), 
+            name=data.get('name'), 
             status="study", 
             email=email, 
-            tel=data['tel']
+            tel=data.get('tel'),
+            advisorID=advisor.id
         )
-        pw = generate_random_password()
-        name_sp = data['name'].split(' ')
-        new_user = User(email=data['email'], password=pw,fname=name_sp[0],lname=name_sp[1],isAdmin=False)
-        #########################################
-        new_plan = Study_plan(planName=data['degree'],testEng=False,study_planID=data['stdID'],n1=0,n2=0,finished=False,comprehension=False,quality=False,core=0,select=0,free=0)
-        ##################################3
+        
+        # Convert the image file to binary (if provided)
+        picture_data = file.read() if file else None
+
+        # Creating a new user with the picture
+        new_user = User(
+            email=data.get('email'), 
+            password=pw,
+            fname=name_sp[0],
+            lname=name_sp[1],
+            isAdmin=False,
+            picture=picture_data  # Saving the binary data
+        )
+
+        # Creating a study plan
+        new_plan = Study_plan(
+            planName=data.get('degree'),
+            testEng=False,
+            study_planID=data.get('stdID'),
+            n1=0,
+            n2=0,
+            finished=False,
+            comprehension=False,
+            quality=False,
+            core=0,
+            select=0,
+            free=0
+        )
+
         db.session.add(new_student)
         db.session.add(new_user)
         db.session.add(new_plan)
         db.session.commit()
-        send_email(data['email'],pw)
-        print("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
-        # Return a valid response
+
+        # Sending the password via email
+        send_email(data.get('email'), pw)
+        print("Student and user created successfully")
+
         return jsonify({"message": "Student data received successfully", "data": data}), 200
     
     except Exception as e:
         print("An error occurred:", e)
         traceback.print_exc()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
 
 def generate_random_password(length=12):
     # Ensure the length is at least 8 characters
@@ -171,12 +210,76 @@ def studentfix():
 
 @app.route('/currentstudent', methods=['GET'])
 def currentstudent():
-    # User = request.json()
     stdID = request.args.get('stdID')  # Get stdID from query parameters
+    
+    # Fetch the student record
     student = Student.query.filter_by(stdID=stdID).first()
+    
+    # Handle case where student is not found
+    if student is None:
+        return jsonify({"error": "Student not found"}), 404
+
+    # Fetch the study plan associated with the student
     plan = Study_plan.query.filter_by(study_planID=student.stdID).first()
-    # print(f"Received stdID: {student}")
-    current_data = {'name':student.name,'tel':student.tel,'email':student.email,'plan':plan.planName}
-    print(current_data)
-    # Logic to retrieve student data using stdID
-    return jsonify(current_data)
+    
+    # If plan is not found, handle it if necessary
+    plan_name = plan.planName if plan else "No plan available"
+    user = User.query.filter_by(email=student.email).first()
+    # Prepare the current data to return
+    current_data = {
+        'name': student.name,
+        'tel': student.tel,
+        'email': student.email,
+        'plan': plan_name,
+        # Convert picture binary data to Base64 string if it exists
+        'picture': None  # Initialize as None
+    }
+
+    # Convert picture to Base64 if it exists
+    # Convert picture to Base64 if it exists
+    if user.picture:
+        current_data['picture'] = base64.b64encode(user.picture).decode('utf-8')
+
+
+    print(current_data)  # Log the current data for debugging
+    
+    return jsonify(current_data), 200  # Return the data with status 200
+
+
+
+
+
+####################################################3
+@app.route('/uploadfile', methods=['POST'])
+def test_upload():
+    if 'file' not in request.files:
+        return jsonify({'message': "No file part in the request"}), 400
+
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({'message': "No selected file"}), 400
+
+    upload = Upload(filename=file.filename, data=file.read())
+    db.session.add(upload)
+    db.session.commit()
+
+    return jsonify({'message': "File uploaded successfully"}), 200
+
+
+@app.route('/download/<upload_id>')
+def download(upload_id):
+    upload = Upload.query.filter_by(id=upload_id).first()
+    return send_file(BytesIO(upload.data), download_name=upload.filename, as_attachment=True)
+
+
+@app.route('/uploads', methods=['GET'])
+def get_uploaded_files():
+    try:
+        uploads = Upload.query.all()
+        files = [{'id': upload.id, 'filename': upload.filename} for upload in uploads]
+        return jsonify({'files': files}), 200
+    except Exception as e:
+        print("An error occurred:", e)
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
