@@ -1,21 +1,23 @@
-// src/Page/progressbar.js
 import React, { useState } from 'react';
 import '../css/progressbar.css';
 
 export const ProgressBar = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4'];
+  const [completedSteps, setCompletedSteps] = useState([]); // Array to track completed steps
+  const steps = ['1', '2', '3', '4']; // Only numbers now
 
-  const nextStep = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
+  const toggleStep = (step) => {
+    // Check if the step is already completed
+    let updatedCompletedSteps = [...completedSteps];
+    if (updatedCompletedSteps.includes(step)) {
+      // If the step is already completed, remove it from the array
+      updatedCompletedSteps = updatedCompletedSteps.filter((s) => s !== step);
+    } else {
+      // If the step is not completed, add it to the array
+      updatedCompletedSteps.push(step);
     }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    setCompletedSteps(updatedCompletedSteps);
+    setCurrentStep(step);
   };
 
   return (
@@ -24,21 +26,15 @@ export const ProgressBar = () => {
         {steps.map((step, index) => (
           <div
             key={index}
-            className={`step ${currentStep > index ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`}
+            className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`}
+            onClick={() => toggleStep(index + 1)} // Allow clicking to toggle completion
+            style={{ cursor: 'pointer' }} // Make it look clickable
           >
-            <div className="circle">{index + 1}</div>
+            <div className="circle">{step}</div> {/* Only showing step number */}
+            {/* Removed the step label */}
             {index !== steps.length - 1 && <div className="line"></div>}
           </div>
         ))}
-      </div>
-
-      <div className="navigation-buttons">
-        <button className='prev' onClick={prevStep} disabled={currentStep === 1}>
-          Prev
-        </button>
-        <button className='next' onClick={nextStep} disabled={currentStep === steps.length}>
-          Next
-        </button>
       </div>
     </div>
   );
