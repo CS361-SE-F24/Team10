@@ -54,11 +54,11 @@ export const Login = ({ setCurrentUser }) => {
               <div className="inputt">
                 <label>Username</label>
                 <br />
-                <input type="text" className="username" placeholder="example@cmu.ac.th" required />
+                <input type="email" name="email" className="username" placeholder="example@cmu.ac.th" required />
                 <br />
                 <label className="font-bold">Password</label>
                 <br />
-                <input type="password" className="password" placeholder="password" required />
+                <input type="password" name="password" className="password" placeholder="password" required />
                 <br />
                 <input type="checkbox" /> Remember Me
                 <br />
