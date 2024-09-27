@@ -5,26 +5,26 @@ class Study_plan(db.Model, SerializerMixin):
     __tablename__ = 'study_plan'
     id = db.Column(db.Integer, primary_key=True)
     planName = db.Column(db.String)
-    testEng = db.Column(db.Boolean)
-    study_planID = db.Column(db.Integer, unique=True)
-    n1 = db.Column(db.Integer)
-    n2 = db.Column(db.Integer)
-    finished = db.Column(db.Boolean)
-    comprehension = db.Column(db.Boolean)
-    quality = db.Column(db.Boolean)
+    testEng = db.Column(db.LargeBinary) #
+    study_planID = db.Column(db.Integer, unique=True) 
+    nPublish = db.Column(db.Integer) #
+    finished = db.Column(db.Boolean) 
+    comprehension = db.Column(db.LargeBinary) #
+    quality = db.Column(db.LargeBinary) #
+    publishExam = db.Column(db.LargeBinary) #
     core = db.Column(db.Integer)
     select = db.Column("select", db.Integer)  # ใช้ double quotes เพราะ `select` เป็นคำสงวน
     free = db.Column(db.Integer)
 
-    def __init__(self, planName, testEng, study_planID, n1, n2, finished, comprehension, quality, core, select, free):
+    def __init__(self, planName, testEng, study_planID, nPublish, finished, comprehension, quality, core, select, free,publishExam):
         self.planName = planName
         self.testEng = testEng
         self.study_planID = study_planID
-        self.n1 = n1
-        self.n2 = n2
+        self.nPublish = nPublish
         self.finished = finished
         self.comprehension = comprehension
         self.quality = quality
         self.core = core
         self.select = select
         self.free = free
+        self.publishExam = publishExam

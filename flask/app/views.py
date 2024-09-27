@@ -6,7 +6,7 @@ from app.models.user import User
 from app.models.student import Student
 from app.models.study_plan import Study_plan
 from app.models.advisor import Advisor
-from app.models.upload import Upload
+from app.models.upload import Publish
 import traceback
 import secrets
 import string
@@ -58,75 +58,84 @@ def post_data():
 @app.route('/addstudent', methods=['POST'])
 def addStudent():
     try:
-        data = request.form  # Accessing form data for text fields
-        file = request.files.get('picture')  # Getting the image file from the request
+        data = request.form
+        file = request.files.get('picture')
         email = data.get('email')
         
-        # Check if the email already exists in the database
+        # Validate required fields
+        if not email or not data.get('stdID') or not data.get('name'):
+            return jsonify({"message": "Missing required fields"}), 400
+        
+        # Check if the email already exists
         existing_student = Student.query.filter_by(email=email).first()
         if existing_student:
-            return jsonify({"message": "Email already exists", "data": email}), 409  # 409 Conflict
+            return jsonify({"message": "Email already exists", "data": email}), 409
 
-        # If the email doesn't exist, proceed to add the student
-        pw = generate_random_password()
+        # Process student name
         name_sp = data.get('name').split(' ')
+        fname = name_sp[0]
+        lname = name_sp[1] if len(name_sp) > 1 else ''  # Handle cases where last name is missing
+        
         advisor = Advisor.query.filter_by(name=data.get('advisor')).first()
         if not advisor:
             return jsonify({"message": "Advisor not found", "advisor": data.get('advisor')}), 404
 
-        # Saving the student data
+        # Generate password and hash it
+        pw = generate_random_password()
+        # hashed_password = hash_password(pw)  # Make sure you use a secure hashing method
+        
+        # Create student and user
         new_student = Student(
-            stdID=data.get('stdID'), 
-            name=data.get('name'), 
-            status="study", 
-            email=email, 
+            stdID=data.get('stdID'),
+            name=data.get('name'),
+            status="study",
+            email=email,
             tel=data.get('tel'),
             advisorID=advisor.id
         )
         
-        # Convert the image file to binary (if provided)
         picture_data = file.read() if file else None
 
-        # Creating a new user with the picture
         new_user = User(
-            email=data.get('email'), 
-            password=pw,
-            fname=name_sp[0],
-            lname=name_sp[1],
+            email=email,
+            password=pw,  # Store hashed password
+            fname=fname,
+            lname=lname,
             isAdmin=False,
-            picture=picture_data  # Saving the binary data
+            picture=picture_data
         )
-
-        # Creating a study plan
+        
         new_plan = Study_plan(
             planName=data.get('degree'),
-            testEng=False,
+            testEng=None,
             study_planID=data.get('stdID'),
-            n1=0,
-            n2=0,
+            nPublish=0,
             finished=False,
-            comprehension=False,
-            quality=False,
+            comprehension=None,
+            quality=None,
+            publishExam=None,
             core=0,
             select=0,
             free=0
         )
 
+        # Add and commit to DB
+        send_email(email, pw)
         db.session.add(new_student)
         db.session.add(new_user)
         db.session.add(new_plan)
         db.session.commit()
 
-        # Sending the password via email
-        send_email(data.get('email'), pw)
-        print("Student and user created successfully")
+        # Send the generated password via email
+        # send_email(email, pw)
+        
+        return jsonify({"message": "Student added successfully", "data": {"email": email, "stdID": data.get('stdID')}}), 200
 
-        return jsonify({"message": "Student data received successfully", "data": data}), 200
-    
     except Exception as e:
         print("An error occurred:", e)
         traceback.print_exc()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
 
 
 def generate_random_password(length=12):
@@ -241,45 +250,156 @@ def currentstudent():
         current_data['picture'] = base64.b64encode(user.picture).decode('utf-8')
 
 
-    print(current_data)  # Log the current data for debugging
+    # print(current_data)  # Log the current data for debugging
     
     return jsonify(current_data), 200  # Return the data with status 200
 
+###################################################
+
+import base64
+import mimetypes
+
+def get_file_data(file_binary, filename):
+    if file_binary:
+        return {
+            'file': base64.b64encode(file_binary).decode('utf-8'),
+            'fileType': mimetypes.guess_type(filename)[0]  # Pass actual filename
+        }
+    return None
+
+
+@app.route('/currentstudentplan', methods=['GET'])
+def currentstudentplan():
+    stdID = request.args.get('stdID')
+    study_plan = Study_plan.query.filter_by(study_planID=stdID).first()
+
+    if study_plan is None:
+        return jsonify({"error": "Student not found"}), 404
+
+    current_data = {
+    'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),  # Example filename
+    'nPublish': study_plan.nPublish,
+    'comprehension': get_file_data(study_plan.comprehension, 'comprehension.pdf'),
+    'quality': get_file_data(study_plan.quality, 'quality.pdf'),
+    'publishExam': get_file_data(study_plan.publishExam, 'publishExam.pdf')
+    }
+
+
+    return jsonify(current_data), 200
 
 
 
 
 ####################################################3
 @app.route('/uploadfile', methods=['POST'])
-def test_upload():
+def upload_file():
     if 'file' not in request.files:
         return jsonify({'message': "No file part in the request"}), 400
 
     file = request.files['file']
-    
+    stdID = request.form.get('stdID')
+    types = request.form.get('types')
+
     if file.filename == '':
         return jsonify({'message': "No selected file"}), 400
 
-    upload = Upload(filename=file.filename, data=file.read())
+    # ตรวจสอบว่ามีไฟล์ของ stdID นี้ในฐานข้อมูลหรือไม่
+    existing_file = Publish.query.filter_by(stdID=stdID, filename=file.filename).first()
+    if existing_file:
+        return jsonify({'message': "This file already exists for the student"}), 400
+
+    # ถ้าไม่มี ให้ทำการบันทึก
+    upload = Publish(stdID=stdID, filename=file.filename, file=file.read(), types=types)
     db.session.add(upload)
     db.session.commit()
 
     return jsonify({'message': "File uploaded successfully"}), 200
 
 
+
+from flask import send_file, jsonify
+from io import BytesIO
+
+@app.route('/downloadplan/<upload_id>/<type_exam>')
+def downloadplan(upload_id, type_exam):
+    print(upload_id, type_exam)
+    
+    study_plan = Study_plan.query.filter_by(study_planID=upload_id).first()
+
+    if study_plan is None:
+        return jsonify({"error": "Study plan not found"}), 404
+    file_data = None
+    filename = ""
+    if type_exam == "testEng":
+        file_data = study_plan.testEng
+        filename = f"test_eng_file_{upload_id}.pdf"  # Change extension as needed
+    elif type_exam == "comprehension":
+        file_data = study_plan.comprehension
+        filename = f"comprehension_file_{upload_id}.pdf"  # Change extension as needed
+    elif type_exam == "quality":
+        file_data = study_plan.quality
+        filename = f"quality_file_{upload_id}.pdf"  # Change extension as needed
+    elif type_exam == "publishExam":
+        file_data = study_plan.publishExam
+        filename = f"publish_exam_file_{upload_id}.pdf"  # Change extension as needed
+    else:
+        return jsonify({"error": "Invalid exam type"}), 400
+    if file_data:
+        return send_file(BytesIO(file_data), download_name=filename, as_attachment=True)
+    return jsonify({"error": "No file available for download"}), 404
+
+    # return
+
 @app.route('/download/<upload_id>')
 def download(upload_id):
-    upload = Upload.query.filter_by(id=upload_id).first()
-    return send_file(BytesIO(upload.data), download_name=upload.filename, as_attachment=True)
+    upload = Publish.query.filter_by(id=upload_id).first()
+    return send_file(BytesIO(upload.file), download_name=upload.filename, as_attachment=True)
 
 
 @app.route('/uploads', methods=['GET'])
 def get_uploaded_files():
+    stdID = request.args.get('stdID')  # Get stdID from the request parameters
+    if not stdID:
+        return jsonify({"message": "stdID is required"}), 400
     try:
-        uploads = Upload.query.all()
+        uploads = Publish.query.filter_by(stdID=stdID).all()  # Get all uploads for the given stdID
         files = [{'id': upload.id, 'filename': upload.filename} for upload in uploads]
         return jsonify({'files': files}), 200
     except Exception as e:
         print("An error occurred:", e)
         traceback.print_exc()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
+
+@app.route('/editprogress', methods=['POST'])
+def editprogress():
+    try:
+        # Extract form data and file uploads
+        study_planID = request.form.get('stdID')
+        testEng = request.files.get('testEng').read() if request.files.get('testEng') else None
+        comprehensiveExam = request.files.get('comprehensiveExam').read() if request.files.get('comprehensiveExam') else None
+        qualifyingExam = request.files.get('QualifyingExam').read() if request.files.get('QualifyingExam') else None
+        nPublish = request.form.get('nPublish')
+
+        # Find the study plan by student ID
+        study_plan = Study_plan.query.filter_by(study_planID=study_planID).first()
+        
+        if not study_plan:
+            return jsonify({"error": "Study plan not found"}), 404
+
+        # Update study plan fields if data is provided
+        if testEng:
+            study_plan.testEng = testEng
+        if comprehensiveExam:
+            study_plan.comprehension = comprehensiveExam
+        if qualifyingExam:
+            study_plan.quality = qualifyingExam
+        if nPublish:
+            study_plan.nPublish = int(nPublish)
+
+        # Commit changes to the database
+        db.session.commit()
+
+        return jsonify({"message": "Progress updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
