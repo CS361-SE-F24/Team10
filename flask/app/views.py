@@ -13,7 +13,7 @@ import string
 from flask_mail import Mail,Message
 from io import BytesIO
 import base64
-
+import mimetypes
 # Configure the mail server
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Replace with your mail server
 app.config['MAIL_PORT'] = 587  # Usually 465 for SSL, 587 for TLS
@@ -108,16 +108,22 @@ def addStudent():
         new_plan = Study_plan(
             planName=data.get('degree'),
             testEng=None,
+            testEng_filename=None,  # Updated to store file name
             study_planID=data.get('stdID'),
             nPublish=0,
             finished=False,
             comprehension=None,
+            comprehension_filename=None,  # Updated to store file name
             quality=None,
+            quality_filename=None,  # Updated to store file name
             publishExam=None,
+            publishExam_filename=None,  # Updated to store file name
             core=0,
             select=0,
             free=0
         )
+
+
 
         # Add and commit to DB
         send_email(email, pw)
@@ -256,8 +262,7 @@ def currentstudent():
 
 ###################################################
 
-import base64
-import mimetypes
+
 
 def get_file_data(file_binary, filename):
     if file_binary:
@@ -317,38 +322,34 @@ def upload_file():
 
 
 
-from flask import send_file, jsonify
-from io import BytesIO
-
 @app.route('/downloadplan/<upload_id>/<type_exam>')
 def downloadplan(upload_id, type_exam):
-    print(upload_id, type_exam)
-    
     study_plan = Study_plan.query.filter_by(study_planID=upload_id).first()
-
-    if study_plan is None:
+    if not study_plan:
         return jsonify({"error": "Study plan not found"}), 404
-    file_data = None
-    filename = ""
+
     if type_exam == "testEng":
         file_data = study_plan.testEng
-        filename = f"test_eng_file_{upload_id}.pdf"  # Change extension as needed
+        filename = study_plan.testEng_filename
     elif type_exam == "comprehension":
         file_data = study_plan.comprehension
-        filename = f"comprehension_file_{upload_id}.pdf"  # Change extension as needed
+        filename = study_plan.comprehension_filename
     elif type_exam == "quality":
         file_data = study_plan.quality
-        filename = f"quality_file_{upload_id}.pdf"  # Change extension as needed
+        filename = study_plan.quality_filename
     elif type_exam == "publishExam":
         file_data = study_plan.publishExam
-        filename = f"publish_exam_file_{upload_id}.pdf"  # Change extension as needed
+        filename = study_plan.publishExam_filename
     else:
         return jsonify({"error": "Invalid exam type"}), 400
-    if file_data:
-        return send_file(BytesIO(file_data), download_name=filename, as_attachment=True)
-    return jsonify({"error": "No file available for download"}), 404
 
-    # return
+    if not file_data:
+        return jsonify({"error": "No file available for the requested exam type"}), 404
+
+    # Use the stored file name when sending the file
+    return send_file(BytesIO(file_data), download_name=filename, as_attachment=True)
+
+
 
 @app.route('/download/<upload_id>')
 def download(upload_id):
@@ -376,30 +377,61 @@ def editprogress():
     try:
         # Extract form data and file uploads
         study_planID = request.form.get('stdID')
-        testEng = request.files.get('testEng').read() if request.files.get('testEng') else None
-        comprehensiveExam = request.files.get('comprehensiveExam').read() if request.files.get('comprehensiveExam') else None
-        qualifyingExam = request.files.get('QualifyingExam').read() if request.files.get('QualifyingExam') else None
+        testEng_file = request.files.get('testEng')
+        comprehensive_file = request.files.get('comprehensiveExam')
+        qualifying_file = request.files.get('QualifyingExam')
         nPublish = request.form.get('nPublish')
+
+        # Debug print to inspect form data and file uploads
+        print({
+            "study_planID": study_planID,
+            "testEng_file": testEng_file,
+            "comprehensive_file": comprehensive_file,
+            "qualifying_file": qualifying_file,
+            "nPublish": nPublish
+        })
 
         # Find the study plan by student ID
         study_plan = Study_plan.query.filter_by(study_planID=study_planID).first()
-        
+
         if not study_plan:
             return jsonify({"error": "Study plan not found"}), 404
 
-        # Update study plan fields if data is provided
-        if testEng:
-            study_plan.testEng = testEng
-        if comprehensiveExam:
-            study_plan.comprehension = comprehensiveExam
-        if qualifyingExam:
-            study_plan.quality = qualifyingExam
-        if nPublish:
+        # Update study plan fields if files are provided, skip if None
+        if testEng_file is not None and testEng_file.filename != '':
+            study_plan.testEng = testEng_file.read()
+            study_plan.testEng_filename = testEng_file.filename
+        elif testEng_file is not None and testEng_file.filename == '':
+            # If file is explicitly empty, reset the field
+            study_plan.testEng = None
+            study_plan.testEng_filename = None
+
+        if comprehensive_file is not None and comprehensive_file.filename != '':
+            study_plan.comprehension = comprehensive_file.read()
+            study_plan.comprehension_filename = comprehensive_file.filename
+        elif comprehensive_file is not None and comprehensive_file.filename == '':
+            # If file is explicitly empty, reset the field
+            study_plan.comprehension = None
+            study_plan.comprehension_filename = None
+
+        if qualifying_file is not None and qualifying_file.filename != '':
+            study_plan.quality = qualifying_file.read()
+            study_plan.quality_filename = qualifying_file.filename
+        elif qualifying_file is not None and qualifying_file.filename == '':
+            # If file is explicitly empty, reset the field
+            study_plan.quality = None
+            study_plan.quality_filename = None
+
+        # Update nPublish if provided
+        if nPublish is not None:
             study_plan.nPublish = int(nPublish)
 
         # Commit changes to the database
         db.session.commit()
-
         return jsonify({"message": "Progress updated successfully"}), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+

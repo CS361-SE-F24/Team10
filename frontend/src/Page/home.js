@@ -93,41 +93,40 @@ export const Home = (props) => {
 
   const fetchPlan = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:56733/currentstudentplan?stdID=${stdID}`
-      );
-      const studentData = response.data;
+        const response = await axios.get(
+            `http://localhost:56733/currentstudentplan?stdID=${stdID}`
+        );
+        const studentData = response.data;
+        console.log(studentData);
+        
+        const convertFile = (fileData) => {
+            if (fileData && fileData.file) {
+                return {
+                    dataUrl: `data:${fileData.fileType};base64,${fileData.file}`,
+                    isImage: fileData.fileType ? fileData.fileType.startsWith("image") : false,
+                    isPDF: fileData.fileType === "application/pdf",
+                };
+            }
+            return null;
+        };
 
-      const convertFile = (fileData) => {
-        if (fileData && fileData.file) {
-            return {
-                dataUrl: `data:${fileData.fileType};base64,${fileData.file}`,
-                isImage: fileData.fileType ? fileData.fileType.startsWith("image") : false,
-                isPDF: fileData.fileType === "application/pdf",
-            };
-        }
-        return null;
-    };
-    
+        // Here you can spread the previous state and update the specific fields
+        setFormplan(prevPlan => ({
+            ...prevPlan,
+            testEng: convertFile(studentData.testEng) || prevPlan.testEng,
+            comprehensiveExam: convertFile(studentData.comprehension) || prevPlan.comprehensiveExam,
+            QualifyingExam: convertFile(studentData.quality) || prevPlan.QualifyingExam,
+            nPublish: studentData.nPublish,
+        }));
 
-      setFormplan({
-        stdID: stdID,
-        testEng: convertFile(studentData.testEng),
-        nPublish: studentData.nPublish,
-        finishedExam: null,
-        comprehensiveExam: convertFile(studentData.comprehension),
-        QualifyingExam: convertFile(studentData.quality),
-        credit: 0,
-      });
-      console.log(plan);
-      
-      setLoading(false);
+        setLoading(false);
     } catch (err) {
-      setError("Error fetching data");
-      setLoading(false);
-      console.error(err);
+        setError("Error fetching data");
+        setLoading(false);
+        console.error(err);
     }
-  };
+};
+
 
   const handleUpdate = () => {
     setShow((prevShow) => (prevShow === "progress" ? "update" : "progress"));
@@ -158,6 +157,8 @@ export const Home = (props) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget); // Create a FormData object
     const data = Object.fromEntries(formData.entries()); // Log the form data for debugging
+    console.log("diuUfffffffff");
+    
     console.log(data);
 
     try {
@@ -169,7 +170,7 @@ export const Home = (props) => {
         }
       );
       alert("Progress updated successfully");
-      event.target.reset();
+      // event.target.reset();
       fetchPlan(); // Refresh the study plan after the update
     } catch (error) {
       setError("Progress update failed");
@@ -237,17 +238,19 @@ export const Home = (props) => {
               ) : (
                 <div>
                   <label
-                    onClick={() => setFormplan({ ...plan, testEng: null })}
+                    onClick={() => {
+                      setFormplan({ ...plan, testEng: null }); // Set testEng to not pass
+                    }}
                     className="editprogress_label_pass"
                   >
                     ผ่าน
                   </label>
-                    <div>
-                      <p>Uploaded File:</p>
-                      <a href={`http://localhost:56733/downloadplan/${stdID}/testEng`} download>
+                  <div>
+                    <p>Uploaded File:</p>
+                    <a href={`http://localhost:56733/downloadplan/${stdID}/testEng`} download>
                       TestEnglish_{stdID}
-                      </a>
-                    </div>
+                    </a>
+                  </div>
                 </div>
               )}
             </div>
@@ -273,20 +276,18 @@ export const Home = (props) => {
                 <div>
                   <label
                     onClick={() =>
-                      setFormplan({ ...plan, comprehensiveExam: null })
+                      setFormplan({ ...plan, comprehensiveExam: null }) // Set comprehensiveExam to not pass
                     }
                     className="editprogress_label_pass"
                   >
                     ผ่าน
                   </label>
-                  {plan.comprehensiveExam && plan.comprehensiveExam.fileType && (
-                    <div>
-                      <p>Uploaded File:</p>
-                      <a href={plan.comprehensiveExam.dataUrl} download>
-                        {plan.comprehensiveExam.fileType.split('/')[1]}
-                      </a>
-                    </div>
-                  )}
+                  <div>
+                    <p>Uploaded File:</p>
+                    <a href={`http://localhost:56733/downloadplan/${stdID}/comprehension`} download>
+                    ComprehensiveExam_{stdID}
+                    </a>
+                  </div>
                 </div>
               )}
             </div>
@@ -312,20 +313,18 @@ export const Home = (props) => {
                 <div>
                   <label
                     onClick={() =>
-                      setFormplan({ ...plan, QualifyingExam: null })
+                      setFormplan({ ...plan, QualifyingExam: null }) // Set QualifyingExam to not pass
                     }
                     className="editprogress_label_pass"
                   >
                     ผ่าน
                   </label>
-                  {plan.QualifyingExam && plan.QualifyingExam.fileType && (
-                    <div>
-                      <p>Uploaded File:</p>
-                      <a href={plan.QualifyingExam.dataUrl} download>
-                        {plan.QualifyingExam.fileType.split('/')[1]}
-                      </a>
-                    </div>
-                  )}
+                  <div>
+                    <p>Uploaded File:</p>
+                    <a href={`http://localhost:56733/downloadplan/${stdID}/quality`} download>
+                      QualifyingExam_{stdID}
+                    </a>
+                  </div>
                 </div>
               )}
             </div>
