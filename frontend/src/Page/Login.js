@@ -102,6 +102,13 @@ export const Login = ({ setCurrentUser }) => {
 export const Logout = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  setCurrentUser({ id: 0, isAdmin: false });
-  navigate("/login");
+
+  useEffect(() => {
+    // Set the current user to an initial state
+    setCurrentUser({ id: 0, isAdmin: false });
+    // Navigate to login page after updating currentUser
+    navigate("/login");
+  }, [setCurrentUser, navigate]); // Dependency array to avoid infinite loop
+
+  return null; // No UI is needed, just a side effect
 };

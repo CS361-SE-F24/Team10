@@ -276,8 +276,10 @@ def get_file_data(file_binary, filename):
 @app.route('/currentstudentplan', methods=['GET'])
 def currentstudentplan():
     stdID = request.args.get('stdID')
+    # print("*****************")
+    # print(stdID)
     study_plan = Study_plan.query.filter_by(study_planID=stdID).first()
-
+    # print(study_plan)
     if study_plan is None:
         return jsonify({"error": "Student not found"}), 404
 

@@ -215,7 +215,7 @@ export const Home = (props) => {
 
       {show === "progress" ? (
         <div className="progressbar">
-          <ProgressBar />
+          <ProgressBar stdID={stdID} />
         </div>
       ) : (
         <div className="editprogress">

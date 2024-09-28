@@ -38,7 +38,6 @@
   position: absolute; /* Change to absolute for better control */
   top: 30px; /* Adjust this to position the line below the circle */
   left: 72px; /* Center align the line with the circle */
-
 }
 
 .completed .line {
