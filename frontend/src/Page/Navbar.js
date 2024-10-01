@@ -1,37 +1,38 @@
-// Navbar.js
-import {React,useState} from "react";
-import { Link } from "react-router-dom";
-import "../css/Navbar.css"
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../css/Navbar.css";
 
-export const Navbar = () => {
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem("currentUser");
-    return savedUser ? JSON.parse(savedUser) : { id: 0, isAdmin: false };
-  });
+export const Navbar = ({ user = { isAdmin: false }, setCurrentUser }) => {
+  const navigate = useNavigate();
 
-  // console.log(currentUser);
+
+  const handleLogout = (event) => {
+    event.preventDefault(); 
+    const confirmed = window.confirm("ยืนยันจะ logout หรือไม่?");
+    if (confirmed) {
+      setCurrentUser({ id: 0, isAdmin: false });
+      navigate("/login"); 
+    }
+  };
+
   return (
     <div>
-      {/* Navbar อันแรก */}
       <div className="navbar">
         <div className="brand">
-          {currentUser.isAdmin ? <Link to="/admin">HOME</Link>:<Link to="/">HOME</Link>}
-          {/* <Link to="/">HOME</Link> */}
+          <Link to={user.isAdmin ? "/admin" : "/"}>HOME</Link>
           <Link to="/blog">BACK</Link>
         </div>
         <div>
-          <Link to="/logout">LOGOUT</Link>
+          <Link to="#" onClick={handleLogout} className="logout-button">
+            Log Out
+          </Link>
         </div>
       </div>
-      
-      {/* Navbar อันที่สอง */}
+
       <div className="navbar-second">
         <div className="menu">
-            COMPUTER SCIENCE CMU<br />
-            STUDENT PROGRESS TRACKING SYSTEM
-          {/* <Link to="/profile">Profile</Link>
-          <Link to="/settings">Settings</Link>
-          <Link to="/help">Help</Link> */}
+          COMPUTER SCIENCE CMU<br />
+          STUDENT PROGRESS TRACKING SYSTEM
         </div>
       </div>
     </div>

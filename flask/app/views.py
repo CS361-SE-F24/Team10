@@ -82,7 +82,6 @@ def addStudent():
 
         # Generate password and hash it
         pw = generate_random_password()
-        # hashed_password = hash_password(pw)  # Make sure you use a secure hashing method
         
         # Create student and user
         new_student = Student(
@@ -123,17 +122,11 @@ def addStudent():
             free=0
         )
 
-
-
-        # Add and commit to DB
         send_email(email, pw)
         db.session.add(new_student)
         db.session.add(new_user)
         db.session.add(new_plan)
         db.session.commit()
-
-        # Send the generated password via email
-        # send_email(email, pw)
         
         return jsonify({"message": "Student added successfully", "data": {"email": email, "stdID": data.get('stdID')}}), 200
 
@@ -240,7 +233,6 @@ def currentstudent():
     # If plan is not found, handle it if necessary
     plan_name = plan.planName if plan else "No plan available"
     user = User.query.filter_by(email=student.email).first()
-    # Prepare the current data to return
     current_data = {
         'name': student.name,
         'tel': student.tel,
@@ -250,13 +242,8 @@ def currentstudent():
         'picture': None  # Initialize as None
     }
 
-    # Convert picture to Base64 if it exists
-    # Convert picture to Base64 if it exists
     if user.picture:
         current_data['picture'] = base64.b64encode(user.picture).decode('utf-8')
-
-
-    # print(current_data)  # Log the current data for debugging
     
     return jsonify(current_data), 200  # Return the data with status 200
 

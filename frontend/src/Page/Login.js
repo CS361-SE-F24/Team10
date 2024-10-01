@@ -7,6 +7,7 @@ import "../css/Login.css";
 export const Login = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // สถานะเพื่อแสดง/ซ่อนรหัสผ่าน
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -35,6 +36,11 @@ export const Login = ({ setCurrentUser }) => {
         setError("Invalid login credentials");
         console.error("There was an error sending the data!", error);
       });
+  };
+
+  // ฟังก์ชันสลับการแสดงรหัสผ่าน
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
