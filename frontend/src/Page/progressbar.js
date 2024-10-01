@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import DonutChart from './DonutChart';
 import axios from 'axios';
-import { DonutChart } from './DonutChart'; // Import DonutChart
 import '../css/progressbar.css';
 
 export const ProgressBar = ({ stdID }) => {
-  const steps = ['1', '2', '3', '4']; // กำหนดจำนวนขั้นตอน
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState([]);
   
@@ -35,6 +34,9 @@ export const ProgressBar = ({ stdID }) => {
 
     fetchStudentPlan();
   }, [stdID]);
+
+  // คำนวณเปอร์เซ็นต์ความสำเร็จ
+  const progressPercentage = (completedSteps.length / steps.length) * 100;
 
   return (
     <div style={{ padding: '20px', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-end' }}> 
