@@ -6,6 +6,7 @@ import axios from "axios";
 export const Login = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // สถานะเพื่อแสดง/ซ่อนรหัสผ่าน
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -36,6 +37,11 @@ export const Login = ({ setCurrentUser }) => {
       });
   };
 
+  // ฟังก์ชันสลับการแสดงรหัสผ่าน
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="container">
       <div className="item">
@@ -49,22 +55,49 @@ export const Login = ({ setCurrentUser }) => {
           <form onSubmit={handleSubmit}>
             <div>
               <p className="cs">cs cmu</p>
-              <p className="hello">Hello,<br />Welcome!</p>
+              <p className="hello">
+                Hello,
+                <br />
+                Welcome!
+              </p>
               <br />
               <div className="inputt">
                 <label>Username</label>
                 <br />
-                <input type="email" name="email" className="username" placeholder="example@cmu.ac.th" required />
+                <input
+                  type="email"
+                  name="email"
+                  className="username"
+                  placeholder="example@cmu.ac.th"
+                  required
+                />
                 <br />
                 <label className="font-bold">Password</label>
                 <br />
-                <input type="password" name="password" className="password" placeholder="password" required />
+                <div className="password-container">
+                  <input
+                    type={showPassword ? "text" : "password"} // ถ้า showPassword เป็น true ให้แสดงเป็น text
+                    name="password"
+                    className="password"
+                    placeholder="password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="toggle-password"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
                 <br />
                 <input type="checkbox" /> Remember Me
                 <br />
                 <br />
                 <center>
-                  <button type="submit" className="submit">LOG IN</button>
+                  <button type="submit" className="submit">
+                    LOG IN
+                  </button>
                 </center>
                 <br />
                 <br />

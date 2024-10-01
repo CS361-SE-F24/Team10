@@ -3,6 +3,8 @@ import { React, useEffect, useState } from "react";
 import '../css/home.css';
 import axios from "axios";
 import { ProgressBar } from '../Page/progressbar.js';
+import DonutChart from '../Page/DonutChart.js';
+
 
 export const Home = (props) => {
   const location = useLocation();
@@ -91,6 +93,10 @@ export const Home = (props) => {
 
       <div className="progressbar">
         <ProgressBar />
+      </div>
+      <div>
+        {/* <DonutChart /> */}
+        {/* <DonutChart progress={progressPercentage} /> */}
       </div>
     </div>
   );
