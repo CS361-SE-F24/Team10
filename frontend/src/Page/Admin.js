@@ -50,6 +50,7 @@ export const Admin = () => {
       </div>
       <div className="contain">
         <button onClick={() => navigate("/addcourse")}></button>
+        <button onClick={() => navigate("/alladmin")}>รวม admin</button>
       </div>
       <table>
         <thead>
