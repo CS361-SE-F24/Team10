@@ -108,6 +108,17 @@ export const Addadmin= () => {
             required 
           />
         </div>
+        <div className="form-group">
+          <label htmlFor="pw_admin">Password</label><br />
+          <input className = "input_select_text"
+            type="text" 
+            id="pw_admin" 
+            name="pw_admin" 
+            value={formData.pw_admin} 
+            onChange={handleChange} 
+            required 
+          />
+        </div>
         <button type="submit" className="button_add" >เพิ่ม Admin</button>
       </form>
       <br />

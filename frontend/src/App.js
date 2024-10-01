@@ -10,6 +10,7 @@ import { TestSend } from "./Page/Test_send_email";
 import { Admin } from "./Page/Admin";
 import { Data } from "./Page/Data";
 import { ProgressBar } from "./Page/progressbar";
+import { Alladmin } from "./Page/Alladmin";
 
 function App() {
   const navigate = useNavigate();
@@ -64,6 +65,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/data" element={<Data />} />
         <Route path="/progressbar" element={<ProgressBar />} />
+        <Route path="/alladmin" element={<Alladmin />} />
       </Routes>
     </>
   );
