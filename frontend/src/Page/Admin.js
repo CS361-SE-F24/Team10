@@ -49,7 +49,7 @@ export const Admin = () => {
         <button onClick={() => navigate("/addstudent")}>เพิ่มนักศึกษา</button>
       </div>
       <div className="contain">
-        <button onClick={() => navigate("/addstudent")}></button>
+        <button onClick={() => navigate("/addcourse")}></button>
       </div>
       <table>
         <thead>

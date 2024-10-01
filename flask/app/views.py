@@ -7,6 +7,7 @@ from app.models.student import Student
 from app.models.study_plan import Study_plan
 from app.models.advisor import Advisor
 from app.models.upload import Publish
+from app.models.course import Course
 import traceback
 import secrets
 import string
@@ -422,5 +423,40 @@ def editprogress():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/addcourse', methods=['POST'])
+def add_course():
+    data = request.get_json()
+    print(data)
+    new_course = Course(
+        courseID=data['courseID'],
+        types=data['types'],
+        credit=data['credit'],
+        planName=data['planName']
+    )
+    db.session.add(new_course)
+    db.session.commit()
+
+    print(f"Added course with ID: {new_course.courseID}")  # Debugging log
+
+    return jsonify({'message': 'Course added successfully!'}), 201
 
 
+
+@app.route('/courses', methods=['GET'])
+def get_courses():
+    plan_name = request.args.get('planName')
+    
+    if plan_name:
+        courses = Course.query.filter_by(planName=plan_name).all()
+    else:
+        courses = Course.query.all()
+    
+    if not courses:
+        return jsonify({'message': 'No courses found'}), 200
+
+    return jsonify([{
+        'courseID': course.courseID,
+        'types': course.types,
+        'credit': course.credit,
+        'planName': course.planName
+    } for course in courses]), 200
