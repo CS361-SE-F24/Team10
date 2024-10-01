@@ -8,7 +8,8 @@ export const Login = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false); // สถานะเพื่อแสดง/ซ่อนรหัสผ่าน
-
+  // console.log("asssssssssss");
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
