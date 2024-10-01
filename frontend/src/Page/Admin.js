@@ -44,43 +44,51 @@ export const Admin = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="admin-container">
-      <div className="contain">
-        <button onClick={() => navigate("/addstudent")}>เพิ่มนักศึกษา</button>
+    <>
+      <div className="admin-header">  
+        <div className="contain">
+          <button onClick={() => navigate("/addstudent")}>เพิ่มนักศึกษา</button>
+        </div>
+        <div className="contain">
+          <button onClick={() => navigate("/alladmin")}>รวม admin</button>
+        </div>
       </div>
-      <div className="contain">
-        <button onClick={() => navigate("/alladmin")}>รวม admin</button>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Name</th>
-            <th>Student ID</th>
-            <th>Degree</th>
-            <th>Progress</th>
-            <th>Edit</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student) => (
-            <tr key={student.no}>
-              <td>{student.no}</td>
-              <td>{student.name}</td>
-              <td>{student.stdID}</td>
-              <td>{student.degree}</td>
-              <td>{student.progress}</td>
-              <td>
-                <div>
-                  <button onClick={() => handleView(student.stdID)}>view</button>
-                  <button onClick={() => handleEdit(student.stdID)}>edit</button>
-                  <button onClick={() => handleDelete(student.stdID)}>delete</button>
-                </div>
-              </td>
+
+
+
+
+      <div className="admin-container">  
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Student ID</th>
+              <th>Degree</th>
+              <th>Progress</th>
+              <th>Edit</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr key={student.no}>
+                <td>{student.no}</td>
+                <td>{student.name}</td>
+                <td>{student.stdID}</td>
+                <td>{student.degree}</td>
+                <td>{student.progress}</td>
+                <td>
+                  <div>
+                    <button onClick={() => handleView(student.stdID)}>view</button>
+                    <button onClick={() => handleEdit(student.stdID)}>edit</button>
+                    <button onClick={() => handleDelete(student.stdID)}>delete</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 };

@@ -1,3 +1,13 @@
+.admin-header {
+  padding: 10px 15px;
+}
+
+
+
+
+
+
+
 table {
   border-collapse: collapse;
   width: 100%;
@@ -5,6 +15,7 @@ table {
   border-radius: 10px; /* Rounded corners */
   overflow: hidden; /* Ensures rounded corners */
   margin-top: 20px;
+  padding: 10px 15px;
 }
 
 th,
