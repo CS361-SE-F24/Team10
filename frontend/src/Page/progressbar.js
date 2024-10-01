@@ -1,26 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { DonutChart } from './DonutChart'; // Import DonutChart
 import '../css/progressbar.css';
 
-export const ProgressBar = () => {
+export const ProgressBar = ({ stdID }) => {
   const steps = ['1', '2', '3', '4']; // กำหนดจำนวนขั้นตอน
   const [currentStep, setCurrentStep] = useState(1);
-  const [completedSteps, setCompletedSteps] = useState([]); // Array to track completed steps
+  const [completedSteps, setCompletedSteps] = useState([]);
+  
+  // Define steps as the keys you will receive from the API
+  const steps = ['testEng', 'comprehension', 'quality', 'publishExam'];
+  const stepNames = ['Test English', 'Comprehension', 'Quality', 'Publish Exam']; // Readable step names
 
-  // ฟังก์ชันเพื่อ toggle สถานะเสร็จสมบูรณ์ของ step
-  const toggleStep = (step) => {
-    let updatedCompletedSteps = [...completedSteps];
-    if (updatedCompletedSteps.includes(step)) {
-      updatedCompletedSteps = updatedCompletedSteps.filter((s) => s !== step);
-    } else {
-      updatedCompletedSteps.push(step);
-    }
-    setCompletedSteps(updatedCompletedSteps);
-    setCurrentStep(step);
-  };
+  useEffect(() => {
+    const fetchStudentPlan = async () => {
+      if (!stdID) return;
 
-  // คำนวณเปอร์เซ็นต์ความสำเร็จ
-  const progressPercentage = (completedSteps.length / steps.length) * 100;
+      try {
+        const response = await axios.get(`http://localhost:56733/currentstudentplan?stdID=${stdID}`);
+        const { testEng, comprehension, quality, publishExam } = response.data;
+
+        const fetchedCompletedSteps = [];
+        if (testEng) fetchedCompletedSteps.push(1); // Step 1 corresponds to testEng
+        if (comprehension) fetchedCompletedSteps.push(2); // Step 2 corresponds to comprehension
+        if (quality) fetchedCompletedSteps.push(3); // Step 3 corresponds to quality
+        if (publishExam) fetchedCompletedSteps.push(4); // Step 4 corresponds to publishExam
+
+        setCompletedSteps(fetchedCompletedSteps);
+        setCurrentStep(fetchedCompletedSteps.length > 0 ? Math.max(...fetchedCompletedSteps) : 1);
+      } catch (error) {
+        console.error('Error fetching student plan:', error);
+      }
+    };
+
+    fetchStudentPlan();
+  }, [stdID]);
 
   return (
     <div style={{ padding: '20px', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-end' }}> 
@@ -28,13 +42,9 @@ export const ProgressBar = () => {
 
       <div className="progress-bar-container vertical" style={{ flex: 1 }}> {/* flex: 1 เพื่อให้ ProgressBar ใช้พื้นที่ตามต้องการ */}
         {steps.map((step, index) => (
-          <div
-            key={index}
-            className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`}
-            onClick={() => toggleStep(index + 1)} // อนุญาตให้คลิกเพื่อเปลี่ยนสถานะ
-            style={{ cursor: 'pointer' }} // แสดงผลว่าคลิกได้
-          >
-            <div className="circle">{step}</div>
+          <div key={index} className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`} style={{ cursor: 'pointer' }}>
+            <div className="circle">{index + 1}</div> {/* Step number displayed */}
+            <div className="step-name">{stepNames[index]}</div> {/* Display the readable step name */}
             {index !== steps.length - 1 && <div className="line"></div>}
           </div>
         ))}

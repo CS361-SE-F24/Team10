@@ -5,6 +5,7 @@
 }
 
 .step {
+  
   display: flex;
   flex-direction: column;
   margin-bottom: 75px; /* Space between steps */
@@ -12,7 +13,6 @@
   position: relative; /* Position relative for absolute positioning of line */
   background-color: transparent !important;
 }
-
 
 .circle {
   width: 30px;
@@ -38,7 +38,6 @@
   position: absolute; /* Change to absolute for better control */
   top: 30px; /* Adjust this to position the line below the circle */
   left: 72px; /* Center align the line with the circle */
-
 }
 
 .completed .line {
@@ -49,4 +48,27 @@
   background-color: orange; /* Color for completed circle */
   border-color: orange; /* Border color for completed circle */
   color: white; /* Text color for completed circle */
+}
+
+.step-name {
+  text-align: center; /* Center the step names */
+  margin-top: 5px; /* Add space between the number and the name */
+  color: black;
+}
+
+.step-title {
+  font-weight: bold;
+}
+
+.step-date {
+  color: gray;
+  font-size: 0.9em;
+}
+
+.step-description {
+  margin-top: 5px;
+}
+
+.detail {
+  font-size: 0.8em; /* Smaller text for details */
 }

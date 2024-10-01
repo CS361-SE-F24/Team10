@@ -10,10 +10,12 @@ class Student(db.Model):
     status = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     tel = db.Column(db.String(15), nullable=True)
+    advisorID = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, stdID, name, status, email, tel):
+    def __init__(self, stdID, name, status, email, tel,advisorID):
         self.stdID = stdID
         self.name = name
         self.status = status
         self.email = email
         self.tel = tel
+        self.advisorID = advisorID

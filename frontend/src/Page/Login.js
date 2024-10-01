@@ -1,8 +1,9 @@
-import { React, useState } from "react";
-import "../css/Login.css";
+import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../css/Login.css";
 
+// Login Component
 export const Login = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -66,30 +67,21 @@ export const Login = ({ setCurrentUser }) => {
                 <br />
                 <input
                   type="email"
-                  name="email"
                   className="username"
                   placeholder="example@cmu.ac.th"
+                  name="email"
                   required
                 />
                 <br />
                 <label className="font-bold">Password</label>
                 <br />
-                <div className="password-container">
-                  <input
-                    type={showPassword ? "text" : "password"} // ถ้า showPassword เป็น true ให้แสดงเป็น text
-                    name="password"
-                    className="password"
-                    placeholder="password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className="toggle-password"
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
+                <input
+                  type="password"
+                  className="password"
+                  placeholder="password"
+                  name="password"
+                  required
+                />
                 <br />
                 <input type="checkbox" /> Remember Me
                 <br />
@@ -112,20 +104,17 @@ export const Login = ({ setCurrentUser }) => {
   );
 };
 
+// Logout Component
 export const Logout = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
-  const handleLogout = () => {
-    // Reset current user and navigate to login page
+  useEffect(() => {
+    // Set the current user to an initial state
     setCurrentUser({ id: 0, isAdmin: false });
+    // Navigate to login page after updating currentUser
     navigate("/login");
-  };
+  }, [setCurrentUser, navigate]); // Dependency array to avoid infinite loop
 
-  return (
-    <div>
-      <button onClick={handleLogout}>Logout</button>
-      {error && <p className="error-message">{error}</p>}
-    </div>
-  );
+  return null; // No UI is needed, just a side effect
 };
