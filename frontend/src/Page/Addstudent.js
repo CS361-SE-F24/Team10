@@ -12,15 +12,32 @@ export const Addstudent = () => {
     degree: '',
     advisor: '',
     email_advisor: '',
-    picture: null, // For storing the image file
+    picture: null,
   });
 
+  const [planNames, setPlanNames] = useState([]);
+  const [loading, setLoading] = useState(false); // New loading state
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPlanNames = async () => {
+      try {
+        const response = await axios.get('http://localhost:56733/planNames');
+        setPlanNames(response.data);
+      } catch (error) {
+        console.error("Error fetching plan names", error);
+      }
+    };
+    
+    fetchPlanNames();
+  }, []);
 
   const AddNewStudent = (event) => {
     event.preventDefault();
 
-    // Use FormData to send both text and file data
+    setLoading(true); // Show loading
+
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
     formDataToSend.append("stdID", formData.stdID);
@@ -29,31 +46,31 @@ export const Addstudent = () => {
     formDataToSend.append("degree", formData.degree);
     formDataToSend.append("advisor", formData.advisor);
     formDataToSend.append("email_advisor", formData.email_advisor);
-    formDataToSend.append("picture", formData.picture); // Append the image file
+    formDataToSend.append("picture", formData.picture);
 
     axios
       .post("http://localhost:56733/addstudent", formDataToSend, {
         headers: {
-          "Content-Type": "multipart/form-data", // Important for sending file data
+          "Content-Type": "multipart/form-data",
         },
       })
       .then((response) => {
         console.log(response.data);
-        alert("Data sent successfully");
+        setLoading(false); // Hide loading after success
         navigate("/admin");
       })
       .catch((error) => {
         console.error("There was an error sending the data!", error);
+        setLoading(false); // Hide loading after error
       });
   };
 
-  // Handle file selection and store it in the formData state
   const HandleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith("image/")) {
       setFormData({
         ...formData,
-        picture: file, // Store the file directly
+        picture: file,
       });
     } else {
       alert("Please upload a valid image file.");
@@ -69,128 +86,133 @@ export const Addstudent = () => {
   };
 
   return (
-    <div className="containers">
-      <br />
-      <form onSubmit={AddNewStudent}>
-        <div className="form-group">
-          <label htmlFor="imageUpload">
-            <img
-              src={formData.picture ? URL.createObjectURL(formData.picture) : 'pic.png'}
-              className="uploaded-image"
-              alt="Display"
-              style={{ cursor: 'pointer', width: '200px', height: '200px' }}
-            />
-          </label>
-          <input
-            className="input_select_text"
-            id="imageUpload"
-            type="file"
-            accept="image/*"
-            name="picture"
-            onChange={HandleFileChange}
-            style={{ display: 'none' }}
-            required
-          />
+    <>
+      {loading && (
+        <div className="loading-screen">
+          <div className="loader"></div>
         </div>
-        <div className="form-group">
-          <label htmlFor="name">Name</label><br />
-          <input
-            className="input_select_text"
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="stdID">StudentID</label><br />
-          <input
-            className="input_select_text"
-            type="text"
-            id="stdID"
-            name="stdID"
-            value={formData.stdID}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="tel">Tel</label><br />
-          <input
-            className="input_select_text"
-            type="text"
-            id="tel"
-            name="tel"
-            value={formData.tel}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">Email</label><br />
-          <input
-            className="input_select_text"
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="degree">Degree</label><br />
-          <select
-            className="input_select_text"
-            id="degree"
-            name="degree"
-            value={formData.degree}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Degree</option>
-            <option value="Master_Degree (แผน ก แบบ ก 1)">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
-            <option value="Master_Degree (แผน ก แบบ ก 2)">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
-            <option value="Master_Degree3 (แผน ข)">ปริญญาโทแบบ 3(แผน ข)</option>
-            <option value="PhD1.1">ปริญญาเอกหลักสูตรแบบ 1.1</option>
-            <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="advisor">Teacher Advisor</label><br />
-          <select
-            className="input_select_text"
-            id="advisor"
-            name="advisor"
-            value={formData.advisor}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Advisor</option>
-            <option value="Advisor Kittipich">Kittipich</option>
-            <option value="Advisor Jakkarin">Jakkarin</option>
-            <option value="Advisor Benjamas">Benjamas</option>
-            <option value="Advisor Kamonphop">Kamonphop</option>
-            <option value="Advisor Meetip">Meetip</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="email_advisor">Email Advisor</label><br />
-          <input
-            className="input_select_text"
-            type="email"
-            id="email_advisor"
-            name="email_advisor"
-            value={formData.email_advisor}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" className="button_add">เพิ่มนักศึกษา</button>
-      </form>
-      <br />
-    </div>
+      )}
+      <div className="containers">
+        {!loading && (
+          <form onSubmit={AddNewStudent}>
+            <div className="form-group">
+              <label htmlFor="imageUpload">
+                <img
+                  src={formData.picture ? URL.createObjectURL(formData.picture) : 'pic.png'}
+                  className="uploaded-image"
+                  alt="Display"
+                  style={{ cursor: 'pointer', width: '200px', height: '200px' }}
+                />
+              </label>
+              <input
+                className="input_select_text"
+                id="imageUpload"
+                type="file"
+                accept="image/*"
+                name="picture"
+                onChange={HandleFileChange}
+                style={{ display: 'none' }}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="name">Name</label><br />
+              <input
+                className="input_select_text"
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="stdID">StudentID</label><br />
+              <input
+                className="input_select_text"
+                type="text"
+                id="stdID"
+                name="stdID"
+                value={formData.stdID}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="tel">Tel</label><br />
+              <input
+                className="input_select_text"
+                type="text"
+                id="tel"
+                name="tel"
+                value={formData.tel}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label><br />
+              <input
+                className="input_select_text"
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="degree">Plan Name</label><br />
+              <select
+                className="input_select_text"
+                id="degree"
+                name="degree"
+                value={formData.degree}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Plan Name</option>
+                {planNames.map((plan, index) => (
+                  <option key={index} value={plan}>{plan}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="advisor">Teacher Advisor</label><br />
+              <select
+                className="input_select_text"
+                id="advisor"
+                name="advisor"
+                value={formData.advisor}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Advisor</option>
+                <option value="Advisor Kittipich">Kittipich</option>
+                <option value="Advisor Jakkarin">Jakkarin</option>
+                <option value="Advisor Benjamas">Benjamas</option>
+                <option value="Advisor Kamonphop">Kamonphop</option>
+                <option value="Advisor Meetip">Meetip</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="email_advisor">Email Advisor</label><br />
+              <input
+                className="input_select_text"
+                type="email"
+                id="email_advisor"
+                name="email_advisor"
+                value={formData.email_advisor}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit" className="button_add">เพิ่มนักศึกษา</button>
+          </form>
+        )}
+      </div>
+    </>
   );
 };
