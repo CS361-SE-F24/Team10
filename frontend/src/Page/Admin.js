@@ -50,6 +50,7 @@ export const Admin = () => {
           <button onClick={() => navigate("/addstudent")}>เพิ่มนักศึกษา</button>
         </div>
         <div className="contain">
+          <button onClick={() => navigate("/addcourse")}></button>
           <button onClick={() => navigate("/alladmin")}>รวม admin</button>
         </div>
       </div>
