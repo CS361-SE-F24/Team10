@@ -54,10 +54,6 @@ export const Admin = () => {
           <button onClick={() => navigate("/alladmin")}>รวม admin</button>
         </div>
       </div>
-
-
-
-
       <div className="admin-container">  
         <table>
           <thead>
