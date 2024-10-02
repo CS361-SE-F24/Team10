@@ -164,7 +164,7 @@ export const Addstudent = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="degree">Plan Name</label><br />
+              <label htmlFor="degree">Degree</label><br />
               <select
                 className="input_select_text"
                 id="degree"
@@ -173,10 +173,12 @@ export const Addstudent = () => {
                 onChange={handleChange}
                 required
               >
-                <option value="">Select Plan Name</option>
-                {planNames.map((plan, index) => (
-                  <option key={index} value={plan}>{plan}</option>
-                ))}
+                <option value="">Select Degree</option>
+                <option value="Master_Degree (แผน ก แบบ ก 1)">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
+                <option value="Master_Degree (แผน ก แบบ ก 2)">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
+                <option value="Master_Degree3 (แผน ข)">ปริญญาโทแบบ 3(แผน ข)</option>
+                <option value="PhD1.1">ปริญญาเอกหลักสูตรแบบ 1.1</option>
+                <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option>
               </select>
             </div>
             <div className="form-group">
