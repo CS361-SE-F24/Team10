@@ -57,6 +57,15 @@ export const ProgressBar = ({ stdID }) => {
         <DonutChart progress={progressPercentage} />
       </div>
 
+      <div>
+        <button id="open-popup">วิชาที่เรียน</button>
+      </div>
+      <div className="popup" id="popup">
+        <div className="overlay"></div>
+        <div className="popup-content">
+          
+        </div> 
+      </div>
     </div>
   );
 };

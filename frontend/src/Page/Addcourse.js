@@ -16,14 +16,21 @@ export const AddCourse = () => {
                 params: { planName }
             });
             console.log("Courses fetched:", response.data); // Check if the data is returned
-            if (response.data.length === 0) {
-                console.log('No courses found');
+            
+            // Ensure response data is an array
+            if (Array.isArray(response.data)) {
+                setCourses(response.data);
+            } else {
+                setCourses([]); // Set an empty array if the response is not an array
+                console.error("Unexpected response format: ", response.data);
             }
-            setCourses(response.data);
+            
         } catch (error) {
             console.error("Error fetching courses", error);
+            setCourses([]); // Set an empty array in case of error to avoid breaking the component
         }
     };
+    
 
     // Fetch courses when the component mounts
     useEffect(() => {

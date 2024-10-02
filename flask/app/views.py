@@ -460,3 +460,10 @@ def get_courses():
         'credit': course.credit,
         'planName': course.planName
     } for course in courses]), 200
+
+
+@app.route('/planNames', methods=['GET'])
+def get_plan_names():
+    plan_names = db.session.query(Course.planName).distinct().all()
+    plan_names_list = [planName[0] for planName in plan_names]  # Flatten the result
+    return jsonify(plan_names_list)

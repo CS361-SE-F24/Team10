@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../css/Add.css";
@@ -15,7 +15,23 @@ export const Addstudent = () => {
     picture: null, // For storing the image file
   });
 
+  const [planNames, setPlanNames] = useState([]); // State to store fetched plan names
+
   const navigate = useNavigate();
+
+  // Fetch available plan names from the backend when the component mounts
+  useEffect(() => {
+    const fetchPlanNames = async () => {
+      try {
+        const response = await axios.get('http://localhost:56733/planNames'); // Adjust endpoint as needed
+        setPlanNames(response.data);
+      } catch (error) {
+        console.error("Error fetching plan names", error);
+      }
+    };
+    
+    fetchPlanNames();
+  }, []);
 
   const AddNewStudent = (event) => {
     event.preventDefault();
@@ -141,7 +157,7 @@ export const Addstudent = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="degree">Degree</label><br />
+          <label htmlFor="degree">Plan Name</label><br />
           <select
             className="input_select_text"
             id="degree"
@@ -150,12 +166,10 @@ export const Addstudent = () => {
             onChange={handleChange}
             required
           >
-            <option value="">Select Degree</option>
-            <option value="Master_Degree (แผน ก แบบ ก 1)">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
-            <option value="Master_Degree (แผน ก แบบ ก 2)">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
-            <option value="Master_Degree3 (แผน ข)">ปริญญาโทแบบ 3(แผน ข)</option>
-            <option value="PhD1.1">ปริญญาเอกหลักสูตรแบบ 1.1</option>
-            <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option>
+            <option value="">Select Plan Name</option>
+            {planNames.map((plan, index) => (
+              <option key={index} value={plan}>{plan}</option>
+            ))}
           </select>
         </div>
         <div className="form-group">
