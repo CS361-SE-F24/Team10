@@ -3,7 +3,8 @@ import { React, useEffect, useState } from "react";
 import "../css/home.css";
 import axios from "axios";
 import { ProgressBar } from "../Page/progressbar.js";
-import DonutChart from "../Page/DonutChart.js";
+import DonutChart from '../Page/DonutChart.js';
+
 
 export const Home = (props) => {
   const location = useLocation();
@@ -17,8 +18,7 @@ export const Home = (props) => {
   const [show, setShow] = useState("progress");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [files, setFiles] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
+  const [files, setFiles] = useState([]); // State to store the uploaded files
 
   const [formData, setFormData] = useState({
     name: "",
@@ -29,7 +29,7 @@ export const Home = (props) => {
     advisor: "",
     email_advisor: "",
     image: null,
-    picture: null,
+    picture: null, // Add this field to store the image
   });
 
   const [plan, setFormplan] = useState({
@@ -95,41 +95,40 @@ export const Home = (props) => {
 
   const fetchPlan = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:56733/currentstudentplan?stdID=${stdID}`
-      );
-      const studentData = response.data;
+        const response = await axios.get(
+            `http://localhost:56733/currentstudentplan?stdID=${stdID}`
+        );
+        const studentData = response.data;
+        console.log(studentData);
+        
+        const convertFile = (fileData) => {
+            if (fileData && fileData.file) {
+                return {
+                    dataUrl: `data:${fileData.fileType};base64,${fileData.file}`,
+                    isImage: fileData.fileType ? fileData.fileType.startsWith("image") : false,
+                    isPDF: fileData.fileType === "application/pdf",
+                };
+            }
+            return null;
+        };
 
-      const convertFile = (fileData) => {
-        if (fileData && fileData.file) {
-          return {
-            dataUrl: `data:${fileData.fileType};base64,${fileData.file}`,
-            isImage: fileData.fileType
-              ? fileData.fileType.startsWith("image")
-              : false,
-            isPDF: fileData.fileType === "application/pdf",
-          };
-        }
-        return null;
-      };
+        // Here you can spread the previous state and update the specific fields
+        setFormplan(prevPlan => ({
+            ...prevPlan,
+            testEng: convertFile(studentData.testEng) || prevPlan.testEng,
+            comprehensiveExam: convertFile(studentData.comprehension) || prevPlan.comprehensiveExam,
+            QualifyingExam: convertFile(studentData.quality) || prevPlan.QualifyingExam,
+            nPublish: studentData.nPublish,
+        }));
 
-      setFormplan((prevPlan) => ({
-        ...prevPlan,
-        testEng: convertFile(studentData.testEng) || prevPlan.testEng,
-        comprehensiveExam:
-          convertFile(studentData.comprehension) || prevPlan.comprehensiveExam,
-        QualifyingExam:
-          convertFile(studentData.quality) || prevPlan.QualifyingExam,
-        nPublish: studentData.nPublish,
-      }));
-
-      setLoading(false);
+        setLoading(false);
     } catch (err) {
-      setError("Error fetching data");
-      setLoading(false);
-      console.error(err);
+        setError("Error fetching data");
+        setLoading(false);
+        console.error(err);
     }
-  };
+};
+
 
   const handleUpdate = () => {
     setShow((prevShow) => (prevShow === "progress" ? "update" : "progress"));
@@ -149,7 +148,7 @@ export const Home = (props) => {
       );
       alert("Upload successful");
       event.target.reset();
-      fetchUploadedFiles();
+      fetchUploadedFiles(); // Refresh file list after uploading
     } catch (error) {
       setError("File upload failed");
       console.error("Error uploading the file:", error);
@@ -158,26 +157,27 @@ export const Home = (props) => {
 
   const editProgress = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(event.currentTarget); // Create a FormData object
+    const data = Object.fromEntries(formData.entries()); // Log the form data for debugging
+    console.log("diuUfffffffff");
+    
+    console.log(data);
 
     try {
       const response = await axios.post(
         "http://localhost:56733/editprogress",
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data" }, // Ensure it's multipart for file upload
         }
       );
       alert("Progress updated successfully");
-      fetchPlan();
+      // event.target.reset();
+      fetchPlan(); // Refresh the study plan after the update
     } catch (error) {
       setError("Progress update failed");
       console.error("Error updating progress:", error);
     }
-  };
-
-  const togglePopup = () => {
-    setShowPopup(!showPopup);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -208,11 +208,11 @@ export const Home = (props) => {
           Email of Advisor: {formData.email_advisor || "Not available"}
         </div>
 
-        {currentUser.isAdmin && show === "progress" && (
+        {currentUser.isAdmin && show === "progress" ? (
           <div>
             <button onClick={handleUpdate}>Update Progress</button>
           </div>
-        )}
+        ) : null}
       </div>
 
       {show === "progress" ? (
@@ -221,21 +221,138 @@ export const Home = (props) => {
         </div>
       ) : (
         <div className="editprogress">
-          {/* Add your forms and content here as before */}
-        </div>
-      )}
+          <form onSubmit={editProgress} enctype="multipart/form-data">
+            <input type="hidden" name="stdID" value={stdID} />
+            <div>
+              <p>Test English</p>
+              {plan.testEng === null ? (
+                <>
+                  <input
+                    type="file"
+                    id="testEng"
+                    name="testEng"
+                    className="editprogress_input"
+                  />
+                  <label htmlFor="testEng" className="editprogress_label">
+                    ไม่ผ่าน
+                  </label>
+                </>
+              ) : (
+                <div>
+                  <label
+                    onClick={() => {
+                      setFormplan({ ...plan, testEng: null }); // Set testEng to not pass
+                    }}
+                    className="editprogress_label_pass"
+                  >
+                    ผ่าน
+                  </label>
+                  <div>
+                    <p>Uploaded File:</p>
+                    <a href={`http://localhost:56733/downloadplan/${stdID}/testEng`} download>
+                      TestEnglish_{stdID}
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
 
-      <button onClick={togglePopup} className="popup-button">
-        Open Popup
-      </button>
+            <div>
+              <p>Comprehensive Exam</p>
+              {plan.comprehensiveExam === null ? (
+                <>
+                  <input
+                    type="file"
+                    id="comprehensiveExam"
+                    name="comprehensiveExam"
+                    className="editprogress_input"
+                  />
+                  <label
+                    htmlFor="comprehensiveExam"
+                    className="editprogress_label"
+                  >
+                    ไม่ผ่าน
+                  </label>
+                </>
+              ) : (
+                <div>
+                  <label
+                    onClick={() =>
+                      setFormplan({ ...plan, comprehensiveExam: null }) // Set comprehensiveExam to not pass
+                    }
+                    className="editprogress_label_pass"
+                  >
+                    ผ่าน
+                  </label>
+                  <div>
+                    <p>Uploaded File:</p>
+                    <a href={`http://localhost:56733/downloadplan/${stdID}/comprehension`} download>
+                    ComprehensiveExam_{stdID}
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
 
-      {showPopup && (
-        <div className="popup-modal">
-          <div className="popup-content">
-            <h2>Popup Title</h2>
-            <p>This is the content inside the popup.</p>
-            <button onClick={togglePopup}>Close Popup</button>
-          </div>
+            <div>
+              <p>Qualifying Exam</p>
+              {plan.QualifyingExam === null ? (
+                <>
+                  <input
+                    type="file"
+                    id="QualifyingExam"
+                    name="QualifyingExam"
+                    className="editprogress_input"
+                  />
+                  <label
+                    htmlFor="QualifyingExam"
+                    className="editprogress_label"
+                  >
+                    ไม่ผ่าน
+                  </label>
+                </>
+              ) : (
+                <div>
+                  <label
+                    onClick={() =>
+                      setFormplan({ ...plan, QualifyingExam: null }) // Set QualifyingExam to not pass
+                    }
+                    className="editprogress_label_pass"
+                  >
+                    ผ่าน
+                  </label>
+                  <div>
+                    <p>Uploaded File:</p>
+                    <a href={`http://localhost:56733/downloadplan/${stdID}/quality`} download>
+                      QualifyingExam_{stdID}
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button type="submit">Save Progress</button>
+          </form>
+          {/* File Upload Form and Uploaded Files List */}
+          <form onSubmit={uploadFile} enctype="multipart/form-data">
+            <input type="file" name="file" />
+            <input type="text" name="type" />
+            <input type="hidden" name="stdID" value={stdID} />
+            <button type="submit">Upload File</button>
+          </form>
+
+          <h3>Uploaded Files:</h3>
+          <ul>
+            {files.map((file) => (
+              <li key={file.id}>
+                <a href={`http://localhost:56733/download/${file.id}`} download>
+                  {file.filename}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <button onClick={handleUpdate}>ยืนยัน</button>
         </div>
       )}
     </div>

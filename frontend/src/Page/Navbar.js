@@ -24,7 +24,7 @@ export const Navbar = ({ user = { isAdmin: false }, setCurrentUser }) => {
         </div>
         <div>
           <Link to="#" onClick={handleLogout} className="logout-button">
-            Log Out
+            LOG OUT
           </Link>
         </div>
       </div>
