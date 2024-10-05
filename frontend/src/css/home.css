@@ -1,17 +1,22 @@
 .home-container {
-    display: flex; /* ใช้ Flexbox เพื่อจัดเรียง */
-    height: 100vh; /* กำหนดความสูงให้เต็มหน้าจอ */
-  }
+  display: flex; /* ใช้ Flexbox เพื่อจัดเรียง */
+  height: 100vh; /* กำหนดความสูงให้เต็มหน้าจอ */
+  margin: 0; /* ลบ margin เพื่อไม่ให้มีระยะห่าง */
+}
+
   
 .sidebar {
-    width: 275px;
-    background-color: #11009e;
-    padding-top: 20px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* จัดแนวแนวนอน */
-  }
+  width: 275px;
+  height: 100%; /* ใช้ความสูง 100% ของ .home-container */
+  background-color: #11009e;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* จัดแนวแนวนอน */
+  padding: 20px 0; /* ปรับ padding */
+}
+
+
   
 .rec {
     /* height: 50vh;     */
@@ -31,7 +36,7 @@
 .progressbar {
     flex: 1; /* ขยายให้เต็มพื้นที่ที่เหลือ */
     padding: 20px;
-    background-color: #f0f0f0; /* สีพื้นหลังสำหรับ progress bar */
+    background-color: white; /* สีพื้นหลังสำหรับ progress bar */
   }
   
 .email, .advisor {
@@ -130,3 +135,38 @@
   /* border: 1px dashed #de0611; */
   background-color: #02af0e;
 }
+
+.popup-modal {
+  position: fixed; /* Ensures the popup stays on top and doesn't scroll with the page */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Higher z-index to stay above other elements */
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  z-index: 1001; /* Higher z-index for the content */
+}
+
+.popup-button {
+  margin-top: 20px;
+  padding: 5px 10px; /* Smaller padding for a smaller button */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px; /* Smaller font size */
+}
+
+
