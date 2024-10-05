@@ -40,39 +40,29 @@ export const ProgressBar = ({ stdID }) => {
   const progressPercentage = (completedSteps.length / steps.length) * 100;
 
   return (
-    <div style={{ padding: '20px', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-end' }}>
+    <div className="items">
       {/* Progress bar container */}
       <div className="progress-bar-container vertical" style={{ flex: 1 }}>
-        {steps.map((step, index) => (
-          <div key={index} className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`} style={{ cursor: 'pointer' }}>
-            <div className="circle">{index + 1}</div>
-            <div className="step-name">{stepNames[index]}</div>
-            {index !== steps.length - 1 && <div className="line"></div>}
-          </div>
-        ))}
+      {steps.map((step, index) => (
+        <div
+          key={index}
+          className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className="circle">{index + 1}</div>
+          <div className="step-name">{stepNames[index]}</div>
+          {index !== steps.length - 1 && <div className="line"></div>}
+        </div>
+      ))}
+
       </div>
 
       {/* DonutChart */}
-      <div style={{ marginLeft: '-100px', marginTop: '0px' }}>
+      <div className="DonutChart">
         <DonutChart progress={progressPercentage} />
       </div>
 
-      {/* Popup button and popup content */}
-      <div>
-        <button id="open-popup" onClick={() => setIsPopupOpen(true)}>วิชาที่เรียน</button>
-      </div>
-
-      {/* Popup Component */}
-      {isPopupOpen && (
-        <div className="popup">
-          <div className="overlay" onClick={() => setIsPopupOpen(false)}></div> {/* Click overlay to close popup */}
-          <div className="popup-content">
-            <h2>Here is your course information</h2>
-            <p>This is where you can show the course-related details or any other information.</p>
-            <button onClick={() => setIsPopupOpen(false)} className="close-btn">Close</button>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };

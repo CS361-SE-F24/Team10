@@ -20,19 +20,6 @@ export const Addstudent = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchPlanNames = async () => {
-      try {
-        const response = await axios.get('http://localhost:56733/planNames');
-        setPlanNames(response.data);
-      } catch (error) {
-        console.error("Error fetching plan names", error);
-      }
-    };
-    
-    fetchPlanNames();
-  }, []);
-
   const AddNewStudent = (event) => {
     event.preventDefault();
 
@@ -47,7 +34,8 @@ export const Addstudent = () => {
     formDataToSend.append("advisor", formData.advisor);
     formDataToSend.append("email_advisor", formData.email_advisor);
     formDataToSend.append("picture", formData.picture);
-
+    console.log(formDataToSend);
+    
     axios
       .post("http://localhost:56733/addstudent", formDataToSend, {
         headers: {

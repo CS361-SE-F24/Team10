@@ -1,18 +1,19 @@
 .progress-bar-container {
-  display: flex;
-  flex-direction: column;
-  background-color: transparent !important;
+  display: grid; /* Use grid for the entire progress bar container */
+  row-gap: 50px; /* Adjust spacing between rows of steps */
 }
 
+
 .step {
-  
-  display: flex;
-  flex-direction: column;
+  display: grid; /* Set grid layout */
+  grid-template-columns: 1fr 1fr; /* Define two columns: one for the circle, and one for the step name */
+  align-items: center; /* Vertically align content in both columns */
+  column-gap: 15px; /* Adjust spacing between the circle and step name */
   margin-bottom: 75px; /* Space between steps */
-  padding: 10px; /* Add padding to increase the height of each step */
-  position: relative; /* Position relative for absolute positioning of line */
-  background-color: transparent !important;
+  position: relative;
+  padding-left: 10px; /* Optional: Adjust padding if necessary */
 }
+
 
 .circle {
   width: 30px;
@@ -52,7 +53,7 @@
 
 .step-name {
   text-align: center; /* Center the step names */
-  margin-top: 5px; /* Add space between the number and the name */
+  margin-top: 5px;
   color: black;
 }
 
@@ -70,40 +71,16 @@
 }
 
 .detail {
-  font-size: 0.8em; /* Smaller text for details */
+  font-size: 0.8em;
 }
 
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  background-color: white;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+.items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(212, 73, 73, 0.5);
-  z-index: 999;
-}
-
-.popup-content {
-  padding: 20px;
-  text-align: center;
-}
-
-.close-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  cursor: pointer;
+.DonutChart {
+  width: 75%;
+  max-width: 400px;
 }
