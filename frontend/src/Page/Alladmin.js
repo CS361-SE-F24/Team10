@@ -8,27 +8,31 @@ import Typography from '@mui/material/Typography';
 import { Box, Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import IconButton from '@mui/material/IconButton';
 import "../css/Alladmin.css";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-
 export const Alladmin = () => {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false); // ประกาศ state สำหรับ open  
+  const [open, setOpen] = useState(false); // State for the dialog
+  const [adminToDelete, setAdminToDelete] = useState(null); // State to track which admin to delete
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpen = (admin) => {
+    setAdminToDelete(admin); // Set the admin to delete
+    setOpen(true); // Open dialog
   };
 
   const handleClose = () => {
-    setOpen(false); // ฟังก์ชันปิด dialog  
+    setOpen(false); // Close dialog  
   };
 
   const handleDelete = () => {
-    alert("ลบเรียบร้อยแล้ว"); // ตัวอย่างการดำเนินการลบ  
-    setOpen(false); // ปิด dialog หลังจากการลบ  
+    alert("ลบเรียบร้อยแล้ว"); // Example delete operation
+    setOpen(false); // Close dialog after deletion
   };
 
   const CustomButton = ({ children, ...props }) => {
@@ -39,175 +43,92 @@ export const Alladmin = () => {
     );
   };
 
-
-
   return (
     <>
-      <Box className="header">
-        <Box className="header-container">
+      <Box className="admin-header">
+        <Box className="admin-text">
+          <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left' }}>
+            Add new admin <br />
+          </Typography>
+        </Box>
+
+        <Box className="admin-container">
           <CustomButton variant="outlined" startIcon={<AddIcon />} onClick={() => navigate("/addadmin")}>
             เพิ่ม Admin
           </CustomButton>
         </Box>
       </Box>
 
-      <Grid container spacing={10} sx={{px:1}} >
+      <Box className="admin-card-container">
+        <Grid container spacing={10}>
+          <Grid item xs={12} md={4} sm={6} lg={4}>
+            <Card className="card-admin" >
+              <CardMedia sx={{ height: 140 }} image="/static/images/cards/contemplative-reptile.jpg" title="green iguana" />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">Admin3</Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Data
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <IconButton
+                  size="small"
+                  sx={{
+                    color: 'indigo',
+                    '&:hover': {
+                      color: 'cyan',
+                    },
+                  }}
+                >
+                  <VisibilityIcon />
+                </IconButton>
 
-        <Grid item xs={12} md={4} sm={6} lg={3}>
-          <Card className="card-admin" >
-            <CardMedia sx={{ height: 140 }} image="/static/images/cards/contemplative-reptile.jpg" title="green iguana" />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">Admin3</Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Data
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="error" onClick={handleClickOpen}>
-                delete
-              </Button>
-              <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>ยืนยันการลบ</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    คุณแน่ใจหรือว่าต้องการลบ?
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose} color="primary">
-                    ไม่
-                  </Button>
-                  <Button onClick={handleDelete} color="error">
-                    ใช่
-                  </Button>
-                </DialogActions>
-              </Dialog>
-              <Button size="small" sx={{ color: 'yellow' }}>
-                <EditIcon />
-              </Button>
-            </CardActions>
-          </Card>
+                <IconButton
+                  size="small"
+                  sx={{
+                    color: 'black',
+                    '&:hover': {
+                      color: 'yellow',
+                    },
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => handleClickOpen("Admin3")} // Pass the admin info to the delete handler
+                  sx={{
+                    color: 'red',
+                    '&:hover': {
+                      color: 'orange',
+                    },
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </CardActions>
+            </Card>
+          </Grid>
         </Grid>
+      </Box>
 
-
-        <Grid item xs={12} md={4} sm={6} lg={3}>
-        <Card className="card-admin" >
-          <CardMedia sx={{ height: 140 }} image="/static/images/cards/contemplative-reptile.jpg" title="green iguana" />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">Admin3</Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Data
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button variant="contained" size="small" color="error" onClick={handleClickOpen}>
-              delete
-            </Button>
-            <Dialog open={open} onClose={handleClose}>
-              <DialogTitle>ยืนยันการลบ</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  คุณแน่ใจหรือว่าต้องการลบ?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose} color="primary">
-                  ไม่
-                </Button>
-                <Button onClick={handleDelete} color="error">
-                  ใช่
-                </Button>
-              </DialogActions>
-            </Dialog>
-            <Button
-              size="small"
-              sx={{
-                color: 'black', // สีปกติของไอคอน
-                '&:hover': {
-                  color: 'yellow', // สีของไอคอนเมื่อ hover
-                },
-              }}
-            >
-              <EditIcon />
-            </Button>
-          </CardActions>
-        </Card>
-        </Grid>
-
-
-        <Grid item xs={12} md={4} sm={6} lg={3}>
-          <Card className="card-admin" >
-            <CardMedia sx={{ height: 140 }} image="/static/images/cards/contemplative-reptile.jpg" title="green iguana" />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">Admin3</Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Data
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="error" onClick={handleClickOpen}>
-                delete
-              </Button>
-              <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>ยืนยันการลบ</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    คุณแน่ใจหรือว่าต้องการลบ?
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose} color="primary">
-                    ไม่
-                  </Button>
-                  <Button onClick={handleDelete} color="error">
-                    ใช่
-                  </Button>
-                </DialogActions>
-              </Dialog>
-
-
-              <Button size="small">Learn More</Button>
-            </CardActions>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={4} sm={6} lg={3}>
-          <Card className="card-admin" >
-            <CardMedia sx={{ height: 140 }} image="/static/images/cards/contemplative-reptile.jpg" title="green iguana" />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">Admin3</Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Data
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="error" onClick={handleClickOpen}>
-                delete
-              </Button>
-              <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>ยืนยันการลบ</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    คุณแน่ใจหรือว่าต้องการลบ?
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose} color="primary">
-                    ไม่
-                  </Button>
-                  <Button onClick={handleDelete} color="error">
-                    ใช่
-                  </Button>
-                </DialogActions>
-              </Dialog>
-
-              <Button size="small">Learn More</Button>
-            </CardActions>
-          </Card>
-        </Grid>
-
-      </Grid>
+      {/* Dialog for delete confirmation */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>ยืนยันการลบ</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            คุณแน่ใจหรือว่าต้องการลบ {adminToDelete}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            ไม่
+          </Button>
+          <Button onClick={handleDelete} color="error">
+            ใช่
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
-

@@ -1,7 +1,13 @@
 import "../css/Admin.css";
-import React, { useState, useEffect } from "react";
+import * as React from 'react';
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Box, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button, Select, MenuItem, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 export const Admin = () => {
   const [students, setStudents] = useState([]);
@@ -24,19 +30,15 @@ export const Admin = () => {
     fetchData();
   }, []);
 
-  const handleView = (stdID) =>{
+  const handleView = (stdID) => {
     navigate('/', { state: { stdID } });
   }
 
-  // Function to handle edit
   const handleEdit = (stdID) => {
-  navigate('/studentfix', { state: { stdID } }); // Using state to pass stdID
-};
+    navigate('/studentfix', { state: { stdID } });
+  };
 
-
-  // Function to handle delete
   const handleDelete = (stdID) => {
-    // Add delete functionality here (e.g., API call to delete student)
     console.log(`Delete student with ID: ${stdID}`);
   };
 
@@ -45,46 +47,87 @@ export const Admin = () => {
 
   return (
     <>
-      <div className="admin-header">  
-        <div className="contain">
-          <button onClick={() => navigate("/addstudent")}>เพิ่มนักศึกษา</button>
-        </div>
-        <div className="contain">
-          <button onClick={() => navigate("/addcourse")}></button>
-          <button onClick={() => navigate("/alladmin")}>รวม admin</button>
-        </div>
-      </div>
-      <div className="admin-container">  
-        <table>
-          <thead>
-            <tr>
-              <th>No.</th>
-              <th>Name</th>
-              <th>Student ID</th>
-              <th>Degree</th>
-              <th>Progress</th>
-              <th>Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((student) => (
-              <tr key={student.no}>
-                <td>{student.no}</td>
-                <td>{student.name}</td>
-                <td>{student.stdID}</td>
-                <td>{student.degree}</td>
-                <td>{student.progress}</td>
-                <td>
-                  <div>
-                    <button onClick={() => handleView(student.stdID)}>view</button>
-                    <button onClick={() => handleEdit(student.stdID)}>edit</button>
-                    <button onClick={() => handleDelete(student.stdID)}>delete</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <Grid container spacing={2} sx={{ px: 1 }}>
+        <Grid item xs={12} md={4}>
+          <Box className="admin-header">
+            <FormGroup>
+              <FormControlLabel control={<Checkbox defaultChecked />} label="ปริญญาโท" />
+              <FormControlLabel control={<Checkbox defaultChecked />} label="ปริญญาเอก" />
+            </FormGroup>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Box className="mid-container">
+            <Select defaultValue={10} fullWidth>
+              <MenuItem value={10}>Degree</MenuItem>
+              <MenuItem value={20}>Progress</MenuItem>
+              <MenuItem value={30}>Features</MenuItem>
+            </Select>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Box className="right-container">
+            <Button variant="contained" onClick={() => navigate("/addstudent")} startIcon={<AddIcon />}>
+              เพิ่มนักศึกษา
+            </Button>
+            <Button variant="contained" onClick={() => navigate("/alladmin")} startIcon={<AddIcon />}>
+              รวม admin
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
+
+      <div className="admin-table-container" style={{ marginTop: '20px' }}>
+        <TableContainer component={Paper} sx={{ maxHeight: 440, overflow: 'auto' }}>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell>No.</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Student ID</TableCell>
+                <TableCell>Degree</TableCell>
+                <TableCell>Progress</TableCell>
+                <TableCell>Edit</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {students.map((student) => (
+                <TableRow key={student.stdID}>
+                  <TableCell>{student.no}</TableCell>
+                  <TableCell>{student.name}</TableCell>
+                  <TableCell>{student.stdID}</TableCell>
+                  <TableCell>{student.degree}</TableCell>
+                  <TableCell>{student.progress}</TableCell>
+                  <TableCell>
+                    <div>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleView(student.stdID)}
+                        sx={{ color: 'indigo', '&:hover': { color: 'cyan' } }}
+                      >
+                        <VisibilityIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEdit(student.stdID)}
+                        sx={{ color: 'black', '&:hover': { color: 'yellow' } }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleDelete(student.stdID)}
+                        sx={{ color: 'red', '&:hover': { color: 'orange' } }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </>
   );
