@@ -3,8 +3,7 @@ import { React, useEffect, useState } from "react";
 import "../css/home.css";
 import axios from "axios";
 import { ProgressBar } from "../Page/progressbar.js";
-import DonutChart from '../Page/DonutChart.js';
-
+import DonutChart from "../Page/DonutChart.js";
 
 export const Home = (props) => {
   const location = useLocation();
@@ -19,6 +18,8 @@ export const Home = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [files, setFiles] = useState([]); // State to store the uploaded files
+  const [progressPercentage, setProgressPercentage] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -95,40 +96,43 @@ export const Home = (props) => {
 
   const fetchPlan = async () => {
     try {
-        const response = await axios.get(
-            `http://localhost:56733/currentstudentplan?stdID=${stdID}`
-        );
-        const studentData = response.data;
-        console.log(studentData);
-        
-        const convertFile = (fileData) => {
-            if (fileData && fileData.file) {
-                return {
-                    dataUrl: `data:${fileData.fileType};base64,${fileData.file}`,
-                    isImage: fileData.fileType ? fileData.fileType.startsWith("image") : false,
-                    isPDF: fileData.fileType === "application/pdf",
-                };
-            }
-            return null;
-        };
+      const response = await axios.get(
+        `http://localhost:56733/currentstudentplan?stdID=${stdID}`
+      );
+      const studentData = response.data;
+      console.log(studentData);
 
-        // Here you can spread the previous state and update the specific fields
-        setFormplan(prevPlan => ({
-            ...prevPlan,
-            testEng: convertFile(studentData.testEng) || prevPlan.testEng,
-            comprehensiveExam: convertFile(studentData.comprehension) || prevPlan.comprehensiveExam,
-            QualifyingExam: convertFile(studentData.quality) || prevPlan.QualifyingExam,
-            nPublish: studentData.nPublish,
-        }));
+      const convertFile = (fileData) => {
+        if (fileData && fileData.file) {
+          return {
+            dataUrl: `data:${fileData.fileType};base64,${fileData.file}`,
+            isImage: fileData.fileType
+              ? fileData.fileType.startsWith("image")
+              : false,
+            isPDF: fileData.fileType === "application/pdf",
+          };
+        }
+        return null;
+      };
 
-        setLoading(false);
+      // Here you can spread the previous state and update the specific fields
+      setFormplan((prevPlan) => ({
+        ...prevPlan,
+        testEng: convertFile(studentData.testEng) || prevPlan.testEng,
+        comprehensiveExam:
+          convertFile(studentData.comprehension) || prevPlan.comprehensiveExam,
+        QualifyingExam:
+          convertFile(studentData.quality) || prevPlan.QualifyingExam,
+        nPublish: studentData.nPublish,
+      }));
+
+      setLoading(false);
     } catch (err) {
-        setError("Error fetching data");
-        setLoading(false);
-        console.error(err);
+      setError("Error fetching data");
+      setLoading(false);
+      console.error(err);
     }
-};
-
+  };
 
   const handleUpdate = () => {
     setShow((prevShow) => (prevShow === "progress" ? "update" : "progress"));
@@ -160,7 +164,7 @@ export const Home = (props) => {
     const formData = new FormData(event.currentTarget); // Create a FormData object
     const data = Object.fromEntries(formData.entries()); // Log the form data for debugging
     console.log("diuUfffffffff");
-    
+
     console.log(data);
 
     try {
@@ -178,6 +182,10 @@ export const Home = (props) => {
       setError("Progress update failed");
       console.error("Error updating progress:", error);
     }
+  };
+
+  const togglePopup = () => {
+    setShowPopup(!showPopup);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -216,8 +224,31 @@ export const Home = (props) => {
       </div>
 
       {show === "progress" ? (
-        <div className="progressbar">
-          <ProgressBar stdID={stdID} />
+        <div className="progress-bar-container">
+          <div className="items-progress">
+            <div className="progressbar">
+              <ProgressBar
+                stdID={stdID}
+                onProgressUpdate={setProgressPercentage}
+              />
+            </div>
+            <div className="DonutChart">
+              <DonutChart progress={progressPercentage} />
+              <div className="course"></div>
+              <button onClick={togglePopup} className="popup-button">
+                Open Popup
+              </button>
+              {showPopup && (
+                <div className="popup-modal">
+                  <div className="popup-content">
+                    <h2>Popup Title</h2>
+                    <p>This is the content inside the popup.</p>
+                    <button onClick={togglePopup}>Close Popup</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       ) : (
         <div className="editprogress">
@@ -249,7 +280,10 @@ export const Home = (props) => {
                   </label>
                   <div>
                     <p>Uploaded File:</p>
-                    <a href={`http://localhost:56733/downloadplan/${stdID}/testEng`} download>
+                    <a
+                      href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
+                      download
+                    >
                       TestEnglish_{stdID}
                     </a>
                   </div>
@@ -277,8 +311,8 @@ export const Home = (props) => {
               ) : (
                 <div>
                   <label
-                    onClick={() =>
-                      setFormplan({ ...plan, comprehensiveExam: null }) // Set comprehensiveExam to not pass
+                    onClick={
+                      () => setFormplan({ ...plan, comprehensiveExam: null }) // Set comprehensiveExam to not pass
                     }
                     className="editprogress_label_pass"
                   >
@@ -286,8 +320,11 @@ export const Home = (props) => {
                   </label>
                   <div>
                     <p>Uploaded File:</p>
-                    <a href={`http://localhost:56733/downloadplan/${stdID}/comprehension`} download>
-                    ComprehensiveExam_{stdID}
+                    <a
+                      href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
+                      download
+                    >
+                      ComprehensiveExam_{stdID}
                     </a>
                   </div>
                 </div>
@@ -314,8 +351,8 @@ export const Home = (props) => {
               ) : (
                 <div>
                   <label
-                    onClick={() =>
-                      setFormplan({ ...plan, QualifyingExam: null }) // Set QualifyingExam to not pass
+                    onClick={
+                      () => setFormplan({ ...plan, QualifyingExam: null }) // Set QualifyingExam to not pass
                     }
                     className="editprogress_label_pass"
                   >
@@ -323,7 +360,10 @@ export const Home = (props) => {
                   </label>
                   <div>
                     <p>Uploaded File:</p>
-                    <a href={`http://localhost:56733/downloadplan/${stdID}/quality`} download>
+                    <a
+                      href={`http://localhost:56733/downloadplan/${stdID}/quality`}
+                      download
+                    >
                       QualifyingExam_{stdID}
                     </a>
                   </div>
