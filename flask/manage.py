@@ -18,7 +18,9 @@ def create_db():
 def seed_db():
 
     db.session.add(User(email="taruuiop@gmail.com",password="sarantar",fname="Saran", lname="Jatupornpitakkul",isAdmin=True,picture=None))
+    db.session.add(User(email="arnarock6696@gmail.com",password="050396696a",fname="Anajak", lname="Chuamuangpahn",isAdmin=True,picture=None))
     db.session.add(Advisor(name="Advisor Kittipich",email="Kittipich@gmail.com",tel="0999999999"))
+    db.session.add(Advisor(name="Other",email="none@gmail.com",tel="0999999058"))
     # db.session.add(Student(stdID="650510642", name="Saran Jatupornpitakkul", status="study", email="Saran_jatuporn@cmu.ac.th", tel="0984892124"))
     db.session.commit()
 
