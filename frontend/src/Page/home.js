@@ -127,11 +127,16 @@ export const Home = (props) => {
       }));
 
       setLoading(false);
+      setLoading(false);
     } catch (err) {
       setError("Error fetching data");
       setLoading(false);
       console.error(err);
+      setError("Error fetching data");
+      setLoading(false);
+      console.error(err);
     }
+  };
   };
 
   const handleUpdate = () => {
@@ -176,12 +181,15 @@ export const Home = (props) => {
         }
       );
       alert("Progress updated successfully");
-      // event.target.reset();
       fetchPlan(); // Refresh the study plan after the update
     } catch (error) {
       setError("Progress update failed");
       console.error("Error updating progress:", error);
     }
+  };
+
+  const togglePopup = () => {
+    setShowPopup(!showPopup);
   };
 
   const togglePopup = () => {
@@ -216,11 +224,11 @@ export const Home = (props) => {
           Email of Advisor: {formData.email_advisor || "Not available"}
         </div>
 
-        {currentUser.isAdmin && show === "progress" ? (
+        {currentUser.isAdmin && show === "progress" && (
           <div>
             <button onClick={handleUpdate}>Update Progress</button>
           </div>
-        ) : null}
+        )}
       </div>
 
       {show === "progress" ? (
@@ -254,6 +262,7 @@ export const Home = (props) => {
         <div className="editprogress">
           <form onSubmit={editProgress} enctype="multipart/form-data">
             <input type="hidden" name="stdID" value={stdID} />
+            {/* Test English Section */}
             <div>
               <p>Test English</p>
               {plan.testEng === null ? (
@@ -291,6 +300,7 @@ export const Home = (props) => {
               )}
             </div>
 
+            {/* Comprehensive Exam Section */}
             <div>
               <p>Comprehensive Exam</p>
               {plan.comprehensiveExam === null ? (
@@ -331,6 +341,7 @@ export const Home = (props) => {
               )}
             </div>
 
+            {/* Qualifying Exam Section */}
             <div>
               <p>Qualifying Exam</p>
               {plan.QualifyingExam === null ? (
@@ -373,7 +384,7 @@ export const Home = (props) => {
 
             <button type="submit">Save Progress</button>
           </form>
-          {/* File Upload Form and Uploaded Files List */}
+          {/* File Upload Form */}
           <form onSubmit={uploadFile} enctype="multipart/form-data">
             <input type="file" name="file" />
             <input type="text" name="type" />
@@ -391,6 +402,19 @@ export const Home = (props) => {
               </li>
             ))}
           </ul>
+
+          <button onClick={togglePopup}>Show Popup</button>
+
+          {/* Popup Implementation */}
+          {showPopup && (
+            <div className="popup">
+              <div className="popup-content">
+                <span className="close" onClick={togglePopup}>&times;</span>
+                <p>This is a popup message!</p>
+                {/* You can add more content here */}
+              </div>
+            </div>
+          )}
 
           <button onClick={handleUpdate}>ยืนยัน</button>
         </div>
