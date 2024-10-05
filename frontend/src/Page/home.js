@@ -137,7 +137,7 @@ export const Home = (props) => {
       console.error(err);
     }
   };
-  };
+
 
   const handleUpdate = () => {
     setShow((prevShow) => (prevShow === "progress" ? "update" : "progress"));
@@ -186,10 +186,6 @@ export const Home = (props) => {
       setError("Progress update failed");
       console.error("Error updating progress:", error);
     }
-  };
-
-  const togglePopup = () => {
-    setShowPopup(!showPopup);
   };
 
   const togglePopup = () => {
@@ -330,11 +326,8 @@ export const Home = (props) => {
                   </label>
                   <div>
                     <p>Uploaded File:</p>
-                    <a
-                      href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
-                      download
-                    >
-                      ComprehensiveExam_{stdID}
+                    <a href={`http://localhost:56733/downloadplan/${stdID}/comprehension`} download>
+                    ComprehensiveExam_{stdID}
                     </a>
                   </div>
                 </div>
