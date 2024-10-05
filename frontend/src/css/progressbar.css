@@ -1,7 +1,7 @@
 .progress-bar-container {
   display: flex;
   flex-direction: column;
-  background-color: transparent !important;
+  background-color: white;
 }
 
 .step {
@@ -33,7 +33,7 @@
 
 .line {
   width: 7px;
-  height: 125px; /* Height of the line */
+  height: 175px; /* Height of the line */
   background-color: #e0e0e0;
   position: absolute; /* Change to absolute for better control */
   top: 30px; /* Adjust this to position the line below the circle */
@@ -73,7 +73,7 @@
   font-size: 0.8em; /* Smaller text for details */
 }
 
-.popup {
+/* .popup {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -97,7 +97,7 @@
 .popup-content {
   padding: 20px;
   text-align: center;
-}
+} */
 
 .close-btn {
   margin-top: 20px;
@@ -106,4 +106,8 @@
   color: white;
   border: none;
   cursor: pointer;
+}
+
+.step-description{
+  color: black;
 }

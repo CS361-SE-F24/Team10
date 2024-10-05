@@ -20,19 +20,6 @@ export const Addstudent = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchPlanNames = async () => {
-      try {
-        const response = await axios.get('http://localhost:56733/planNames');
-        setPlanNames(response.data);
-      } catch (error) {
-        console.error("Error fetching plan names", error);
-      }
-    };
-    
-    fetchPlanNames();
-  }, []);
-
   const AddNewStudent = (event) => {
     event.preventDefault();
 
