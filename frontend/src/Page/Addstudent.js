@@ -15,15 +15,16 @@ export const Addstudent = () => {
     picture: null,
   });
 
-  const [planNames, setPlanNames] = useState([]);
+  const [customAdvisor, setCustomAdvisor] = useState(''); // New state for custom advisor input
   const [loading, setLoading] = useState(false); // New loading state
+  const [responseMessage, setResponseMessage] = useState(''); // New state for response message
 
   const navigate = useNavigate();
 
   const AddNewStudent = (event) => {
     event.preventDefault();
-
     setLoading(true); // Show loading
+    setResponseMessage(''); // Clear previous response message
 
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
@@ -31,11 +32,34 @@ export const Addstudent = () => {
     formDataToSend.append("tel", formData.tel);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("degree", formData.degree);
-    formDataToSend.append("advisor", formData.advisor);
+
+    // Include either selected advisor or custom advisor
+    const advisorToSend = formData.advisor === "Other" ? customAdvisor : formData.advisor;
+    formDataToSend.append("advisor", advisorToSend);
+    
+    // Ensure to add custom advisor if "Other" is selected
+    if (formData.advisor === "Other" && !customAdvisor) {
+      alert("Please provide a custom advisor name.");
+      setLoading(false); // Hide loading after error
+      return;
+    }
+
     formDataToSend.append("email_advisor", formData.email_advisor);
     formDataToSend.append("picture", formData.picture);
-    console.log(formDataToSend);
     
+    // Log the form data to console before sending
+    console.log("Form Data being sent:", {
+      name: formData.name,
+      stdID: formData.stdID,
+      tel: formData.tel,
+      email: formData.email,
+      degree: formData.degree,
+      advisor: advisorToSend,
+      email_advisor: formData.email_advisor,
+      picture: formData.picture ? formData.picture.name : null, // Log file name if present
+    });
+
+    // Send the request
     axios
       .post("http://localhost:56733/addstudent", formDataToSend, {
         headers: {
@@ -44,12 +68,14 @@ export const Addstudent = () => {
       })
       .then((response) => {
         console.log(response.data);
+        setResponseMessage(response.data.message); // Set the response message
         setLoading(false); // Hide loading after success
         navigate("/admin");
       })
       .catch((error) => {
         console.error("There was an error sending the data!", error);
         setLoading(false); // Hide loading after error
+        setResponseMessage("There was an error adding the student."); // Set error message
       });
   };
 
@@ -71,6 +97,11 @@ export const Addstudent = () => {
       ...formData,
       [name]: value,
     });
+
+    // If 'Other' is selected, reset the custom advisor input
+    if (name === 'advisor' && value !== 'Other') {
+      setCustomAdvisor(''); // Clear custom advisor when switching advisors
+    }
   };
 
   return (
@@ -185,8 +216,26 @@ export const Addstudent = () => {
                 <option value="Advisor Benjamas">Benjamas</option>
                 <option value="Advisor Kamonphop">Kamonphop</option>
                 <option value="Advisor Meetip">Meetip</option>
+                <option value="Other">Other</option> {/* Option for custom input */}
               </select>
             </div>
+
+            {/* Input for custom advisor name */}
+            {formData.advisor === 'Other' && (
+              <div className="form-group">
+                <label htmlFor="customAdvisor">Enter Advisor Name</label><br />
+                <input
+                  className="input_select_text"
+                  type="text"
+                  id="customAdvisor"
+                  name="customAdvisor"
+                  value={customAdvisor}
+                  onChange={(e) => setCustomAdvisor(e.target.value)} // Update custom advisor input
+                  required
+                />
+              </div>
+            )}
+
             <div className="form-group">
               <label htmlFor="email_advisor">Email Advisor</label><br />
               <input
@@ -201,6 +250,12 @@ export const Addstudent = () => {
             </div>
             <button type="submit" className="button_add">เพิ่มนักศึกษา</button>
           </form>
+        )}
+        {/* Displaying the response message */}
+        {responseMessage && (
+          <div className="response-message">
+            {responseMessage}
+          </div>
         )}
       </div>
     </>

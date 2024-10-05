@@ -54,6 +54,8 @@ export const Home = (props) => {
           `http://localhost:56733/currentstudent?stdID=${stdID}`
         );
         const studentData = response.data;
+        console.log(studentData);
+        
 
         const picture = studentData.picture
           ? `data:image/jpeg;base64,${studentData.picture}`
@@ -65,11 +67,14 @@ export const Home = (props) => {
           tel: studentData.tel || "",
           email: studentData.email || "",
           degree: studentData.plan || "",
-          advisor: "",
-          email_advisor: "",
+          advisor: studentData.advisor || "",
+          email_advisor: studentData.advisor_email || "",
           image: null,
           picture: picture,
         });
+
+        console.log(formData);
+        
         setLoading(false);
       } catch (err) {
         setError("Error fetching data");

@@ -55,35 +55,51 @@ def post_data():
         traceback.print_exc()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
 
-
 @app.route('/addstudent', methods=['POST'])
 def addStudent():
     try:
-        data = request.form
-        file = request.files.get('picture')
+        data = request.form  # Retrieve data from formData
+        file = request.files.get('picture')  # Retrieve image file
         email = data.get('email')
-        
+
         # Validate required fields
         if not email or not data.get('stdID') or not data.get('name'):
             return jsonify({"message": "Missing required fields"}), 400
-        
+
         # Check if the email already exists
         existing_student = Student.query.filter_by(email=email).first()
         if existing_student:
             return jsonify({"message": "Email already exists", "data": email}), 409
 
-        # Process student name
-        name_sp = data.get('name').split(' ')
-        fname = name_sp[0]
-        lname = name_sp[1] if len(name_sp) > 1 else ''  # Handle cases where last name is missing
-        
-        advisor = Advisor.query.filter_by(name=data.get('advisor')).first()
-        if not advisor:
-            return jsonify({"message": "Advisor not found", "advisor": data.get('advisor')}), 404
+        # Process advisor information
+        advisor_name = data.get('advisor')
+
+        if advisor_name == 'Other':  # If "Other" is selected, use customAdvisor
+            advisor_name = data.get('customAdvisor')
+
+            # Validate that customAdvisor is provided
+            if not advisor_name:
+                return jsonify({"message": "Custom advisor name is required"}), 400
+
+        # Ensure advisor_name is not None or empty
+        advisor = Advisor.query.filter_by(name=advisor_name).first()
+        if not advisor:  # If advisor doesn't exist, create a new one
+            advisor_email = data.get('email_advisor')
+            if not advisor_email:
+                return jsonify({"message": "Advisor email is required"}), 400
+
+            new_advisor = Advisor(
+                name=advisor_name,
+                email=advisor_email,  # Assuming there's a field for advisor email
+                tel="0999958855"  # Static tel for now, can be dynamic
+            )
+            db.session.add(new_advisor)
+            db.session.commit()
+            advisor = Advisor.query.filter_by(name=advisor_name).first()
 
         # Generate password and hash it
         pw = generate_random_password()
-        
+
         # Create student and user
         new_student = Student(
             stdID=data.get('stdID'),
@@ -93,42 +109,46 @@ def addStudent():
             tel=data.get('tel'),
             advisorID=advisor.id
         )
-        
+
         picture_data = file.read() if file else None
 
         new_user = User(
             email=email,
             password=pw,  # Store hashed password
-            fname=fname,
-            lname=lname,
+            fname=data.get('name').split(' ')[0],
+            lname=data.get('name').split(' ')[1] if len(data.get('name').split(' ')) > 1 else '',
             isAdmin=False,
             picture=picture_data
         )
-        
+
+        # Create a new study plan, ensuring all required parameters are included
         new_plan = Study_plan(
-            planName=data.get('degree'),
-            testEng=None,
-            testEng_filename=None,  # Updated to store file name
-            study_planID=data.get('stdID'),
-            nPublish=0,
-            finished=False,
-            comprehension=None,
-            comprehension_filename=None,  # Updated to store file name
-            quality=None,
-            quality_filename=None,  # Updated to store file name
-            publishExam=None,
-            publishExam_filename=None,  # Updated to store file name
-            core=0,
-            select=0,
-            free=0
+            planName=data.get('degree'),  # You may want to adjust this depending on your logic
+            testEng=None,  # Set this to the correct value as needed
+            testEng_filename=None,  # Set this to the correct value as needed
+            study_planID=data.get('stdID'),  # Assuming this should match stdID
+            nPublish=0,  # Default or actual value from your logic
+            finished=False,  # Default value, adjust based on your requirements
+            comprehension=None,  # Set this to the correct value as needed
+            comprehension_filename=None,  # Set this to the correct value as needed
+            quality=None,  # Set this to the correct value as needed
+            quality_filename=None,  # Set this to the correct value as needed
+            core=0,  # Default or actual value from your logic
+            select=0,  # Default or actual value from your logic
+            free=0,  # Default or actual value from your logic
+            publishExam=None,  # Set this to the correct value as needed
+            publishExam_filename=None  # Set this to the correct value as needed
         )
 
+        # Send email with generated password
         send_email(email, pw)
+
+        # Add new records to the session
         db.session.add(new_student)
         db.session.add(new_user)
         db.session.add(new_plan)
         db.session.commit()
-        
+
         return jsonify({"message": "Student added successfully", "data": {"email": email, "stdID": data.get('stdID')}}), 200
 
     except Exception as e:
@@ -171,23 +191,28 @@ password: {password}""",
 # @login_required
 def data():
     students = Student.query.all()
-    # study_plan = Study_plan.query.filter_by(stdID=students.stdID).first()
     result = []
     no = 1
     for student in students:
+        # Fetch the study plan associated with the student
         study_plan = Study_plan.query.filter_by(study_planID=student.stdID).first()
+        
+        # Fetch the advisor details associated with the student
+        advisor = Advisor.query.filter_by(id=student.advisorID).first()
+
         result.append({
             'no': no,
             'name': student.name,
             'stdID': student.stdID,
-            'degree': study_plan.planName,
-            #######################
-            'progress': 0,
-            ########################
+            'degree': study_plan.planName ,
+            'advisor': advisor.name ,
+            'advisor_email': advisor.email ,
+            'progress': 0,  # Update this logic for progress as needed
         })
         no += 1
     print(result)
     return jsonify(result)
+
 
 ################################################################333
 @login_manager.user_loader
@@ -223,14 +248,14 @@ def currentstudent():
     
     # Fetch the student record
     student = Student.query.filter_by(stdID=stdID).first()
-    
+    # advisor = Advisor.query.filter_by(id=student.advisorID).first()
     # Handle case where student is not found
     if student is None:
         return jsonify({"error": "Student not found"}), 404
 
     # Fetch the study plan associated with the student
     plan = Study_plan.query.filter_by(study_planID=student.stdID).first()
-    
+    advisor = Advisor.query.filter_by(id=student.advisorID).first()
     # If plan is not found, handle it if necessary
     plan_name = plan.planName if plan else "No plan available"
     user = User.query.filter_by(email=student.email).first()
@@ -240,7 +265,9 @@ def currentstudent():
         'email': student.email,
         'plan': plan_name,
         # Convert picture binary data to Base64 string if it exists
-        'picture': None  # Initialize as None
+        'picture': None, # Initialize as None
+        'advisor': advisor.name ,
+        'advisor_email': advisor.email ,
     }
 
     if user.picture:
