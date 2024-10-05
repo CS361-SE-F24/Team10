@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Grid2 from '@mui/material/Grid2';
 import axios from "axios";
 import "../css/Login.css";
 
@@ -9,7 +10,7 @@ export const Login = ({ setCurrentUser }) => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false); // สถานะเพื่อแสดง/ซ่อนรหัสผ่าน
   // console.log("asssssssssss");
-  
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -45,63 +46,66 @@ export const Login = ({ setCurrentUser }) => {
   };
 
   return (
-    <div className="container">
-      <div className="item">
-        {/* Right Side */}
-        <div className="contact">
-          {/* Add more content as needed */}
-        </div>
 
-        {/* Left Side */}
-        <div className="submit-form">
-          <form onSubmit={handleSubmit}>
-            <div>
-              <p className="cs">cs cmu</p>
-              <p className="hello">
-                Hello,
+    <Grid2 size={{ xs: 4, md: 2 }}>
+      <div className="container">
+        <div className="item">
+          {/* Right Side */}
+          <div className="contact">
+            {/* Add more content as needed */}
+          </div>
+
+          {/* Left Side */}
+          <div className="submit-form">
+            <form onSubmit={handleSubmit}>
+              <div>
+                <p className="cs">cs cmu</p>
+                <p className="hello">
+                  Hello,
+                  <br />
+                  Welcome!
+                </p>
                 <br />
-                Welcome!
-              </p>
-              <br />
-              <div className="inputt">
-                <label>Username</label>
-                <br />
-                <input
-                  type="email"
-                  className="username"
-                  placeholder="example@cmu.ac.th"
-                  name="email"
-                  required
-                />
-                <br />
-                <label className="font-bold">Password</label>
-                <br />
-                <input
-                  type="password"
-                  className="password"
-                  placeholder="password"
-                  name="password"
-                  required
-                />
-                <br />
-                <input type="checkbox" /> Remember Me
-                <br />
-                <br />
-                <center>
-                  <button type="submit" className="submit">
-                    LOG IN
-                  </button>
-                </center>
-                <br />
-                <br />
+                <div className="inputt">
+                  <label>Username</label>
+                  <br />
+                  <input
+                    type="email"
+                    className="username"
+                    placeholder="example@cmu.ac.th"
+                    name="email"
+                    required
+                  />
+                  <br />
+                  <label className="font-bold">Password</label>
+                  <br />
+                  <input
+                    type="password"
+                    className="password"
+                    placeholder="password"
+                    name="password"
+                    required
+                  />
+                  <br />
+                  <input type="checkbox" /> Remember Me
+                  <br />
+                  <br />
+                  <center>
+                    <button type="submit" className="submit">
+                      LOG IN
+                    </button>
+                  </center>
+                  <br />
+                  <br />
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
 
-          {error && <p className="error-message">{error}</p>}
+            {error && <p className="error-message">{error}</p>}
+          </div>
         </div>
       </div>
-    </div>
+    </Grid2>
   );
 };
 

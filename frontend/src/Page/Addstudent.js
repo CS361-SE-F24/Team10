@@ -34,7 +34,8 @@ export const Addstudent = () => {
     formDataToSend.append("advisor", formData.advisor);
     formDataToSend.append("email_advisor", formData.email_advisor);
     formDataToSend.append("picture", formData.picture);
-
+    console.log(formDataToSend);
+    
     axios
       .post("http://localhost:56733/addstudent", formDataToSend, {
         headers: {

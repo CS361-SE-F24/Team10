@@ -45,19 +45,25 @@ export const ProgressBar = ({ stdID }) => {
   const progressPercentage = (completedSteps.length / steps.length) * 100;
 
   return (
-    <div style={{ padding: '20px', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-end' }}>
+    <div className="items">
+      {/* Progress bar container */}
       <div className="progress-bar-container vertical" style={{ flex: 1 }}>
-        {steps.map((step, index) => (
-          <div key={index} className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`} style={{ cursor: 'pointer' }}>
-            <div className="circle">{index + 1}</div>
-            <div className="step-name">{stepNames[index]}</div>
-            <div className="step-description">{stepDescriptions[index]}</div> {/* New description */}
-            {index !== steps.length - 1 && <div className="line"></div>}
-          </div>
-        ))}
+      {steps.map((step, index) => (
+        <div
+          key={index}
+          className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className="circle">{index + 1}</div>
+          <div className="step-name">{stepNames[index]}</div>
+          {index !== steps.length - 1 && <div className="line"></div>}
+        </div>
+      ))}
+
       </div>
 
-      <div style={{ marginLeft: '-100px', marginTop: '0px' }}>
+      {/* DonutChart */}
+      <div className="DonutChart">
         <DonutChart progress={progressPercentage} />
         <div className='course'>
           

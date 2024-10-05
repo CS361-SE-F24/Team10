@@ -4,15 +4,17 @@
   background-color: white;
 }
 
+
 .step {
-  
-  display: flex;
-  flex-direction: column;
+  display: grid; /* Set grid layout */
+  grid-template-columns: 1fr 1fr; /* Define two columns: one for the circle, and one for the step name */
+  align-items: center; /* Vertically align content in both columns */
+  column-gap: 15px; /* Adjust spacing between the circle and step name */
   margin-bottom: 75px; /* Space between steps */
-  padding: 10px; /* Add padding to increase the height of each step */
-  position: relative; /* Position relative for absolute positioning of line */
-  background-color: transparent !important;
+  position: relative;
+  padding-left: 10px; /* Optional: Adjust padding if necessary */
 }
+
 
 .circle {
   width: 30px;
@@ -52,7 +54,7 @@
 
 .step-name {
   text-align: center; /* Center the step names */
-  margin-top: 5px; /* Add space between the number and the name */
+  margin-top: 5px;
   color: black;
 }
 
@@ -70,7 +72,7 @@
 }
 
 .detail {
-  font-size: 0.8em; /* Smaller text for details */
+  font-size: 0.8em;
 }
 
 /* .popup {

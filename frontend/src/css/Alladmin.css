@@ -59,12 +59,20 @@
     }
   }
   
-  .header {
+  .admin-header {
     display: flex; /* ใช้ Flexbox */
     justify-content: flex-end; /* จัดให้เนื้อหาทั้งหมดอยู่ที่ขวา */
-    align-items: center; /* จัดให้อยู่กลางแนวตั้ง */
-    padding: 10px; /* เพิ่ม padding รอบๆ */
+    /* align-items: center; จัดให้อยู่กลางแนวตั้ง */
+    padding: 30px; /* เพิ่ม padding รอบๆ */
+  }
+
+  .admin-container {
+    align-items: right;
   }
   
-/* .header-container {
-} */
+  .admin-card-container {
+    display: flex; /* ใช้ Flexbox */
+    align-items: center; /* จัดให้อยู่กลางแนวตั้ง */
+    padding: 30px; /* เพิ่ม padding รอบๆ */
+  }
+  
