@@ -10,6 +10,12 @@ export const ProgressBar = ({ stdID }) => {
   // Define steps as the keys you will receive from the API
   const steps = ['testEng', 'comprehension', 'quality', 'publishExam'];
   const stepNames = ['Test English', 'Comprehension', 'Quality', 'Publish Exam']; // Readable step names
+  const stepDescriptions = [
+    'This step involves taking the English test to assess your proficiency.',
+    'This step checks comprehension skills in reading and understanding texts.',
+    'This step ensures quality control of the content and materials.',
+    'This step publishes the exam for students to access.'
+  ];
 
   useEffect(() => {
     const fetchStudentPlan = async () => {
@@ -35,36 +41,33 @@ export const ProgressBar = ({ stdID }) => {
     fetchStudentPlan();
   }, [stdID]);
 
-  // คำนวณเปอร์เซ็นต์ความสำเร็จ
+  // Calculate the success percentage
   const progressPercentage = (completedSteps.length / steps.length) * 100;
 
   return (
-    <div style={{ padding: '20px', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-end' }}> 
-      {/* จัดให้อยู่ด้านบนขวา ด้วย alignItems และ justifyContent */}
+    <div className="items">
+      {/* Progress bar container */}
+      <div className="progress-bar-container vertical" style={{ flex: 1 }}>
+      {steps.map((step, index) => (
+        <div
+          key={index}
+          className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className="circle">{index + 1}</div>
+          <div className="step-name">{stepNames[index]}</div>
+          {index !== steps.length - 1 && <div className="line"></div>}
+        </div>
+      ))}
 
-      <div className="progress-bar-container vertical" style={{ flex: 1 }}> {/* flex: 1 เพื่อให้ ProgressBar ใช้พื้นที่ตามต้องการ */}
-        {steps.map((step, index) => (
-          <div key={index} className={`step ${completedSteps.includes(index + 1) ? 'completed' : ''} ${currentStep === index + 1 ? 'active' : ''}`} style={{ cursor: 'pointer' }}>
-            <div className="circle">{index + 1}</div> {/* Step number displayed */}
-            <div className="step-name">{stepNames[index]}</div> {/* Display the readable step name */}
-            {index !== steps.length - 1 && <div className="line"></div>}
-          </div>
-        ))}
       </div>
 
-      {/* จัดวาง DonutChart ด้านขวาบน */}
-      <div style={{ marginLeft: '-100px', marginTop: '0px' }}> {/* ใช้ marginLeft เป็นค่าลบเพื่อขยับเข้าไปใกล้ */} 
+      {/* DonutChart */}
+      <div className="DonutChart">
         <DonutChart progress={progressPercentage} />
-      </div>
-
-      <div>
-        <button id="open-popup">วิชาที่เรียน</button>
-      </div>
-      <div className="popup" id="popup">
-        <div className="overlay"></div>
-        <div className="popup-content">
+        <div className='course'>
           
-        </div> 
+        </div>
       </div>
     </div>
   );
