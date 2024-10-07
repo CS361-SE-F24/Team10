@@ -42,6 +42,7 @@ export const Home = (props) => {
     comprehensiveExam: null,
     QualifyingExam: null,
     credit: 0,
+    Complete_Course:null
   });
 
   useEffect(() => {
@@ -129,6 +130,7 @@ export const Home = (props) => {
         QualifyingExam:
           convertFile(studentData.quality) || prevPlan.QualifyingExam,
         nPublish: studentData.nPublish,
+        Complete_Course: studentData.complete_course || prevPlan.Complete_Course
       }));
 
       setLoading(false);
@@ -175,6 +177,9 @@ export const Home = (props) => {
     console.log("diuUfffffffff");
 
     console.log(data);
+    setFormplan({ ...plan, Complete_Course: data.complete_course})
+    console.log();
+    
 
     try {
       const response = await axios.post(
@@ -408,6 +413,39 @@ export const Home = (props) => {
           </div>
 
           {/* Complete all required courses */}
+          <div>
+            <p>Complete Course</p>
+            {plan.Complete_Course === null ? (
+              <>
+                <input
+                  type="checkbox"
+                  id="Complete_Course"
+                  name="Complete_Course"
+                  checked={plan.Complete_Course === true}
+                  onChange={() => setFormplan({ ...plan, Complete_Course: !plan.Complete_Course })}
+
+                  htmlFor="Complete_Course" className="editprogress_label"
+                />
+
+                <label htmlFor="Complete_Course" className="editprogress_label" onClick={() =>
+                    setFormplan({ ...plan, Complete_Course: true}) // Set Complete_Course to not pass
+                  }>
+                  ไม่ผ่าน
+                </label>
+              </>
+            ) : (
+              <div>
+                <label
+                  onClick={() =>
+                    setFormplan({ ...plan, Complete_Course: null }) // Set Complete_Course to not pass
+                  }
+                  className="editprogress_label_pass"
+                >
+                  ผ่าน
+                </label>
+              </div>
+            )}
+          </div>
           
 
           <button type="submit">Save Progress</button>
