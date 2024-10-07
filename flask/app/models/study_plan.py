@@ -27,7 +27,9 @@ class Study_plan(db.Model, SerializerMixin):
     select = db.Column("select", db.Integer)  # ใช้ double quotes เพราะ `select` เป็นคำสงวน
     free = db.Column(db.Integer)
 
-    def __init__(self, planName, testEng, testEng_filename, study_planID, nPublish, finished, comprehension, comprehension_filename, quality, quality_filename, core, select, free, publishExam, publishExam_filename):
+    complete_course = db.Column(db.Boolean)
+
+    def __init__(self, planName, testEng, testEng_filename, study_planID, nPublish, finished, comprehension, comprehension_filename, quality, quality_filename, core, select, free, publishExam, publishExam_filename,complete_course):
         self.planName = planName
         self.testEng = testEng
         self.testEng_filename = testEng_filename
@@ -43,3 +45,4 @@ class Study_plan(db.Model, SerializerMixin):
         self.free = free
         self.publishExam = publishExam
         self.publishExam_filename = publishExam_filename
+        self.complete_course = complete_course

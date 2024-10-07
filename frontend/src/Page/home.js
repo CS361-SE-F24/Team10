@@ -20,6 +20,7 @@ export const Home = (props) => {
   const [files, setFiles] = useState([]); // State to store the uploaded files
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
+  const [courses, setCourses] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -55,7 +56,6 @@ export const Home = (props) => {
         );
         const studentData = response.data;
         console.log(studentData);
-        
 
         const picture = studentData.picture
           ? `data:image/jpeg;base64,${studentData.picture}`
@@ -74,7 +74,7 @@ export const Home = (props) => {
         });
 
         console.log(formData);
-        
+
         setLoading(false);
       } catch (err) {
         setError("Error fetching data");
@@ -143,7 +143,6 @@ export const Home = (props) => {
     }
   };
 
-
   const handleUpdate = () => {
     setShow((prevShow) => (prevShow === "progress" ? "update" : "progress"));
   };
@@ -193,199 +192,231 @@ export const Home = (props) => {
     }
   };
 
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get(`http://localhost:56733/getcourses?stdID=${stdID}`);
+      setCourses(response.data.courses);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
+  
+
   const togglePopup = () => {
     setShowPopup(!showPopup);
+    if (!showPopup) {
+      fetchCourses();
+    }
   };
+  
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="home-container">
-      <div className="sidebar">
-        <h4>PhD Student</h4>
-        <div className="rec">
-          <div className="inside">
-            {formData.picture ? (
-              <img className="picture" src={formData.picture} alt="User" />
-            ) : (
-              <p>No Image Available</p>
-            )}
-            <p>{formData.name}</p>
-            <p>รหัสนักศึกษา {formData.stdID}</p>
-            <hr />
-            <p>{formData.degree}</p>
-          </div>
+  <div className="home-container">
+    <div className="sidebar">
+      <h4>PhD Student</h4>
+      <div className="rec">
+        <div className="inside">
+          {formData.picture ? (
+            <img className="picture" src={formData.picture} alt="User" />
+          ) : (
+            <p>No Image Available</p>
+          )}
+          <p>{formData.name}</p>
+          <p>รหัสนักศึกษา {formData.stdID}</p>
+          <hr />
+          <p>{formData.degree}</p>
         </div>
-        <br />
-        <div className="advisor">
-          Advisor: {formData.advisor || "Not available"}
-        </div>
-        <div className="email">
-          Email of Advisor: {formData.email_advisor || "Not available"}
-        </div>
-
-        {currentUser.isAdmin && show === "progress" && (
-          <div>
-            <button onClick={handleUpdate}>Update Progress</button>
-          </div>
-        )}
+      </div>
+      <br />
+      <div className="advisor">
+        Advisor: {formData.advisor || "Not available"}
+      </div>
+      <div className="email">
+        Email of Advisor: {formData.email_advisor || "Not available"}
       </div>
 
-      {show === "progress" ? (
-        <div className="progress-bar-container">
-          <div className="items-progress">
-            <div className="progressbar">
-              <ProgressBar
-                stdID={stdID}
-                onProgressUpdate={setProgressPercentage}
-              />
-            </div>
-            <div className="DonutChart">
-              <DonutChart progress={progressPercentage} />
-              <div className="course"></div>
-              <button onClick={togglePopup} className="popup-button">
-                Open Popup
-              </button>
-              {showPopup && (
-                <div className="popup-modal">
-                  <div className="popup-content">
-                    <h2>Popup Title</h2>
-                    <p>This is the content inside the popup.</p>
-                    <button onClick={togglePopup}>Close Popup</button>
-                  </div>
+      {currentUser.isAdmin && show === "progress" && (
+        <div>
+          <button onClick={handleUpdate}>Update Progress</button>
+        </div>
+      )}
+    </div>
+
+    {show === "progress" ? (
+      <div className="progress-bar-container">
+        <div className="items-progress">
+          <div className="progressbar">
+            <ProgressBar
+              stdID={stdID}
+              onProgressUpdate={setProgressPercentage}
+            />
+          </div>
+          <div className="DonutChart">
+            <DonutChart progress={progressPercentage} />
+            <div className="course"></div>
+            <button onClick={togglePopup} className="popup-button">
+              Open Popup
+            </button>
+            {showPopup && (
+              <div className="popup-modal">
+                <div className="popup-content">
+                  <h2>Courses</h2>
+                  {courses.length > 0 ? (
+                    <ul>
+                      {courses.map((course, index) => (
+                        <li key={index}>
+                          {course.courseID} - {course.planName} (
+                          {course.credit} credits)
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No courses found for this student.</p>
+                  )}
+                  <button onClick={togglePopup} className="close-popup">
+                    Close
+                  </button>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
-      ) : (
-        <div className="editprogress">
-          <form onSubmit={editProgress} enctype="multipart/form-data">
-            <input type="hidden" name="stdID" value={stdID} />
-            {/* Test English Section */}
-            <div>
-              <p>Test English</p>
-              {plan.testEng === null ? (
-                <>
-                  <input
-                    type="file"
-                    id="testEng"
-                    name="testEng"
-                    className="editprogress_input"
-                  />
-                  <label htmlFor="testEng" className="editprogress_label">
-                    ไม่ผ่าน
-                  </label>
-                </>
-              ) : (
-                <div>
-                  <label
-                    onClick={() => {
-                      setFormplan({ ...plan, testEng: null }); // Set testEng to not pass
-                    }}
-                    className="editprogress_label_pass"
-                  >
-                    ผ่าน
-                  </label>
-                  <div>
-                    <p>Uploaded File:</p>
-                    <a
-                      href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
-                      download
-                    >
-                      TestEnglish_{stdID}
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
+      </div>
+    ) : (
+      <div className="editprogress">
+        <form onSubmit={editProgress} enctype="multipart/form-data">
+          <input type="hidden" name="stdID" value={stdID} />
 
-            {/* Comprehensive Exam Section */}
-            <div>
-              <p>Comprehensive Exam</p>
-              {plan.comprehensiveExam === null ? (
-                <>
-                  <input
-                    type="file"
-                    id="comprehensiveExam"
-                    name="comprehensiveExam"
-                    className="editprogress_input"
-                  />
-                  <label
-                    htmlFor="comprehensiveExam"
-                    className="editprogress_label"
-                  >
-                    ไม่ผ่าน
-                  </label>
-                </>
-              ) : (
+          {/* Test English Section */}
+          <div>
+            <p>Test English</p>
+            {plan.testEng === null ? (
+              <>
+                <input
+                  type="file"
+                  id="testEng"
+                  name="testEng"
+                  className="editprogress_input"
+                />
+                <label htmlFor="testEng" className="editprogress_label">
+                  ไม่ผ่าน
+                </label>
+              </>
+            ) : (
+              <div>
+                <label
+                  onClick={() => {
+                    setFormplan({ ...plan, testEng: null }); // Set testEng to not pass
+                  }}
+                  className="editprogress_label_pass"
+                >
+                  ผ่าน
+                </label>
                 <div>
-                  <label
-                    onClick={
-                      () => setFormplan({ ...plan, comprehensiveExam: null }) // Set comprehensiveExam to not pass
-                    }
-                    className="editprogress_label_pass"
+                  <p>Uploaded File:</p>
+                  <a
+                    href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
+                    download
                   >
-                    ผ่าน
-                  </label>
-                  <div>
-                    <p>Uploaded File:</p>
-                    <a href={`http://localhost:56733/downloadplan/${stdID}/comprehension`} download>
+                    TestEnglish_{stdID}
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Comprehensive Exam Section */}
+          <div>
+            <p>Comprehensive Exam</p>
+            {plan.comprehensiveExam === null ? (
+              <>
+                <input
+                  type="file"
+                  id="comprehensiveExam"
+                  name="comprehensiveExam"
+                  className="editprogress_input"
+                />
+                <label
+                  htmlFor="comprehensiveExam"
+                  className="editprogress_label"
+                >
+                  ไม่ผ่าน
+                </label>
+              </>
+            ) : (
+              <div>
+                <label
+                  onClick={() =>
+                    setFormplan({ ...plan, comprehensiveExam: null }) // Set comprehensiveExam to not pass
+                  }
+                  className="editprogress_label_pass"
+                >
+                  ผ่าน
+                </label>
+                <div>
+                  <p>Uploaded File:</p>
+                  <a
+                    href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
+                    download
+                  >
                     ComprehensiveExam_{stdID}
-                    </a>
-                  </div>
+                  </a>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
 
-            {/* Qualifying Exam Section */}
-            <div>
-              <p>Qualifying Exam</p>
-              {plan.QualifyingExam === null ? (
-                <>
-                  <input
-                    type="file"
-                    id="QualifyingExam"
-                    name="QualifyingExam"
-                    className="editprogress_input"
-                  />
-                  <label
-                    htmlFor="QualifyingExam"
-                    className="editprogress_label"
-                  >
-                    ไม่ผ่าน
-                  </label>
-                </>
-              ) : (
+          {/* Qualifying Exam Section */}
+          <div>
+            <p>Qualifying Exam</p>
+            {plan.QualifyingExam === null ? (
+              <>
+                <input
+                  type="file"
+                  id="QualifyingExam"
+                  name="QualifyingExam"
+                  className="editprogress_input"
+                />
+                <label htmlFor="QualifyingExam" className="editprogress_label">
+                  ไม่ผ่าน
+                </label>
+              </>
+            ) : (
+              <div>
+                <label
+                  onClick={() =>
+                    setFormplan({ ...plan, QualifyingExam: null }) // Set QualifyingExam to not pass
+                  }
+                  className="editprogress_label_pass"
+                >
+                  ผ่าน
+                </label>
                 <div>
-                  <label
-                    onClick={
-                      () => setFormplan({ ...plan, QualifyingExam: null }) // Set QualifyingExam to not pass
-                    }
-                    className="editprogress_label_pass"
+                  <p>Uploaded File:</p>
+                  <a
+                    href={`http://localhost:56733/downloadplan/${stdID}/quality`}
+                    download
                   >
-                    ผ่าน
-                  </label>
-                  <div>
-                    <p>Uploaded File:</p>
-                    <a
-                      href={`http://localhost:56733/downloadplan/${stdID}/quality`}
-                      download
-                    >
-                      QualifyingExam_{stdID}
-                    </a>
-                  </div>
+                    QualifyingExam_{stdID}
+                  </a>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
 
-            <button type="submit">Save Progress</button>
-          </form>
-          {/* File Upload Form */}
-          <form onSubmit={uploadFile} enctype="multipart/form-data">
+          {/* Complete all required courses */}
+          
+
+          <button type="submit">Save Progress</button>
+        </form>
+        <form onSubmit={uploadFile} enctype="multipart/form-data">
             <input type="file" name="file" />
-            <input type="text" name="type" />
+            <br></br>
+            <input type="text" name="type" required />
+            <br></br>
             <input type="hidden" name="stdID" value={stdID} />
             <button type="submit">Upload File</button>
           </form>
@@ -400,23 +431,10 @@ export const Home = (props) => {
               </li>
             ))}
           </ul>
+        <button onClick={handleUpdate}>ยืนยัน</button>
+      </div>
+    )}
+  </div>
+);
 
-          <button onClick={togglePopup}>Show Popup</button>
-
-          {/* Popup Implementation */}
-          {showPopup && (
-            <div className="popup">
-              <div className="popup-content">
-                <span className="close" onClick={togglePopup}>&times;</span>
-                <p>This is a popup message!</p>
-                {/* You can add more content here */}
-              </div>
-            </div>
-          )}
-
-          <button onClick={handleUpdate}>ยืนยัน</button>
-        </div>
-      )}
-    </div>
-  );
 };

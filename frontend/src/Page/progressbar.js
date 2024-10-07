@@ -18,36 +18,43 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
   useEffect(() => {
     const fetchStudentPlan = async () => {
       if (!stdID) return;
-
+  
       try {
         const response = await axios.get(
           `http://localhost:56733/currentstudentplan?stdID=${stdID}`
         );
         const { testEng, comprehension, quality, publishExam } = response.data;
-
+  
         const fetchedCompletedSteps = [];
-        if (testEng) fetchedCompletedSteps.push(1); // Step 1 corresponds to testEng
-        if (comprehension) fetchedCompletedSteps.push(2); // Step 2 corresponds to comprehension
-        if (quality) fetchedCompletedSteps.push(3); // Step 3 corresponds to quality
-        if (publishExam) fetchedCompletedSteps.push(4); // Step 4 corresponds to publishExam
-
+        if (testEng) fetchedCompletedSteps.push(1);
+        if (comprehension) fetchedCompletedSteps.push(2);
+        if (quality) fetchedCompletedSteps.push(3);
+        if (publishExam) fetchedCompletedSteps.push(4);
+  
         setCompletedSteps(fetchedCompletedSteps);
         setCurrentStep(
           fetchedCompletedSteps.length > 0
             ? Math.max(...fetchedCompletedSteps)
             : 1
         );
-
-        // Calculate the success percentage and pass it to the parent component
+  
         const progressPercentage = (fetchedCompletedSteps.length / steps.length) * 100;
-        onProgressUpdate(progressPercentage); // Pass progressPercentage back to Home component
+        
+        // Post progress percentage to the backend
+        await axios.post('http://localhost:56733/updatepercent', {
+          stdID,
+          progressPercentage,
+        });
+  
+        onProgressUpdate(progressPercentage);
       } catch (error) {
         console.error("Error fetching student plan:", error);
       }
     };
-
+  
     fetchStudentPlan();
-  }, [stdID]);
+  }, [stdID, onProgressUpdate]);
+  
 
   return (
     <div className="progress-bar-container vertical" style={{ flex: 1 }}>
