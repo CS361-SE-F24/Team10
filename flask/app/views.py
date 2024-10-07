@@ -138,7 +138,7 @@ def addStudent():
             select=0,  # Default or actual value from your logic
             free=0,  # Default or actual value from your logic
             publishExam=None,  # Set this to the correct value as needed
-            publishExam_filename=None  # Set this to the correct value as needed
+            publishExam_filename=None,  # Set this to the correct value as needed
             complete_course = False
         )
 
@@ -399,14 +399,16 @@ def editprogress():
         comprehensive_file = request.files.get('comprehensiveExam')
         qualifying_file = request.files.get('QualifyingExam')
         nPublish = request.form.get('nPublish')
-
+        set_complete = request.form.get('Complete_Course')  # New field for setting completion status
+        print(request.form.get('Complete_Course'))
         # Debug print to inspect form data and file uploads
         print({
             "study_planID": study_planID,
             "testEng_file": testEng_file,
             "comprehensive_file": comprehensive_file,
             "qualifying_file": qualifying_file,
-            "nPublish": nPublish
+            "nPublish": nPublish,
+            "set_complete": set_complete  # Added for debugging
         })
 
         # Find the study plan by student ID
@@ -443,6 +445,11 @@ def editprogress():
         # Update nPublish if provided
         if nPublish is not None:
             study_plan.nPublish = int(nPublish)
+
+        # Set study plan completion status if provided
+        if set_complete is not None:
+            # Assuming 'setComplete' is passed as 'true' or 'false'
+            study_plan.complete_course = set_complete.lower() == 'true'
 
         # Commit changes to the database
         db.session.commit()
