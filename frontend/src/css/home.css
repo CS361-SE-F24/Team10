@@ -170,8 +170,11 @@
 }
 
 .DonutChart {
-  width: 75%;
-  max-width: 400px;
+  width: 20%; /* ปรับขนาดให้เหมาะสม */
+  max-width: 300px;
+  position: absolute; /* ตั้งตำแหน่งแบบ absolute */
+  top: 150px; /* ระยะห่างจากด้านบน */
+  right: 10px; /* ระยะห่างจากด้านขวา */
 }
 
 .items-progress{
