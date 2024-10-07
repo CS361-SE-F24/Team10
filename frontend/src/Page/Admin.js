@@ -15,19 +15,19 @@ export const Admin = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:56733/data");
-        setStudents(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError("Error fetching data");
-        setLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:56733/data");
+      setStudents(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Error fetching data");
+      setLoading(false);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchData(); // Call fetchData when the component mounts
   }, []);
 
   const handleView = (stdID) => {
@@ -38,8 +38,23 @@ export const Admin = () => {
     navigate('/studentfix', { state: { stdID } });
   };
 
-  const handleDelete = (stdID) => {
-    console.log(`Delete student with ID: ${stdID}`);
+  const handleDelete = async (stdID) => {
+    // Confirm the deletion action from the user
+    const confirmDelete = window.confirm(`Are you sure you want to delete student with ID: ${stdID}?`);
+    
+    if (confirmDelete) {
+      try {
+        // Send DELETE request to the backend
+        await axios.delete(`http://localhost:56733/deleteStudent/${stdID}`);
+        
+        // Call fetchData to refresh the student list after deletion
+        await fetchData();
+        alert(`Student with ID: ${stdID} has been deleted successfully.`);
+      } catch (error) {
+        console.error("Error deleting student:", error);
+        alert("An error occurred while trying to delete the student.");
+      }
+    }
   };
 
   if (loading) return <p>Loading...</p>;

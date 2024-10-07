@@ -107,7 +107,8 @@ def addStudent():
             status="study",
             email=email,
             tel=data.get('tel'),
-            advisorID=advisor.id
+            advisorID=advisor.id,
+            progress = "0%"
         )
 
         picture_data = file.read() if file else None
@@ -138,6 +139,7 @@ def addStudent():
             free=0,  # Default or actual value from your logic
             publishExam=None,  # Set this to the correct value as needed
             publishExam_filename=None  # Set this to the correct value as needed
+            complete_course = False
         )
 
         # Send email with generated password
@@ -207,7 +209,7 @@ def data():
             'degree': study_plan.planName ,
             'advisor': advisor.name ,
             'advisor_email': advisor.email ,
-            'progress': 0,  # Update this logic for progress as needed
+            'progress': student.progress,  # Update this logic for progress as needed
         })
         no += 1
     print(result)
@@ -291,23 +293,22 @@ def get_file_data(file_binary, filename):
 @app.route('/currentstudentplan', methods=['GET'])
 def currentstudentplan():
     stdID = request.args.get('stdID')
-    # print("*****************")
-    # print(stdID)
     study_plan = Study_plan.query.filter_by(study_planID=stdID).first()
-    # print(study_plan)
+
     if study_plan is None:
         return jsonify({"error": "Student not found"}), 404
 
     current_data = {
-    'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),  # Example filename
-    'nPublish': study_plan.nPublish,
-    'comprehension': get_file_data(study_plan.comprehension, 'comprehension.pdf'),
-    'quality': get_file_data(study_plan.quality, 'quality.pdf'),
-    'publishExam': get_file_data(study_plan.publishExam, 'publishExam.pdf')
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),  # Example filename
+        'nPublish': study_plan.nPublish,
+        'comprehension': get_file_data(study_plan.comprehension, 'comprehension.pdf'),
+        'quality': get_file_data(study_plan.quality, 'quality.pdf'),
+        'publishExam': get_file_data(study_plan.publishExam, 'publishExam.pdf'),
+        'complete_course': study_plan.complete_course
     }
 
-
     return jsonify(current_data), 200
+
 
 
 
@@ -494,3 +495,87 @@ def get_plan_names():
     plan_names = db.session.query(Course.planName).distinct().all()
     plan_names_list = [planName[0] for planName in plan_names]  # Flatten the result
     return jsonify(plan_names_list)
+
+
+@app.route('/getcourses', methods=['GET'])
+def get_courses_by_stdID():
+    stdID = request.args.get('stdID')
+    if not stdID:
+        return jsonify({'error': 'stdID is required'}), 400
+
+    # Fetch the study plan using stdID
+    study_plan = Study_plan.query.filter_by(study_planID=stdID).first()
+    if not study_plan:
+        return jsonify({'error': 'Study plan not found'}), 404
+
+    # Mapping study plan names from the frontend to the backend planName
+    planName_map = {
+        "Master_Degree (แผน ก แบบ ก 1)": "M.",
+        "Master_Degree (แผน ก แบบ ก 2)": "M.",
+        "Master_Degree3 (แผน ข)": "M.",
+        "PhD1.1": "Ph.D.",
+        "PhD2.2": "Ph.D."
+    }
+
+    planName = planName_map.get(study_plan.planName, None)
+    if not planName:
+        return jsonify({'error': 'Plan name mapping not found'}), 404
+
+    # Fetch courses using the mapped plan name
+    courses = Course.query.filter_by(planName=planName).all()
+    if not courses:
+        return jsonify({'error': 'No courses found for this student'}), 404
+
+    course_list = [
+        {
+            'courseID': course.courseID,
+            'credit': course.credit,
+            'planName': course.planName
+        }
+        for course in courses
+    ]
+    
+    return jsonify({'courses': course_list}), 200
+
+@app.route('/updatepercent', methods=['POST'])
+def updateper():
+    data = request.get_json()  # Get the JSON data from the request
+    stdID = data.get('stdID')  # Extract stdID
+    progressPercentage = data.get('progressPercentage')  # Extract progressPercentage
+
+    student = Student.query.filter_by(stdID=stdID).first()
+    
+    if student:
+        student.progress = f"{progressPercentage}%"
+        db.session.commit()  # Save changes to the database
+
+        print(f"Student ID: {stdID}, Progress Percentage: {progressPercentage}%")
+        return jsonify({"message": "Progress percentage updated successfully"}), 200
+    else:
+        return jsonify({"error": "Student not found"}), 404
+
+@app.route('/deleteStudent/<stdID>', methods=['DELETE'])
+def delete_student(stdID):
+    # Find the student
+    student = Student.query.filter_by(stdID=stdID).first()
+    user = User.query.filter_by(email=student.email).first()
+    
+    if student:
+        # Delete associated study plans
+        study_plans = Study_plan.query.filter_by(study_planID=stdID).all()  # Assuming stdID is in Study_plan
+        for plan in study_plans:
+            db.session.delete(plan)
+        
+        # Delete associated publish records
+        publishes = Publish.query.filter_by(stdID=stdID).all()  # Assuming stdID is in Publish
+        for publish in publishes:
+            db.session.delete(publish)
+
+        # Finally, delete the student
+        db.session.delete(student)
+        db.session.delete(user)
+        db.session.commit()  # Commit all deletions to the database
+        
+        return jsonify({"message": "Student and associated records deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Student not found"}), 404

@@ -11,11 +11,13 @@ class Student(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     tel = db.Column(db.String(15), nullable=True)
     advisorID = db.Column(db.Integer, nullable=True)
+    progress = db.Column(db.String(15), nullable=True)
 
-    def __init__(self, stdID, name, status, email, tel,advisorID):
+    def __init__(self, stdID, name, status, email, tel,advisorID,progress):
         self.stdID = stdID
         self.name = name
         self.status = status
         self.email = email
         self.tel = tel
         self.advisorID = advisorID
+        self.progress = progress
