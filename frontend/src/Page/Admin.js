@@ -41,12 +41,12 @@ export const Admin = () => {
   const handleDelete = async (stdID) => {
     // Confirm the deletion action from the user
     const confirmDelete = window.confirm(`Are you sure you want to delete student with ID: ${stdID}?`);
-    
+
     if (confirmDelete) {
       try {
         // Send DELETE request to the backend
         await axios.delete(`http://localhost:56733/deleteStudent/${stdID}`);
-        
+
         // Call fetchData to refresh the student list after deletion
         await fetchData();
         alert(`Student with ID: ${stdID} has been deleted successfully.`);
@@ -72,15 +72,6 @@ export const Admin = () => {
           </Box>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Box className="mid-container">
-            <Select defaultValue={10} fullWidth>
-              <MenuItem value={10}>Degree</MenuItem>
-              <MenuItem value={20}>Progress</MenuItem>
-              <MenuItem value={30}>Features</MenuItem>
-            </Select>
-          </Box>
-        </Grid>
-        <Grid item xs={12} md={4}>
           <Box className="right-container">
             <Button variant="contained" onClick={() => navigate("/addstudent")} startIcon={<AddIcon />}>
               เพิ่มนักศึกษา
@@ -93,16 +84,64 @@ export const Admin = () => {
       </Grid>
 
       <div className="admin-table-container" style={{ marginTop: '20px' }}>
-        <TableContainer component={Paper} sx={{ maxHeight: 440, overflow: 'auto' }}>
+        <TableContainer component={Paper} sx={{ maxHeight: 440, overflow: 'auto', }}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>No.</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Student ID</TableCell>
-                <TableCell>Degree</TableCell>
-                <TableCell>Progress</TableCell>
-                <TableCell>Edit</TableCell>
+                <TableCell
+                  sx={{
+                    backgroundColor: '#11009E', // Header background color
+                    color: 'white', // Header text color
+                    textAlign: 'center',
+                  }}
+                >
+                  No.
+                </TableCell>
+                <TableCell
+                  sx={{
+                    backgroundColor: '#11009E',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                >
+                  Name
+                </TableCell>
+                <TableCell
+                  sx={{
+                    backgroundColor: '#11009E',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                >
+                  Student ID
+                </TableCell>
+                <TableCell
+                  sx={{
+                    backgroundColor: '#11009E',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                >
+                  Degree
+                </TableCell>
+                <TableCell
+                  sx={{
+                    backgroundColor: '#11009E',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                >
+                  Progress
+                </TableCell>
+                <TableCell
+                  sx={{
+                    backgroundColor: '#11009E',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                >
+                  Edit
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -118,7 +157,7 @@ export const Admin = () => {
                       <IconButton
                         size="small"
                         onClick={() => handleView(student.stdID)}
-                        sx={{ color: 'indigo', '&:hover': { color: 'cyan' } }}
+                        sx={{ color: '#11009E', '&:hover': { color: 'cyan' } }}
                       >
                         <VisibilityIcon />
                       </IconButton>
@@ -144,6 +183,7 @@ export const Admin = () => {
           </Table>
         </TableContainer>
       </div>
+
     </>
   );
 };
