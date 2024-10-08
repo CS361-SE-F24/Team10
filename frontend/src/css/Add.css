@@ -42,7 +42,7 @@
 }
 
 
-button:hover {
+.button_add:hover {
   background-color: #0056b3;
 }
 
