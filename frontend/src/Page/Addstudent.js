@@ -15,16 +15,78 @@ export const Addstudent = () => {
     picture: null,
   });
 
-  const [customAdvisor, setCustomAdvisor] = useState(''); // New state for custom advisor input
-  const [loading, setLoading] = useState(false); // New loading state
-  const [responseMessage, setResponseMessage] = useState(''); // New state for response message
+  const [customAdvisor, setCustomAdvisor] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState('');
+  const [formValid, setFormValid] = useState(true);
+  const [errorMessages, setErrorMessages] = useState({});
 
   const navigate = useNavigate();
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(email);
+  };
+
   const AddNewStudent = (event) => {
     event.preventDefault();
-    setLoading(true); // Show loading
-    setResponseMessage(''); // Clear previous response message
+    setLoading(true);
+    setResponseMessage('');
+    setErrorMessages({}); // Reset error messages
+
+    const errors = {};
+
+    // Basic validation
+    if (!formData.name) {
+      errors.name = "Name is required!";
+    }
+    if (!formData.stdID) {
+      errors.stdID = "Student ID is required!";
+    }else if (formData.stdID.length !== 9) {
+      errors.stdID = "Student ID must be 9 digits!";
+    }else if (!/^\d+$/.test(formData.stdID)) {
+      errors.stdID = "Student ID is no valid!";
+    }
+    if (!formData.tel) {
+      errors.tel = "Tel is required!";
+    }else if (formData.tel.length !== 10) {
+      errors.tel = "Tel is no valid!";
+    }else if (!/^\d+$/.test(formData.tel)) {
+      errors.tel = "Tel is no valid!";
+    }
+    if (!formData.email) {
+      errors.email = "Email is required!";
+    } else if (!formData.email.endsWith("@cmu.ac.th")) { // Check if email ends
+      errors.email = "Email is not valid!";
+    } //else if (
+    //   !formData.email.endsWith("@gmail.com") &&
+    //   !formData.email.endsWith("@hotmail.com") &&
+    //   !formData.email.endsWith("@cmu.ac.th")
+    // ) {
+    //   errors.email = "Email is not valid!";
+    // }
+    if (!formData.degree) {
+      errors.degree = "Degree is required!";
+    }
+    if (!formData.advisor || (formData.advisor === "Other" && !customAdvisor)) {
+      errors.advisor = "Advisor is required!";
+    }
+    if (!formData.email_advisor) {
+      errors.email_advisor = "Email Advisor is required!";
+    }else if (!isValidEmail(formData.email_advisor)) { // Validate Email Advisor
+      errors.email_advisor = "Email is not valid!";
+    }
+
+    // if (!formData.picture) {
+    //   errors.picture = "Picture is required!";
+    // }
+
+    // Check if there are any errors
+    if (Object.keys(errors).length > 0) {
+      setErrorMessages(errors);
+      setLoading(false);
+      return;
+    }
 
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
@@ -32,32 +94,10 @@ export const Addstudent = () => {
     formDataToSend.append("tel", formData.tel);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("degree", formData.degree);
-
-    // Include either selected advisor or custom advisor
     const advisorToSend = formData.advisor === "Other" ? customAdvisor : formData.advisor;
     formDataToSend.append("advisor", advisorToSend);
-    
-    // Ensure to add custom advisor if "Other" is selected
-    if (formData.advisor === "Other" && !customAdvisor) {
-      alert("Please provide a custom advisor name.");
-      setLoading(false); // Hide loading after error
-      return;
-    }
-
     formDataToSend.append("email_advisor", formData.email_advisor);
     formDataToSend.append("picture", formData.picture);
-    
-    // Log the form data to console before sending
-    console.log("Form Data being sent:", {
-      name: formData.name,
-      stdID: formData.stdID,
-      tel: formData.tel,
-      email: formData.email,
-      degree: formData.degree,
-      advisor: advisorToSend,
-      email_advisor: formData.email_advisor,
-      picture: formData.picture ? formData.picture.name : null, // Log file name if present
-    });
 
     // Send the request
     axios
@@ -67,15 +107,14 @@ export const Addstudent = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
-        setResponseMessage(response.data.message); // Set the response message
-        setLoading(false); // Hide loading after success
+        setResponseMessage(response.data.message);
+        setLoading(false);
         navigate("/admin");
       })
       .catch((error) => {
         console.error("There was an error sending the data!", error);
-        setLoading(false); // Hide loading after error
-        setResponseMessage("There was an error adding the student."); // Set error message
+        setLoading(false);
+        setResponseMessage("There was an error adding the student.");
       });
   };
 
@@ -98,9 +137,8 @@ export const Addstudent = () => {
       [name]: value,
     });
 
-    // If 'Other' is selected, reset the custom advisor input
     if (name === 'advisor' && value !== 'Other') {
-      setCustomAdvisor(''); // Clear custom advisor when switching advisors
+      setCustomAdvisor('');
     }
   };
 
@@ -113,7 +151,7 @@ export const Addstudent = () => {
       )}
       <div className="containers">
         {!loading && (
-          <form onSubmit={AddNewStudent}>
+          <form onSubmit={AddNewStudent} noValidate>
             <div className="form-group">
               <label htmlFor="imageUpload">
                 <img
@@ -131,61 +169,72 @@ export const Addstudent = () => {
                 name="picture"
                 onChange={HandleFileChange}
                 style={{ display: 'none' }}
-                required
+                // required
               />
+              {/* {errorMessages.picture && <div className="error-message">{errorMessages.picture}</div>} Display error message for picture */}
             </div>
             <div className="form-group">
               <label htmlFor="name">Name</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.name ? 'is-invalid' : ''}`}
                 type="text"
                 id="name"
                 name="name"
+                placeholder="Enter Fistname and Lastname"
                 value={formData.name}
                 onChange={handleChange}
                 required
               />
+              {errorMessages.name && <div className="error-message">{errorMessages.name}</div>}
             </div>
             <div className="form-group">
-              <label htmlFor="stdID">StudentID</label><br />
+              <label htmlFor="stdID">Student ID</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.stdID ? 'is-invalid' : ''}`}
                 type="text"
                 id="stdID"
                 name="stdID"
+                placeholder="Enter Student ID"
                 value={formData.stdID}
                 onChange={handleChange}
+                maxLength={9} // Limit input to 9 characters
                 required
               />
+              {errorMessages.stdID && <div className="error-message">{errorMessages.stdID}</div>}
             </div>
             <div className="form-group">
               <label htmlFor="tel">Tel</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.tel ? 'is-invalid' : ''}`}
                 type="text"
                 id="tel"
                 name="tel"
+                placeholder="Enter Telephone"
                 value={formData.tel}
                 onChange={handleChange}
+                maxLength={10}
                 required
               />
+              {errorMessages.tel && <div className="error-message">{errorMessages.tel}</div>}
             </div>
             <div className="form-group">
               <label htmlFor="email">Email</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.email ? 'is-invalid' : ''}`}
                 type="email"
                 id="email"
                 name="email"
+                placeholder="example@cmu.ac.th"
                 value={formData.email}
                 onChange={handleChange}
                 required
               />
+              {errorMessages.email && <div className="error-message">{errorMessages.email}</div>}
             </div>
             <div className="form-group">
               <label htmlFor="degree">Degree</label><br />
               <select
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.degree ? 'is-invalid' : ''}`}
                 id="degree"
                 name="degree"
                 value={formData.degree}
@@ -199,11 +248,12 @@ export const Addstudent = () => {
                 <option value="PhD1.1">ปริญญาเอกหลักสูตรแบบ 1.1</option>
                 <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option>
               </select>
+              {errorMessages.degree && <div className="error-message">{errorMessages.degree}</div>}
             </div>
             <div className="form-group">
               <label htmlFor="advisor">Teacher Advisor</label><br />
               <select
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.advisor ? 'is-invalid' : ''}`}
                 id="advisor"
                 name="advisor"
                 value={formData.advisor}
@@ -216,8 +266,9 @@ export const Addstudent = () => {
                 <option value="Advisor Benjamas">Benjamas</option>
                 <option value="Advisor Kamonphop">Kamonphop</option>
                 <option value="Advisor Meetip">Meetip</option>
-                <option value="Other">Other</option> {/* Option for custom input */}
+                <option value="Other">Other</option>
               </select>
+              {errorMessages.advisor && <div className="error-message">{errorMessages.advisor}</div>}
             </div>
 
             {/* Input for custom advisor name */}
@@ -225,7 +276,7 @@ export const Addstudent = () => {
               <div className="form-group">
                 <label htmlFor="customAdvisor">Enter Advisor Name</label><br />
                 <input
-                  className="input_select_text"
+                  className={`input_select_text ${errorMessages.customAdvisor ? 'is-invalid' : ''}`}
                   type="text"
                   id="customAdvisor"
                   name="customAdvisor"
@@ -233,20 +284,23 @@ export const Addstudent = () => {
                   onChange={(e) => setCustomAdvisor(e.target.value)} // Update custom advisor input
                   required
                 />
+                {/* {errorMessages.customAdvisor && <div className="error-message">{errorMessages.customAdvisor}</div>} */}
               </div>
             )}
 
             <div className="form-group">
               <label htmlFor="email_advisor">Email Advisor</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.email_advisor ? 'is-invalid' : ''}`}
                 type="email"
                 id="email_advisor"
                 name="email_advisor"
+                placeholder="Enter Advisor Email"
                 value={formData.email_advisor}
                 onChange={handleChange}
                 required
               />
+              {errorMessages.email_advisor && <div className="error-message">{errorMessages.email_advisor}</div>}
             </div>
             <button type="submit" className="button_add">เพิ่มนักศึกษา</button>
           </form>
