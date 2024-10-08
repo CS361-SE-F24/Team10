@@ -5,32 +5,52 @@ import "../css/progressbar.css";
 export const ProgressBar = ({ stdID, onProgressUpdate }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState([]);
+  const [steps, setSteps] = useState([]);
+  const [stepNames, setStepNames] = useState([]);
 
-  // Define steps as the keys you will receive from the API
-  const steps = ["testEng", "comprehension", "quality", "publishExam"];
-  const stepNames = [
-    "Test English",
-    "Comprehension",
-    "Quality",
-    "Publish Exam",
-  ];
+  const getStepName = (key) => {
+    switch (key) {
+      case 'testEng':
+        return "Test English";
+      case 'comprehension':
+        return "Comprehension";
+      case 'quality':
+        return "Quality";
+      case 'publishExam':
+        return "Publish Exam";
+      case 'anotherStep': // Replace with actual step names if necessary
+        return "Another Step";
+      case 'finalStep':
+        return "Final Step";
+      default:
+        return key; // Fallback to the key itself if not found
+    }
+  };
 
   useEffect(() => {
     const fetchStudentPlan = async () => {
       if (!stdID) return;
-  
+
       try {
         const response = await axios.get(
           `http://localhost:56733/currentstudentplan?stdID=${stdID}`
         );
-        const { testEng, comprehension, quality, publishExam } = response.data;
-  
-        const fetchedCompletedSteps = [];
-        if (testEng) fetchedCompletedSteps.push(1);
-        if (comprehension) fetchedCompletedSteps.push(2);
-        if (quality) fetchedCompletedSteps.push(3);
-        if (publishExam) fetchedCompletedSteps.push(4);
-  
+        const data_get = response.data;
+        //(data_get);
+
+        // Extract keys and build steps and stepNames
+        const newSteps = Object.keys(data_get);
+        const newStepNames = newSteps.map(getStepName);
+        
+        const fetchedCompletedSteps = newSteps.reduce((acc, key, index) => {
+          if (data_get[key]) {
+            acc.push(index + 1); // Use index + 1 as the step number
+          }
+          return acc;
+        }, []);
+
+        setSteps(newSteps);
+        setStepNames(newStepNames);
         setCompletedSteps(fetchedCompletedSteps);
         setCurrentStep(
           fetchedCompletedSteps.length > 0
@@ -38,7 +58,8 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
             : 1
         );
   
-        const progressPercentage = (fetchedCompletedSteps.length / steps.length) * 100;
+        const progressPercentage = Math.floor((fetchedCompletedSteps.length / newSteps.length) * 100);
+        //(fetchedCompletedSteps.length,steps.length);
         
         // Post progress percentage to the backend
         await axios.post('http://localhost:56733/updatepercent', {

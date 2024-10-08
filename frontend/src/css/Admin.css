@@ -10,12 +10,12 @@
 
 table {
   border-collapse: collapse;
-  width: 100%;
+  width: 70%;
   color: black;
-  border-radius: 10px; /* Rounded corners */
+  border-radius: 20px; /* Rounded corners */
   overflow: hidden; /* Ensures rounded corners */
-  margin-top: 20px;
-  padding: 10px 15px;
+  margin-top: 10px;
+  margin: 1%;
 }
 
 th,

@@ -38,7 +38,8 @@ export const DonutChart = ({ progress }) => {
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible); // Toggle the popup visibility
   };
-
+  //(progress);
+  
   return (
     <div style={{ textAlign: 'center', position: 'relative', width: '200px', height: '150px' }}> {/* ปรับขนาดของคอนเทนเนอร์ */}
       <Doughnut data={data} options={options} />

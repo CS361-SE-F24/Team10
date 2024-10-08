@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.9-alpine3.17
+FROM python:3.9-alpine
 
 # This prevents Python from writing out pyc files
 ENV PYTHONDONTWRITEBYTECODE 1
