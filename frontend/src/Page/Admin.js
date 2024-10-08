@@ -139,7 +139,7 @@ export const Admin = () => {
                     textAlign: 'center',
                   }}
                 >
-                  Tel
+                  Phonenumber
                 </TableCell>
                 <TableCell
                   sx={{
