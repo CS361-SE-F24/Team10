@@ -139,6 +139,15 @@ export const Admin = () => {
                     textAlign: 'center',
                   }}
                 >
+                  Tel
+                </TableCell>
+                <TableCell
+                  sx={{
+                    backgroundColor: '#11009E',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                >
                   Progress
                 </TableCell>
                 <TableCell
@@ -150,13 +159,6 @@ export const Admin = () => {
                 >
                   Edit
                 </TableCell>
-                <TableCell>No.</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Student ID</TableCell>
-                <TableCell>Degree</TableCell>
-                <TableCell>Tel</TableCell>
-                <TableCell>Progress</TableCell>
-                <TableCell>Edit</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

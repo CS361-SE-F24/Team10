@@ -90,7 +90,7 @@ const handleInputChange = (event) => {
           email_advisor: studentData.advisor_email || "",
           image: null,
           picture: picture,
-        });
+        }));
 
         //(formData);
 
