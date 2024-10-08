@@ -241,11 +241,11 @@ export const Home = (props) => {
       </div>
       <div className="email">
         Email of Advisor: {formData.email_advisor || "Not available"}
-      </div>
+      </div><br />
 
       {currentUser.isAdmin && show === "progress" && (
         <div>
-          <button onClick={handleUpdate}>Update Progress</button>
+          <button onClick={handleUpdate} className="editpro">แก้ไข</button>
         </div>
       )}
     </div>
@@ -261,10 +261,16 @@ export const Home = (props) => {
           </div>
           <div className="DonutChart">
             <DonutChart progress={progressPercentage} />
-            <div className="course"></div>
-            <button onClick={togglePopup} className="popup-button">
-              Open Popup
-            </button>
+            <div className="course"></div><br /><br /><br />
+            <div className="box">
+              <p>เรียนให้ครบหน่วยกิต</p>
+              <button onClick={togglePopup} className="popup-button">
+                หน่วยกิตที่ได้รับ
+              </button>
+            </div><br/>
+            <div className="box2">
+              การเข้าร่วมประชุม
+            </div>
             {showPopup && (
               <div className="popup-modal">
                 <div className="popup-content">

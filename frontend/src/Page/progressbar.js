@@ -66,7 +66,7 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
           } ${currentStep === index + 1 ? "active" : ""}`}
           style={{ cursor: "pointer" }}
         >
-          <div className="circle">{index + 1}</div>
+          <div className="circle"></div>
           <div className="step-name">{stepNames[index]}</div>
           {index !== steps.length - 1 && <div className="line"></div>}
         </div>
