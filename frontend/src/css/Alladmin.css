@@ -67,7 +67,11 @@
   }
 
   .admin-container {
-    align-items: right;
+    margin: right;
+  }
+
+  .admin-text {
+    align-items: left;
   }
   
   .admin-card-container {

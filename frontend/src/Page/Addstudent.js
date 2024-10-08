@@ -245,8 +245,8 @@ export const Addstudent = () => {
                 <option value="Master_Degree (แผน ก แบบ ก 1)">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
                 <option value="Master_Degree (แผน ก แบบ ก 2)">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
                 <option value="Master_Degree3 (แผน ข)">ปริญญาโทแบบ 3(แผน ข)</option>
-                <option value="PhD1.1">ปริญญาเอกหลักสูตรแบบ 1.1</option>
-                <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option>
+                <option value="PhD">ปริญญาเอก</option>
+                {/* <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option> */}
               </select>
               {errorMessages.degree && <div className="error-message">{errorMessages.degree}</div>}
             </div>

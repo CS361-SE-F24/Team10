@@ -38,7 +38,8 @@ export const DonutChart = ({ progress }) => {
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible); // Toggle the popup visibility
   };
-
+  //(progress);
+  
   return (
     <div style={{ textAlign: 'center', position: 'relative', width: '200px', height: '150px' }}> {/* ปรับขนาดของคอนเทนเนอร์ */}
       <Doughnut data={data} options={options} />
@@ -53,9 +54,9 @@ export const DonutChart = ({ progress }) => {
       }}>
         {Math.round(progress)}%
       </div>
-      {/* <div style={{ marginTop: '10px', fontSize: '14px', color: 'blue' }}>
-        Current: ตีพิมพ์ผลงานวิจัย
-      </div> */}
+      <div style={{ marginTop: '10px', fontSize: '20px', color: '#11009E' }}>
+        Your Progress
+      </div>
     </div>
   );
 };

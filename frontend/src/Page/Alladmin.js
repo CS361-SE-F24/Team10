@@ -47,7 +47,7 @@ export const Alladmin = () => {
     <>
       <Box className="admin-header">
         <Box className="admin-text">
-          <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left' }}>
+          <Typography variant="h8" ผผ>
             Add new admin <br />
           </Typography>
         </Box>
