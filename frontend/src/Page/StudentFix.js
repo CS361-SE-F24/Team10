@@ -35,8 +35,8 @@ export const StudentFixinformation = (props) => {
           tel: studentData.tel || '',
           email: studentData.email || '',
           degree: studentData.plan || '',  // Assuming "plan" corresponds to degree
-          advisor: '',  // Set a default value or use a field from the response if available
-          email_advisor: '',  // Same as advisor
+          advisor: studentData.advisor || "",
+          email_advisor: studentData.advisor_email || "",
           image: null,  // No image in response; leave as null
         });
         console.log(formData.degree);

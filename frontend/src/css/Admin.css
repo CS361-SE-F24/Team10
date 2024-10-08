@@ -66,20 +66,20 @@ td {
 }
 
 .contain button:hover {
-  background-color: #a5cff9; /* Darker blue on hover */
+  background-color: #a5cff9; 
 }
 
 button.edit, button.delete {
   margin-right: 5px;
   padding: 8px 12px;
   border-radius: 5px;
-  background-color: #4CAF50; /* Green for edit */
+  background-color: #4CAF50; 
   color: white;
   border: none;
 }
 
 button.delete {
-  background-color: #f44336; /* Red for delete */
+  background-color: #f44336; 
 }
 
 button.edit:hover {
