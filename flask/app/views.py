@@ -9,6 +9,7 @@ from app.models.study_plan import Study_plan
 from app.models.advisor import Advisor
 from app.models.upload import Publish
 from app.models.course import Course
+from app.models.regist import Regits
 import traceback
 import secrets
 import string
@@ -124,22 +125,19 @@ def addStudent():
 
         # Create a new study plan, ensuring all required parameters are included
         new_plan = Study_plan(
-            planName=data.get('degree'),  # You may want to adjust this depending on your logic
-            testEng=None,  # Set this to the correct value as needed
-            testEng_filename=None,  # Set this to the correct value as needed
-            study_planID=data.get('stdID'),  # Assuming this should match stdID
-            nPublish=0,  # Default or actual value from your logic
-            finished=False,  # Default value, adjust based on your requirements
-            comprehension=None,  # Set this to the correct value as needed
-            comprehension_filename=None,  # Set this to the correct value as needed
-            quality=None,  # Set this to the correct value as needed
-            quality_filename=None,  # Set this to the correct value as needed
-            core=0,  # Default or actual value from your logic
-            select=0,  # Default or actual value from your logic
-            free=0,  # Default or actual value from your logic
-            publishExam=None,  # Set this to the correct value as needed
-            publishExam_filename=None,  # Set this to the correct value as needed
-            complete_course = False
+        planName=data.get('degree'),  # Assuming this is the degree or name of the plan
+        testEng=None,  # Set this to the correct file data as needed
+        testEng_filename=None,  # Set this to the correct file name as needed
+        comprehension=None,  # Set this to the correct file data as needed
+        comprehension_filename=None,  # Set this to the correct file name as needed
+        quality=None,  # Set this to the correct file data as needed
+        quality_filename=None,  # Set this to the correct file name as needed
+        study_planID=data.get('stdID'),  # Assuming stdID is used as the unique study_planID
+        nPublish_journal=0,  # Default value, adjust based on your logic
+        nPublish_proceeding=0,  # Default value, adjust based on your logic
+        nPublish_conferrence=0,  # Default value, adjust based on your logic
+        credit=0,  # Default or actual value from your logic
+        complete_course=False  # Default value, adjust as needed
         )
 
         # Send email with generated password
@@ -376,16 +374,37 @@ def get_file_data(file_binary, filename):
 def currentstudentplan():
     stdID = request.args.get('stdID')
     study_plan = Study_plan.query.filter_by(study_planID=stdID).first()
-
+    
     if study_plan is None:
         return jsonify({"error": "Student not found"}), 404
-
-    current_data = {
-        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),  # Example filename
-        'nPublish': study_plan.nPublish,
+    if study_plan.planName == "Master_Degree (แผน ก แบบ ก 1)":
+        current_data = {
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'ตีพิมพ์วิจัย': True,
+        'เสนอหัวข้อ': True,
+        'complete_course': study_plan.complete_course
+        }
+    elif study_plan.planName == "Master_Degree (แผน ก แบบ ก 2)":
+        current_data = {
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'ตีพิมพ์วิจัย': True,
+        'เสนอหัวข้อ': True,
+        'complete_course': study_plan.complete_course
+        }
+    elif study_plan.planName == "Master_Degree3 (แผน ข)":
+        current_data = {
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
         'comprehension': get_file_data(study_plan.comprehension, 'comprehension.pdf'),
+        'ตีพิมพ์วิจัย': True,
+        'เสนอหัวข้อ': True,
+        'complete_course': study_plan.complete_course
+    }
+    elif study_plan.planName == "PhD":
+        current_data = {
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'ตีพิมพ์วิจัย': True,
+        'เสนอหัวข้อ': True,
         'quality': get_file_data(study_plan.quality, 'quality.pdf'),
-        'publishExam': get_file_data(study_plan.publishExam, 'publishExam.pdf'),
         'complete_course': study_plan.complete_course
     }
 
@@ -408,17 +427,35 @@ def upload_file():
     if file.filename == '':
         return jsonify({'message': "No selected file"}), 400
 
-    # ตรวจสอบว่ามีไฟล์ของ stdID นี้ในฐานข้อมูลหรือไม่
+    # Check if a file with the same name already exists for this stdID
     existing_file = Publish.query.filter_by(stdID=stdID, filename=file.filename).first()
     if existing_file:
         return jsonify({'message': "This file already exists for the student"}), 400
 
-    # ถ้าไม่มี ให้ทำการบันทึก
-    upload = Publish(stdID=stdID, filename=file.filename, file=file.read(), types=types)
-    db.session.add(upload)
-    db.session.commit()
+    # Find the corresponding study plan for the given stdID
+    plan = Study_plan.query.filter_by(study_planID=stdID).first()
+    
+    # Update the correct publication count based on the types value
+    if plan:
+        if types == "journal":
+            plan.nPublish_journal += 1
+        elif types == "proceeding":
+            plan.nPublish_proceeding += 1
+        elif types == "conference":
+            plan.nPublish_conferrence += 1
+        else:
+            return jsonify({'message': "Invalid type"}), 400
+        
+        # Save the new file in the Publish table
+        upload = Publish(stdID=stdID, filename=file.filename, file=file.read(), types=types)
+        db.session.add(upload)
 
-    return jsonify({'message': "File uploaded successfully"}), 200
+        # Commit both the study plan update and the file upload to the database
+        db.session.commit()
+
+        return jsonify({'message': "File uploaded and study plan updated successfully"}), 200
+    else:
+        return jsonify({'message': "Study plan not found for this student ID"}), 404
 
 
 
@@ -477,15 +514,17 @@ def editprogress():
     try:
         # Extract form data and file uploads
         study_planID = request.form.get('stdID')
+        regits_courses = request.form.get('Regits_Course')  # Get the Regits_Course input
         testEng_file = request.files.get('testEng')
         comprehensive_file = request.files.get('comprehensiveExam')
         qualifying_file = request.files.get('QualifyingExam')
         nPublish = request.form.get('nPublish')
         set_complete = request.form.get('Complete_Course')  # New field for setting completion status
-        print(request.form.get('Complete_Course'))
+
         # Debug print to inspect form data and file uploads
         print({
             "study_planID": study_planID,
+            "regits_courses": regits_courses,  # Debugging Regits_Course
             "testEng_file": testEng_file,
             "comprehensive_file": comprehensive_file,
             "qualifying_file": qualifying_file,
@@ -495,16 +534,14 @@ def editprogress():
 
         # Find the study plan by student ID
         study_plan = Study_plan.query.filter_by(study_planID=study_planID).first()
-
         if not study_plan:
             return jsonify({"error": "Study plan not found"}), 404
 
-        # Update study plan fields if files are provided, skip if None
+        # Handle file uploads (same as your existing logic)
         if testEng_file is not None and testEng_file.filename != '':
             study_plan.testEng = testEng_file.read()
             study_plan.testEng_filename = testEng_file.filename
         elif testEng_file is not None and testEng_file.filename == '':
-            # If file is explicitly empty, reset the field
             study_plan.testEng = None
             study_plan.testEng_filename = None
 
@@ -512,7 +549,6 @@ def editprogress():
             study_plan.comprehension = comprehensive_file.read()
             study_plan.comprehension_filename = comprehensive_file.filename
         elif comprehensive_file is not None and comprehensive_file.filename == '':
-            # If file is explicitly empty, reset the field
             study_plan.comprehension = None
             study_plan.comprehension_filename = None
 
@@ -520,25 +556,41 @@ def editprogress():
             study_plan.quality = qualifying_file.read()
             study_plan.quality_filename = qualifying_file.filename
         elif qualifying_file is not None and qualifying_file.filename == '':
-            # If file is explicitly empty, reset the field
             study_plan.quality = None
             study_plan.quality_filename = None
 
         # Update nPublish if provided
-        if nPublish is not None:
+        if nPublish:
             study_plan.nPublish = int(nPublish)
 
         # Set study plan completion status if provided
-        if set_complete is not None:
-            # Assuming 'setComplete' is passed as 'true' or 'false'
-            study_plan.complete_course = set_complete.lower() == 'true'
+        if set_complete == "true":
+            study_plan.complete_course = True
+        else:
+            study_plan.complete_course = False
+
+        # Handle Regits_Course
+        if regits_courses:
+            # Split the string by commas and create Regits entries
+            course_ids = regits_courses.split(",")
+            for course_id in course_ids:
+                course_id = course_id.strip()  # Trim any whitespace
+                if course_id:  # Check if the course_id is not empty
+                    # Check if the Regits entry already exists
+                    existing_regit = Regits.query.filter_by(stdID=study_planID, courseID=course_id).first()
+                    if not existing_regit:  # Only create a new entry if it doesn't exist
+                        new_regit = Regits(stdID=study_planID, courseID=course_id)
+                        db.session.add(new_regit)
 
         # Commit changes to the database
         db.session.commit()
         return jsonify({"message": "Progress updated successfully"}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print("Error:", e)  # Log the error for debugging
+        return jsonify({"error": str(e), "message": "An error occurred while updating progress."}), 500
+
+
 
 @app.route('/addcourse', methods=['POST'])
 def add_course():
@@ -602,8 +654,8 @@ def get_courses_by_stdID():
         "Master_Degree (แผน ก แบบ ก 1)": "M.",
         "Master_Degree (แผน ก แบบ ก 2)": "M.",
         "Master_Degree3 (แผน ข)": "M.",
-        "PhD1.1": "Ph.D.",
-        "PhD2.2": "Ph.D."
+        "PhD": "Ph.D.",
+        # "PhD2.2": "Ph.D."
     }
 
     planName = planName_map.get(study_plan.planName, None)
@@ -612,14 +664,19 @@ def get_courses_by_stdID():
 
     # Fetch courses using the mapped plan name
     courses = Course.query.filter_by(planName=planName).all()
+    regist = Regits.query.filter_by(stdID=stdID).all()
     if not courses:
         return jsonify({'error': 'No courses found for this student'}), 404
+
+# Create a set of course IDs that the student is registered for
+    registered_course_ids = {reg.courseID for reg in regist}
 
     course_list = [
         {
             'courseID': course.courseID,
             'credit': course.credit,
-            'planName': course.planName
+            'planName': course.planName,
+            'registered': course.courseID in registered_course_ids  # Check if course is registered
         }
         for course in courses
     ]

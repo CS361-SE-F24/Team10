@@ -14,8 +14,8 @@
   grid-template-columns: 1fr 1fr; /* Define two columns: one for the circle, and one for the step name */
   align-items: center; /* Vertically align content in both columns */
   column-gap: 15px; /* Adjust spacing between the circle and step name */
-  margin-bottom: 75px; /* Space between steps */
-  padding: 10px; /* Add padding to increase the height of each step */
+  margin-bottom: 100px; /* Space between steps */
+  padding: 20px; /* Add padding to increase the height of each step */
   position: relative; /* Position relative for absolute positioning of line */
   background-color: transparent !important;
   position: relative;
@@ -41,7 +41,7 @@
 
 .line {
   width: 7px;
-  height: 125px; /* Height of the line */
+  height: 190px; /* Height of the line */
   background-color: #e0e0e0;
   position: absolute; /* Change to absolute for better control */
   top: 30px; /* Adjust this to position the line below the circle */

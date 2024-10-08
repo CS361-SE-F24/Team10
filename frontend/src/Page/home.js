@@ -44,8 +44,21 @@ export const Home = (props) => {
     comprehensiveExam: null,
     QualifyingExam: null,
     credit: 0,
-    Complete_Course: null,
+    Complete_Course:false
   });
+
+  const [selectedCourses, setSelectedCourses] = useState("");
+const [courseArray, setCourseArray] = useState([]);
+
+const handleInputChange = (event) => {
+  const inputValue = event.target.value;
+  setSelectedCourses(inputValue);
+
+  // Split the input string by commas, filter out empty strings, and set the resulting array
+  const courses = inputValue.split(",").filter(course => course.trim() !== "");
+  setCourseArray(courses);
+  //(courses); // Log the newly created array
+};
 
   useEffect(() => {
     // Save stdID to localStorage if not already saved
@@ -59,7 +72,7 @@ export const Home = (props) => {
           `http://localhost:56733/currentstudent?stdID=${stdID}`
         );
         const studentData = response.data;
-        console.log(studentData);
+        //(studentData);
 
         const picture = studentData.picture
           ? `data:image/jpeg;base64,${studentData.picture}`
@@ -75,8 +88,11 @@ export const Home = (props) => {
           degree: studentData.plan || "",
           advisor: studentData.advisor || "",
           email_advisor: studentData.advisor_email || "",
-          picture: picture, // Set the image from API
-        }));
+          image: null,
+          picture: picture,
+        });
+
+        //(formData);
 
         setLoading(false);
       } catch (err) {
@@ -108,7 +124,7 @@ export const Home = (props) => {
         `http://localhost:56733/currentstudentplan?stdID=${stdID}`
       );
       const studentData = response.data;
-      console.log(studentData);
+      // //(studentData);
 
       const convertFile = (fileData) => {
         if (fileData && fileData.file) {
@@ -175,34 +191,37 @@ export const Home = (props) => {
   const editProgress = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget); // Create a FormData object
-    const data = Object.fromEntries(formData.entries()); // Log the form data for debugging
-    console.log("diuUfffffffff");
-
-    console.log(data);
-    setFormplan({ ...plan, Complete_Course: data.complete_course})
-    console.log();
-    
+    //(courseArray);
+    // Append Complete_Course from the plan object
+    formData.append('Complete_Course', plan.Complete_Course); // Append the Complete_Course value
+    formData.append('Regits_Course', courseArray);
+    // Log the form data for debugging
+    const data = Object.fromEntries(formData.entries());
+    //("Form Data:", data); 
 
     try {
-      const response = await axios.post(
-        "http://localhost:56733/editprogress",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" }, // Ensure it's multipart for file upload
-        }
-      );
-      alert("Progress updated successfully");
-      fetchPlan(); // Refresh the study plan after the update
+        const response = await axios.post(
+            "http://localhost:56733/editprogress",
+            formData,
+            {
+                headers: { "Content-Type": "multipart/form-data" }, // Ensure it's multipart for file upload
+            }
+        );
+        alert("Progress updated successfully");
+        fetchPlan(); // Refresh the study plan after the update
     } catch (error) {
-      setError("Progress update failed");
-      console.error("Error updating progress:", error);
+        setError("Progress update failed");
+        console.error("Error updating progress:", error);
     }
-  };
+};
+
 
   const fetchCourses = async () => {
     try {
       const response = await axios.get(`http://localhost:56733/getcourses?stdID=${stdID}`);
       setCourses(response.data.courses);
+      //(response.data);
+      
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
@@ -219,7 +238,8 @@ export const Home = (props) => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
-
+  //(progressPercentage);
+  
   return (
   <div className="home-container">
     <div className="sidebar">
@@ -243,11 +263,11 @@ export const Home = (props) => {
       </div>
       <div className="email">
         Email of Advisor: {formData.email_advisor || "Not available"}
-      </div>
+      </div><br />
 
       {currentUser.isAdmin && show === "progress" && (
         <div>
-          <button onClick={handleUpdate}>Update Progress</button>
+          <button onClick={handleUpdate} className="editpro">แก้ไข</button>
         </div>
       )}
     </div>
@@ -263,10 +283,16 @@ export const Home = (props) => {
           </div>
           <div className="DonutChart">
             <DonutChart progress={progressPercentage} />
-            <div className="course"></div>
-            <button onClick={togglePopup} className="popup-button">
-              Open Popup
-            </button>
+            <div className="course"></div><br /><br /><br />
+            <div className="box">
+              <p>เรียนให้ครบหน่วยกิต</p>
+              <button onClick={togglePopup} className="popup-button">
+                หน่วยกิตที่ได้รับ
+              </button>
+            </div><br/>
+            <div className="box2">
+              การเข้าร่วมประชุม
+            </div>
             {showPopup && (
               <div className="popup-modal">
                 <div className="popup-content">
@@ -274,9 +300,9 @@ export const Home = (props) => {
                   {courses.length > 0 ? (
                     <ul>
                       {courses.map((course, index) => (
-                        <li key={index}>
+                        <li key={index} className={course.registered ? ("registered"):("notregis")}>
                           {course.courseID} - {course.planName} (
-                          {course.credit} credits)
+                          {course.credit} credits{})
                         </li>
                       ))}
                     </ul>
@@ -323,7 +349,7 @@ export const Home = (props) => {
                   ผ่าน
                 </label>
                 <div>
-                  <p>Uploaded File:</p>
+                  {/* <p>Uploaded File:</p> */}
                   <a
                     href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
                     download
@@ -364,7 +390,7 @@ export const Home = (props) => {
                   ผ่าน
                 </label>
                 <div>
-                  <p>Uploaded File:</p>
+                  {/* <p>Uploaded File:</p> */}
                   <a
                     href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
                     download
@@ -402,7 +428,7 @@ export const Home = (props) => {
                   ผ่าน
                 </label>
                 <div>
-                  <p>Uploaded File:</p>
+                  {/* <p>Uploaded File:</p> */}
                   <a
                     href={`http://localhost:56733/downloadplan/${stdID}/quality`}
                     download
@@ -417,18 +443,8 @@ export const Home = (props) => {
           {/* Complete all required courses */}
           <div>
             <p>Complete Course</p>
-            {plan.Complete_Course === null ? (
+            {plan.Complete_Course === false ? (
               <>
-                <input
-                  type="checkbox"
-                  id="Complete_Course"
-                  name="Complete_Course"
-                  checked={plan.Complete_Course === true}
-                  onChange={() => setFormplan({ ...plan, Complete_Course: !plan.Complete_Course })}
-
-                  htmlFor="Complete_Course" className="editprogress_label"
-                />
-
                 <label htmlFor="Complete_Course" className="editprogress_label" onClick={() =>
                     setFormplan({ ...plan, Complete_Course: true}) // Set Complete_Course to not pass
                   }>
@@ -439,7 +455,7 @@ export const Home = (props) => {
               <div>
                 <label
                   onClick={() =>
-                    setFormplan({ ...plan, Complete_Course: null }) // Set Complete_Course to not pass
+                    setFormplan({ ...plan, Complete_Course: false }) // Set Complete_Course to not pass
                   }
                   className="editprogress_label_pass"
                 >
@@ -448,15 +464,27 @@ export const Home = (props) => {
               </div>
             )}
           </div>
-          
+          {/* Course Selection */}
+          <label>เลือกตัวที่เรียน</label>
+          <input 
+            type="text" 
+            // value={selectedCourses} 
+            onChange={handleInputChange} 
+            placeholder="Enter course IDs separated by commas" 
+          />
 
           <button type="submit">Save Progress</button>
         </form>
         <form onSubmit={uploadFile} enctype="multipart/form-data">
             <input type="file" name="file" />
             <br></br>
-            <input type="text" name="type" required />
-            <br></br>
+            <select name="type" required>
+              <option value="journal">Journal</option>
+              <option value="proceeding">Proceeding</option>
+              <option value="conference">Conference</option>
+          </select>
+          <br></br>
+
             <input type="hidden" name="stdID" value={stdID} />
             <button type="submit">Upload File</button>
           </form>
