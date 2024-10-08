@@ -101,6 +101,7 @@ export const Admin = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Student ID</TableCell>
                 <TableCell>Degree</TableCell>
+                <TableCell>Tel</TableCell>
                 <TableCell>Progress</TableCell>
                 <TableCell>Edit</TableCell>
               </TableRow>
@@ -112,6 +113,7 @@ export const Admin = () => {
                   <TableCell>{student.name}</TableCell>
                   <TableCell>{student.stdID}</TableCell>
                   <TableCell>{student.degree}</TableCell>
+                  <TableCell>{student.tel}</TableCell>
                   <TableCell>{student.progress}</TableCell>
                   <TableCell>
                     <div>

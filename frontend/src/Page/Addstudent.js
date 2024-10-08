@@ -112,6 +112,7 @@ export const Addstudent = () => {
         </div>
       )}
       <div className="containers">
+      <br />
         {!loading && (
           <form onSubmit={AddNewStudent}>
             <div className="form-group">
@@ -193,9 +194,9 @@ export const Addstudent = () => {
                 required
               >
                 <option value="">Select Degree</option>
-                <option value="Master_Degree (แผน ก แบบ ก 1)">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
-                <option value="Master_Degree (แผน ก แบบ ก 2)">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
-                <option value="Master_Degree3 (แผน ข)">ปริญญาโทแบบ 3(แผน ข)</option>
+                <option value="Master_Degree1 (แผน ก แบบ ก 1)">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
+                <option value="Master_Degree2 (แผน ก แบบ ก 2)">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
+                <option value="Master_Degree 3(แผน ข)">ปริญญาโทแบบ 3(แผน ข)</option>
                 <option value="PhD1.1">ปริญญาเอกหลักสูตรแบบ 1.1</option>
                 <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option>
               </select>
@@ -211,11 +212,11 @@ export const Addstudent = () => {
                 required
               >
                 <option value="">Select Advisor</option>
-                <option value="Advisor Kittipich">Kittipich</option>
-                <option value="Advisor Jakkarin">Jakkarin</option>
-                <option value="Advisor Benjamas">Benjamas</option>
-                <option value="Advisor Kamonphop">Kamonphop</option>
-                <option value="Advisor Meetip">Meetip</option>
+                <option value="Kittipich">Kittipich</option>
+                <option value="Jakkarin">Jakkarin</option>
+                <option value="Benjamas">Benjamas</option>
+                <option value="Kamonphop">Kamonphop</option>
+                <option value="Meetip">Meetip</option>
                 <option value="Other">Other</option> {/* Option for custom input */}
               </select>
             </div>
@@ -256,7 +257,7 @@ export const Addstudent = () => {
           <div className="response-message">
             {responseMessage}
           </div>
-        )}
+        )}<br />
       </div>
     </>
   );

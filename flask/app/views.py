@@ -1,3 +1,4 @@
+import binascii
 from flask import jsonify, request,send_file,abort
 from flask_cors import CORS
 from flask_login import login_user, login_required, logout_user, current_user
@@ -90,8 +91,7 @@ def addStudent():
 
             new_advisor = Advisor(
                 name=advisor_name,
-                email=advisor_email,  # Assuming there's a field for advisor email
-                tel="0999958855"  # Static tel for now, can be dynamic
+                email=advisor_email  # No tel field here
             )
             db.session.add(new_advisor)
             db.session.commit()
@@ -205,6 +205,8 @@ def data():
         result.append({
             'no': no,
             'name': student.name,
+            'email': student.email,
+            'tel': student.tel,
             'stdID': student.stdID,
             'degree': study_plan.planName ,
             'advisor': advisor.name ,
@@ -241,44 +243,124 @@ def login():
 
 @app.route('/studentfix', methods=['POST'])
 def studentfix():
-    logout_user()
-    return jsonify({"message": "Logged out successfully"}), 200
+    try:
+        # Receive JSON data
+        data = request.json
+        print("Received data:", data)  # Debugging: show received data
+
+        # Check required fields
+        required_fields = ['stdID', 'name', 'tel', 'email', 'degree', 'advisor', 'email_advisor']
+        for field in required_fields:
+            if field not in data or not data[field]:
+                return jsonify({"error": f"{field} is required and cannot be empty"}), 400
+
+        # Find existing student
+        student = Student.query.filter_by(stdID=data['stdID']).first()
+        if student is None:
+            return jsonify({"error": "Student not found"}), 404
+
+        # Update student information
+        student.name = data['name']
+        student.tel = data['tel']
+        student.email = data['email']
+
+        # Look for existing advisor
+        existing_advisor = Advisor.query.filter_by(name=data['advisor']).first()
+
+        if existing_advisor:
+            # If existing advisor's email matches the new email, just use them
+            if existing_advisor.email == data['email_advisor']:
+                print("Advisor data is the same, no changes made.")
+                student.advisorID = existing_advisor.id  # Use the old advisor
+            else:
+                # Check for an advisor with the new email
+                existing_email_advisor = Advisor.query.filter_by(email=data['email_advisor']).first()
+                if existing_email_advisor:
+                    # If the email exists, update student with this advisor
+                    student.advisorID = existing_email_advisor.id
+                    print("Advisor email exists, updating student with existing advisor.")
+                else:
+                    # If not, update the existing advisor's email
+                    existing_advisor.email = data['email_advisor']
+                    db.session.commit()  # Save the changes to the existing advisor
+                    student.advisorID = existing_advisor.id
+                    print("Updated existing advisor's email.")
+        else:
+            # Create a new advisor if none exists
+            new_advisor = Advisor(name=data['advisor'], email=data['email_advisor'])
+            db.session.add(new_advisor)
+            db.session.flush()  # Ensure the new advisor's ID is available
+            student.advisorID = new_advisor.id
+            print("New advisor created.")
+
+        # Handle image if provided
+        if 'image' in data and data['image']:
+            user = User.query.filter_by(email=student.email).first()
+            if user:
+                image_data = data['image']
+                if "," in image_data:
+                    _, image_data = image_data.split(",", 1)  # Remove header
+                try:
+                    decoded_image = base64.b64decode(image_data)
+                    user.picture = decoded_image
+                except binascii.Error:
+                    return jsonify({"error": "Invalid image data"}), 400
+
+        # Commit all changes to the database
+        db.session.commit()
+        print("Updated student data:", student)  # Debugging: show updated student data
+        return jsonify({"message": "Student information updated successfully"}), 200
+
+    except Exception as e:
+        db.session.rollback()  # Rollback on error
+        print("Error during studentfix:", str(e))  # Debugging: show error
+        return jsonify({"error": "An error occurred while updating student information.", "details": str(e)}), 500
+
 
 @app.route('/currentstudent', methods=['GET'])
 def currentstudent():
-    stdID = request.args.get('stdID')  # Get stdID from query parameters
-    
+    stdID = request.args.get('stdID')
+
+    # Check if stdID is provided
+    if not stdID:
+        return jsonify({"error": "stdID is required"}), 400
+
     # Fetch the student record
     student = Student.query.filter_by(stdID=stdID).first()
-    # advisor = Advisor.query.filter_by(id=student.advisorID).first()
-    # Handle case where student is not found
+
     if student is None:
         return jsonify({"error": "Student not found"}), 404
 
-    # Fetch the study plan associated with the student
-    plan = Study_plan.query.filter_by(study_planID=student.stdID).first()
+    # Fetch the advisor
     advisor = Advisor.query.filter_by(id=student.advisorID).first()
-    # If plan is not found, handle it if necessary
+
+    # Prepare the response data
+    advisor_name = advisor.name if advisor else "Unknown Advisor"
+    advisor_email = advisor.email if advisor else "Unknown Email"
+    if advisor is None:
+        print(f"Advisor not found for student: {stdID}")  # Log the missing advisor for debugging
+
+    # Fetch the study plan
+    plan = Study_plan.query.filter_by(study_planID=student.stdID).first()  # Assuming this is the correct key
     plan_name = plan.planName if plan else "No plan available"
+
+    # Fetch user details if exists
     user = User.query.filter_by(email=student.email).first()
+
     current_data = {
         'name': student.name,
         'tel': student.tel,
         'email': student.email,
         'plan': plan_name,
-        # Convert picture binary data to Base64 string if it exists
-        'picture': None, # Initialize as None
-        'advisor': advisor.name ,
-        'advisor_email': advisor.email ,
+        'picture': None,  # Initialize as None
+        'advisor': advisor_name,
+        'advisor_email': advisor_email,
     }
 
-    if user.picture:
+    if user and user.picture:
         current_data['picture'] = base64.b64encode(user.picture).decode('utf-8')
-    
-    return jsonify(current_data), 200  # Return the data with status 200
 
-###################################################
-
+    return jsonify(current_data), 200
 
 
 def get_file_data(file_binary, filename):

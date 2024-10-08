@@ -9,11 +9,13 @@ export const Home = (props) => {
   const location = useLocation();
   const stdID =
     location.state?.stdID || props.stdID || localStorage.getItem("stdID") || "";
-  const currentUser = props.currentUser ||
-    JSON.parse(localStorage.getItem("currentUser")) || {
+  
+  const currentUser =
+    props.currentUser || JSON.parse(localStorage.getItem("currentUser")) || {
       id: 0,
       isAdmin: false,
     };
+
   const [show, setShow] = useState("progress");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,8 +32,8 @@ export const Home = (props) => {
     degree: "",
     advisor: "",
     email_advisor: "",
-    image: null,
-    picture: null, // Add this field to store the image
+    // image: null, // For uploading new image
+    picture: null, // Displaying the current image fetched from API
   });
 
   const [plan, setFormplan] = useState({
@@ -42,10 +44,11 @@ export const Home = (props) => {
     comprehensiveExam: null,
     QualifyingExam: null,
     credit: 0,
-    Complete_Course:null
+    Complete_Course: null,
   });
 
   useEffect(() => {
+    // Save stdID to localStorage if not already saved
     if (stdID && !localStorage.getItem("stdID")) {
       localStorage.setItem("stdID", stdID);
     }
@@ -62,7 +65,9 @@ export const Home = (props) => {
           ? `data:image/jpeg;base64,${studentData.picture}`
           : null;
 
-        setFormData({
+        // Update formData with student data and the picture (if available)
+        setFormData((prevData) => ({
+          ...prevData,
           name: studentData.name || "",
           stdID: stdID,
           tel: studentData.tel || "",
@@ -70,11 +75,8 @@ export const Home = (props) => {
           degree: studentData.plan || "",
           advisor: studentData.advisor || "",
           email_advisor: studentData.advisor_email || "",
-          image: null,
-          picture: picture,
-        });
-
-        console.log(formData);
+          picture: picture, // Set the image from API
+        }));
 
         setLoading(false);
       } catch (err) {

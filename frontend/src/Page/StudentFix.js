@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";  // Import useLocation
+import { useLocation, useNavigate } from "react-router-dom";
 import "../css/Add.css";
 
 export const StudentFixinformation = (props) => {
   const location = useLocation();
-  const stdID = location.state?.stdID || props.stdID || "";
-  // const [students, setStudents] = useState([]);
+  const stdID = location.state?.stdID || props.stdID || ""; 
   const [loading, setLoading] = useState(true);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [error, setError] = useState(null);
-  console.log(stdID)
-
   const [formData, setFormData] = useState({
     name: '',
     stdID: stdID,
@@ -19,66 +17,88 @@ export const StudentFixinformation = (props) => {
     degree: '',
     advisor: '',
     email_advisor: '',
-    image: null, // เพิ่ม field สำหรับจัดเก็บรูปภาพ
+    picture: null,
   });
 
+  const navigate = useNavigate(); 
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:56733/currentstudent?stdID=${stdID}`);
+      const studentData = response.data;
+
+      // Set form data with fetched student data
+      setFormData(prevData => ({
+        ...prevData,
+        name: studentData.name || '',
+        tel: studentData.tel || '',
+        email: studentData.email || '',
+        degree: studentData.plan || '',
+        advisor: studentData.advisor || "",
+        email_advisor: studentData.advisor_email || "",
+        picture: studentData.picture || null, // Use studentData.picture directly
+      }));
+    } catch (err) {
+      setError("Error fetching data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:56733/currentstudent?stdID=${stdID}`);
-        console.log(response.data);
-        // setStudents(response.data);
-        const studentData = response.data;
-        setFormData({
-          name: studentData.name || '',
-          stdID: stdID,  // stdID is already available
-          tel: studentData.tel || '',
-          email: studentData.email || '',
-          degree: studentData.plan || '',  // Assuming "plan" corresponds to degree
-          advisor: '',  // Set a default value or use a field from the response if available
-          email_advisor: '',  // Same as advisor
-          image: null,  // No image in response; leave as null
-        });
-        console.log(formData.degree);
-        
-        setLoading(false);
-      } catch (err) {
-        setError("Error fetching data");
-        setLoading(false);
+    fetchData();
+  }, [stdID]);
+
+  const StudentFix = async (event) => {
+    event.preventDefault();
+    setLoadingSubmit(true);  
+    setError(null);  
+
+    const requiredFields = ['name', 'tel', 'email', 'advisor', 'email_advisor'];
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        setError(`${field.charAt(0).toUpperCase() + field.slice(1)} is required.`);
+        setLoadingSubmit(false);
+        return;
       }
+    }
+
+    const newStudentfix = {
+      stdID: formData.stdID,
+      name: formData.name,
+      tel: formData.tel,
+      email: formData.email,
+      degree: formData.degree,
+      advisor: formData.advisor,
+      email_advisor: formData.email_advisor,
+      picture: formData.picture ? formData.picture.split(',')[1] : null,
     };
 
-    fetchData();
-  }, []);
-
-  const StudentFix = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const newStudentfix = Object.fromEntries(formData.entries());
-    // console.log(formEntries);
-    axios
-      .post("http://localhost:56733/studentfix", newStudentfix)
-      //เมื่อทำการ response จะเข้า then ถ้าไม่ก็จะไปเข้าcatch
-      .then((response) => {
-        console.log(response.data);
-        alert("Data sent successfully");
-      })
-      .catch((error) => {
-        console.error("There was an error sending the data!", error);
+    try {
+      const response = await axios.post("http://localhost:56733/studentfix", newStudentfix, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
+      await fetchData();  
+      navigate("/admin");  
+    } catch (error) {
+      setError(error.response?.data?.error || "Error updating data. Please try again.");
+    } finally {
+      setLoadingSubmit(false);  
+    }
   };
-  
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({
-          ...formData,
-          image: reader.result, // จัดเก็บ base64 ของรูปภาพใน formData
-        });
+        setFormData(prevState => ({
+          ...prevState,
+          picture: reader.result, // Correct the field name here
+        }));
       };
       reader.readAsDataURL(file);
     } else {
@@ -88,128 +108,141 @@ export const StudentFixinformation = (props) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData({
-      ...formData,
+    setFormData(prevState => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
+
+  if (loading) {
+    return <div className="loading-screen"><div className="loader"></div></div>;
+  }
+
   return (
     <div className="containers">
       <br />
+      {error && <div className="error-message">{error}</div>} 
+
       <form onSubmit={StudentFix}>
-      <div className="form-group">
-        <label htmlFor="imageUpload">
-          <img 
-            src={formData.image || 'pic.png'} 
-            className="uploaded-image" 
-            alt="Display"
-            style={{ cursor: 'pointer', width: '200px', height: '200px' }} 
+        <div className="form-group">
+          <label htmlFor="imageUpload">
+            <img
+              src={formData.picture ? `data:image/png;base64,${formData.picture}` : "default-image-url.jpg"} // Use the fetched picture or a default image
+              className="uploaded-image"
+              alt="Student"
+              style={{ cursor: 'pointer', width: '200px', height: '200px' }}
+            />
+          </label>
+          <input
+            id="imageUpload"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
           />
-        </label>
-        <input className = "input_select_text" 
-          id="imageUpload" 
-          type="file" 
-          accept="image/*" 
-          // name="picture" 
-          onChange={handleFileChange} 
-          style={{ display: 'none' }} 
-          required 
-        />
         </div>
+
+        {/* Name Field */}
         <div className="form-group">
           <label htmlFor="name">Name</label><br />
-          <input className = "input_select_text"  
-            type="text" 
-            id="name" 
-            name="name" 
-            value={formData.name} 
-            onChange={handleChange} 
-            required 
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="input_select_text"
           />
         </div>
+
+        {/* Student ID */}
         <div className="form-group">
-          <label htmlFor="stdID">StudentID</label><br />
-          <input className = "input_select_text" 
-            type="text" 
-            id="stdID" 
-            name="stdID" 
-            value={formData.stdID} 
-            onChange={handleChange} 
-            required 
+          <label htmlFor="stdID">Student ID</label><br />
+          <input
+            type="text"
+            id="stdID"
+            name="stdID"
+            value={formData.stdID}
+            readOnly
+            className="input_select_text"
           />
         </div>
+
+        {/* Phone Number */}
         <div className="form-group">
           <label htmlFor="tel">Tel</label><br />
-          <input className = "input_select_text" 
-            type="text" 
-            id="tel" 
-            name="tel" 
-            value={formData.tel} 
-            onChange={handleChange} 
-            required 
+          <input
+            type="text"
+            id="tel"
+            name="tel"
+            value={formData.tel}
+            onChange={handleChange}
+            required
+            className="input_select_text"
           />
         </div>
+
+        {/* Email Field */}
         <div className="form-group">
           <label htmlFor="email">Email</label><br />
-          <input className = "input_select_text" 
-            type="email" 
-            id="email" 
-            name="email" 
-            value={formData.email} 
-            onChange={handleChange} 
-            required 
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="input_select_text"
           />
         </div>
+
+        {/* Degree Select */}
         <div className="form-group">
           <label htmlFor="degree">Degree</label><br />
-          <select className = "input_select_text" 
-            id="degree" 
-            name="degree" 
-            value={formData.degree} 
-            onChange={handleChange} 
-            required
-          >
-            <option value="">Select Degree</option>
-            <option value="Master_Degree1">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
-            <option value="Master_Degree2">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
-            <option value="Master_Degree3">ปริญญาโทแบบ 2(แผน ข)</option>
-            <option value="PhD1.1">ปริญญาเอกหลักสูตรแบบ 1.1</option>
-            <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="advisor">Teacher Advisor</label><br />
-          <select className = "input_select_text" 
-            id="advisor" 
-            name="advisor" 
-            value={formData.advisor} 
-            onChange={handleChange} 
-            required
-          >
-            <option value="">Select Advisor</option>
-            <option value="Advisor Kittipich">Kittipich</option>
-            <option value="Advisor Jakkarin">Jakkarin</option>
-            <option value="Advisor Benjamas">Benjamas</option>
-            <option value="Advisor Kamonphop">Kamonphop</option>
-            <option value="Advisor Meetip">Meetip</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="email_advisor">Email Advisor</label><br />
-          <input className = "input_select_text" 
-            type="email" 
-            id="email_advisor" 
-            name="email_advisor" 
-            value={formData.email_advisor} 
-            onChange={handleChange} 
-            required 
+          <input
+            id="degree"
+            name="degree"
+            value={formData.degree}
+            readOnly
+            className="input_select_text"
           />
         </div>
-        <button type="submit" className="button_add ">แก้ไขข้อมูล</button>
+
+        {/* Advisor Field */}
+        <div className="form-group">
+          <label htmlFor="advisor">Teacher Advisor</label><br />
+          <input
+            type="text"
+            id="advisor"
+            name="advisor"
+            value={formData.advisor}
+            onChange={handleChange}
+            required
+            className="input_select_text"
+          />
+        </div>
+
+        {/* Advisor Email */}
+        <div className="form-group">
+          <label htmlFor="email_advisor">Email Advisor</label><br />
+          <input
+            type="email"
+            id="email_advisor"
+            name="email_advisor"
+            value={formData.email_advisor}
+            onChange={handleChange}
+            required
+            className="input_select_text"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button type="submit" className="button_add" disabled={loadingSubmit}>
+          {loadingSubmit ? "Submitting..." : "แก้ไขข้อมูล"}
+        </button>
       </form>
       <br />
     </div>
   );
-}
-
-  
+};
