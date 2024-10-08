@@ -5,15 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # develop:
-    #   watch:
-    #   - action: sync
-    #     path: ./src
-    #     target: /src
-    #     ignore:
-    #       - node_modules
-    #   - action: rebuild
-    #     part: package.json
     volumes:
       - ".:/usr/src/app"
       - "/usr/src/app/node_modules"
