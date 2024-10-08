@@ -235,7 +235,14 @@
   margin: 0;
 }
 
-.popup-content li {
+.registered{
+  padding: 10px;
+  background-color: #9de67b;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.notregis{
   padding: 10px;
   background-color: #f1f1f1;
   border-radius: 4px;
@@ -257,3 +264,13 @@
 .popup-button:hover, .close-popup:hover {
   opacity: 0.9;
 }
+
+.course-registered {
+  background-color: #06de14; /* Green background for registered courses */
+}
+
+.course-unregistered {
+  background-color: #f1f1f1; /* Default background for unregistered courses */
+}
+
+/* ... existing styles ... */
