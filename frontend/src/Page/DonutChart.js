@@ -54,9 +54,9 @@ export const DonutChart = ({ progress }) => {
       }}>
         {Math.round(progress)}%
       </div>
-      {/* <div style={{ marginTop: '10px', fontSize: '14px', color: 'blue' }}>
-        Current: ตีพิมพ์ผลงานวิจัย
-      </div> */}
+      <div style={{ marginTop: '10px', fontSize: '20px', color: '#11009E' }}>
+        Your Progress
+      </div>
     </div>
   );
 };

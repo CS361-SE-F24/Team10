@@ -31,7 +31,7 @@ export const Navbar = ({ user = { isAdmin: false }, setCurrentUser }) => {
   return (
     <div>
       {/* First Navbar */}
-      <AppBar position="static" sx={{ backgroundColor: '#0d47a1', boxShadow: 'none' }}>
+      <AppBar position="static" sx={{ backgroundColor: '#11009E', boxShadow: 'none' }}>
         <Toolbar sx={{
           justifyContent: 'space-between',
           minHeight: '48px',
@@ -61,9 +61,9 @@ export const Navbar = ({ user = { isAdmin: false }, setCurrentUser }) => {
       </AppBar>
 
       {/* Second Navbar (sub-header) */}
-      <AppBar position="static" sx={{ backgroundColor: '#9e9e9e', boxShadow: 'none' }}>
+      <AppBar position="static" sx={{ backgroundColor: '#D9E3FF', boxShadow: 'none' }}>
         <Toolbar>
-          <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left', color: 'white' }}>
+          <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left', color: '#1B3C73' }}>
             COMPUTER SCIENCE CMU <br />
             STUDENT PROGRESS TRACKING SYSTEM
           </Typography>
