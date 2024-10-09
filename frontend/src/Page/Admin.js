@@ -86,14 +86,7 @@ export const Admin = () => {
           <Box className="admin-page-header">
             <Box className="left-container">
               <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox checked={masterChecked} onChange={() => setMasterChecked(!masterChecked)} />}
-                  label="Master Degree"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={phdChecked} onChange={() => setPhdChecked(!phdChecked)} />}
-                  label="PhD"
-                />
+                
                 <Button
                   variant="contained"
                   onClick={() => navigate("/alumni")}
@@ -117,6 +110,14 @@ export const Admin = () => {
                 >
                   Alumni
                 </Button>
+                <FormControlLabel
+                  control={<Checkbox checked={masterChecked} onChange={() => setMasterChecked(!masterChecked)} />}
+                  label="Master Degree"
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={phdChecked} onChange={() => setPhdChecked(!phdChecked)} />}
+                  label="PhD"
+                />
               </FormGroup>
             </Box>
           </Box>
