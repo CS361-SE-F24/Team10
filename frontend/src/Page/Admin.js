@@ -99,6 +99,7 @@ export const Admin = () => {
                   onClick={() => navigate("/alumni")}
                   startIcon={<SchoolIcon />}
                   sx={{
+                    justifyContent: 'center',
                     width: '200px',
                     height: '50px',
                     fontSize: '16px',
@@ -125,11 +126,12 @@ export const Admin = () => {
           <Box className="right-container"
             sx={{
               display: 'flex',
+              padding: '5px',
               flexDirection: 'column',
-              alignItems: 'right',
-              justifyContent: 'right',
+              alignItems: 'flex-end', // Align to the right horizontally
+              justifyContent: 'center', // Center vertically within the container
               gap: '10px',
-              height: '100%',
+              height: '100%', // Ensure the container has enough height for vertical centering
             }}
           >
             <Button
