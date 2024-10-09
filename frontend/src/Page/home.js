@@ -6,6 +6,7 @@ import { ProgressBar } from "../Page/progressbar.js";
 import DonutChart from "../Page/DonutChart.js";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import SchoolIcon from '@mui/icons-material/School';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export const Home = (props) => {
   const location = useLocation();
@@ -421,14 +422,15 @@ export const Home = (props) => {
               <br />
               <br />
               <div className="box">
+                <br/>
                 <p>หน่วยกิตที่ได้รับ {credit}</p>
                 <button onClick={togglePopup} className="popup-button">
                   หน่วยกิตที่ได้รับ
-                </button>
+                </button><br/><br/>
               </div>
               <br />
               <div className="box2">
-                <h2>Meetings</h2>
+                <p>Meetings</p><br/>
                 {meeting.length > 0 ? (
                   <ul>
                     {meeting.map((meetDate, index) => (
@@ -478,8 +480,11 @@ export const Home = (props) => {
                   )}
               
             </div>
+            
           </div>
+          
         </div>
+        
       ) : (
         <div className="box-edit">
           <div className="editprogress-container">
@@ -520,6 +525,7 @@ export const Home = (props) => {
                         >
                           TestEnglish_{stdID}
                         </a>
+                        {/* <DeleteForeverIcon style={{ color: 'red', cursor: 'pointer' }} /> */}
                       </div>
                     </div>
                   )}
@@ -596,7 +602,7 @@ export const Home = (props) => {
                         ผ่าน
                       </label>
                       <div className="file">
-                        <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                        {/* <InsertDriveFileIcon style={{ marginRight: "8px" }} /> */}
                         {/* <p>Uploaded File:</p> */}
                         <a
                           href={`http://localhost:56733/downloadplan/${stdID}/quality`}
@@ -716,84 +722,80 @@ export const Home = (props) => {
               </div>
 
               <p>วิจัยทั้งหมด</p>
-
-              {files.map((file) => (
-                <div className="file">
-                  <InsertDriveFileIcon style={{ marginRight: "8px" }} />
-                  <a
-                    href={`http://localhost:56733/download/${file.id}`}
-                    download
-                  >
-                    {file.filename}
-                  </a>
-                </div>
-              ))}
-              {/* <div>
-                <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
-                  <label>sdsadasdas</label>
-                  <input type="file" name="file" />
-                  <br />
-                  <br />
-
-                  <input type="hidden" name="stdID" value={stdID} />
-                  <button type="submit">Upload File</button>
-                </form>
-              <h3>Uploaded Files:</h3>
-              <ul>
-                {topic.map((file) => (
-                  <li key={file.id}>
+                {files.map((file) => (
+                  <div className="file">
+                    <InsertDriveFileIcon style={{ marginRight: "8px" }} />
                     <a
-                      href={`http://localhost:56733/downloadtopic/${file.id}`}
+                      href={`http://localhost:56733/download/${file.id}`}
                       download
                     >
                       {file.filename}
                     </a>
-                  </li>
+                    <DeleteForeverIcon 
+                style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
+              />
+                  </div>
                 ))}
-              </ul></div> */}
-              <div>
-                <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
-                    <label>Upload Topic</label>
-                    <div className="file-upload-container">
-                        <input type="file" id="topic-file-upload" name="file" hidden />
-                        <label htmlFor="topic-file-upload" className="file-upload-label">
-                            <div className="file-upload-icon">+</div>
-                            Add Topic File
-                        </label>
-                    </div>
-                    <br />
 
-                    <input type="hidden" name="stdID" value={stdID} />
-                    <button type="submit">Upload File</button>
-                </form>
-                <h3>Uploaded Files:</h3>
-                <ul>
-                    {topic.map((file) => (
-                        <li key={file.id}>
-                            <a href={`http://localhost:56733/downloadtopic/${file.id}`} download>
-                                {file.filename}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-              </div>
+                <br/>
 
-              
-
-              <form onSubmit={addMeeting}>
+              <div className="meet">
+                <form onSubmit={addMeeting}>
                 <label>เข้าร่วมประชุม</label>
-                <br />
+                <br /><br/>
                 <input type="date" name="date-meeting" />
                 <br />
                 <br />
                 <input type="hidden" name="stdID" value={stdID} />
-                <button type="submit">Add meeting</button>
-              </form>
+                <button type="submit" className="button-save">Add meeting</button>
+                </form>
+                <br />
 
+              </div>
+
+              
+              
+            </div>
+            <div className="upload-topic">
+              <p>เสนอหัวข้อวิจัย</p>
+                <div className="box-research">
+                  <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
+                      <div className="file-upload-container">
+                          <input type="file" id="topic-file-upload" name="file" hidden />
+                          <label htmlFor="topic-file-upload" className="file-upload-label">
+                              <div className="file-upload-icon">+</div>
+                              Add Topic File
+                          </label>
+                      </div>
+                      <br />
+
+                      <input type="hidden" name="stdID" value={stdID} />
+                      <button type="submit" className="button-save">Upload File</button>
+                  </form>
+                </div>
+
+                <p>หัวข้อที่ถูกนำเสนอ</p>
+                  {topic.map((file) => (
+                    <div className="file">
+                      <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                      <a href={`http://localhost:56733/downloadtopic/${file.id}`} download>
+                          {file.filename}
+                      </a>
+                      <DeleteForeverIcon 
+                style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
+              />
+                    </div>
+                  ))}
+                <br />
+       
+              
               <button onClick={handleUpdate} className="confirm">
                 ยืนยันการแก้ไข
               </button>
+             
+
             </div>
+          
           </div>
         </div>
       )}
