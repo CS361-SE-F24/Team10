@@ -292,13 +292,17 @@ def get_file_data(file_binary, filename):
 def currentstudentplan():
     stdID = request.args.get('stdID')
     study_plan = Study_plan.query.filter_by(study_planID=stdID).first()
-    
+
     if study_plan is None:
         return jsonify({"error": "Student not found"}), 404
     if study_plan.planName == "Master_Degree (แผน ก แบบ ก 1)":
+        if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding == 1:
+            pass_published = True
+        else:
+            pass_published = False
         current_data = {
         'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
-        'ตีพิมพ์วิจัย': True,
+        'ตีพิมพ์วิจัย': pass_published,
         'เสนอหัวข้อ': True,
         'complete_course': study_plan.complete_course
         }
@@ -340,8 +344,8 @@ def upload_file():
 
     file = request.files['file']
     stdID = request.form.get('stdID')
-    types = request.form.get('types')
-
+    types = request.form.get('type')
+    print(stdID,types)
     if file.filename == '':
         return jsonify({'message': "No selected file"}), 400
 
@@ -386,6 +390,7 @@ def downloadplan(upload_id, type_exam):
     if type_exam == "testEng":
         file_data = study_plan.testEng
         filename = study_plan.testEng_filename
+        print(filename)
     elif type_exam == "comprehension":
         file_data = study_plan.comprehension
         filename = study_plan.comprehension_filename
@@ -488,6 +493,7 @@ def editprogress():
             study_plan.complete_course = False
 
         # Handle Regits_Course
+        
         if regits_courses:
             # Split the string by commas and create Regits entries
             course_ids = regits_courses.split(",")
@@ -495,9 +501,11 @@ def editprogress():
                 course_id = course_id.strip()  # Trim any whitespace
                 if course_id:  # Check if the course_id is not empty
                     # Check if the Regits entry already exists
+                    courses = Course.query.filter_by(courseID=course_id).first()
                     existing_regit = Regits.query.filter_by(stdID=study_planID, courseID=course_id).first()
                     if not existing_regit:  # Only create a new entry if it doesn't exist
                         new_regit = Regits(stdID=study_planID, courseID=course_id)
+                        study_plan.credit += courses.credit
                         db.session.add(new_regit)
 
         # Commit changes to the database
@@ -573,7 +581,6 @@ def get_courses_by_stdID():
         "Master_Degree (แผน ก แบบ ก 2)": "M.",
         "Master_Degree3 (แผน ข)": "M.",
         "PhD": "Ph.D.",
-        # "PhD2.2": "Ph.D."
     }
 
     planName = planName_map.get(study_plan.planName, None)
@@ -582,24 +589,26 @@ def get_courses_by_stdID():
 
     # Fetch courses using the mapped plan name
     courses = Course.query.filter_by(planName=planName).all()
-    regist = Regits.query.filter_by(stdID=stdID).all()
     if not courses:
-        return jsonify({'error': 'No courses found for this student'}), 404
+        return jsonify({'error': 'No courses found for this study plan'}), 404
 
-# Create a set of course IDs that the student is registered for
-    registered_course_ids = {reg.courseID for reg in regist}
+    # Fetch registered courses for the student
+    regist = Regits.query.filter_by(stdID=stdID).all()
+    registered_course_ids = {reg.courseID for reg in regist} if regist else set()
 
+    # Create course list with registration status
     course_list = [
         {
             'courseID': course.courseID,
             'credit': course.credit,
             'planName': course.planName,
-            'registered': course.courseID in registered_course_ids  # Check if course is registered
+            'registered': course.courseID in registered_course_ids
         }
         for course in courses
     ]
-    
-    return jsonify({'courses': course_list}), 200
+
+    return jsonify({'courses': course_list, 'credit': study_plan.credit}), 200
+
 
 @app.route('/updatepercent', methods=['POST'])
 def updateper():

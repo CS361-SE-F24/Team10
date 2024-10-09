@@ -1,22 +1,20 @@
-/* .progress-bar-container {
+.progress-bar-container {
   display: flex;
   flex-direction: column;
   background-color: transparent !important;
-  display: grid; 
-  row-gap: 50px;
-} */
+  /* display: grid; */
+}
 
 .step {
   
   display: flex;
   flex-direction: column;
-  display: grid; /* Set grid layout */
+  display: grid; 
   grid-template-columns: 1fr 1fr; /* Define two columns: one for the circle, and one for the step name */
-  align-items: center; /* Vertically align content in both columns */
-  column-gap: 15px; /* Adjust spacing between the circle and step name */
-  margin-bottom: 75px; /* Space between steps */
-  padding: 10px; /* Add padding to increase the height of each step */
-  position: relative; /* Position relative for absolute positioning of line */
+  column-gap: 35px; /* Adjust spacing between the circle and step name */
+  margin-bottom: 30px;
+  padding-bottom: 45px;
+  margin-top: -5px;
   background-color: transparent !important;
   position: relative;
   padding-left: 10px; /* Optional: Adjust padding if necessary */
@@ -41,11 +39,12 @@
 
 .line {
   width: 7px;
-  height: 125px; /* Height of the line */
+  height: 100%; /* Height of the line */
   background-color: #e0e0e0;
   position: absolute; /* Change to absolute for better control */
   top: 30px; /* Adjust this to position the line below the circle */
   left: 72px; /* Center align the line with the circle */
+  
 }
 
 .completed .line {
@@ -59,8 +58,7 @@
 }
 
 .step-name {
-  text-align: center; /* Center the step names */
-  margin-top: 5px; /* Add space between the number and the name */
+  text-align:left; /* Center the step names */
   margin-top: 5px;
   color: black;
 }
