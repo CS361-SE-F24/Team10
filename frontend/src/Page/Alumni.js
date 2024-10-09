@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -11,15 +12,30 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import IconButton from '@mui/material/IconButton';
-import "../css/Alumni.css";
-import { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 export const Alumni = () => {
   const navigate = useNavigate();
+  const [alumni, setAlumni] = useState([]);  // State for storing all alumni
   const [open, setOpen] = useState(false); // State for the dialog
-  const [adminToDelete, setAlumniToDelete] = useState(null); // State to track which alumni to delete
+  const [alumniToDelete, setAlumniToDelete] = useState(null); // State to track which alumni to delete
+
+  // Fetch alumni from the backend
+  useEffect(() => {
+    const fetchAlumni = async () => {
+      try {
+        const response = await axios.get("http://localhost:56733/getalumni");  // Adjust the API endpoint if necessary
+        console.log(response.data);
+        setAlumni(response.data);  // Store the fetched alumni data in state
+      } catch (err) {
+        console.error("Error fetching alumni", err);
+      }
+    };
+
+    fetchAlumni();  // Fetch alumni when component mounts
+  }, []);
 
   const handleClickOpen = (alumni) => {
     setAlumniToDelete(alumni); // Set the alumni to delete
@@ -27,20 +43,19 @@ export const Alumni = () => {
   };
 
   const handleClose = () => {
-    setOpen(false); // Close dialog  
+    setOpen(false); // Close dialog
   };
 
-  const handleDelete = () => {
-    alert("ลบเรียบร้อยแล้ว"); // Example delete operation
-    setOpen(false); // Close dialog after deletion
-  };
-
-  const CustomButton = ({ children, ...props }) => {
-    return (
-      <Button {...props}>
-        {children}
-      </Button>
-    );
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:56733/deletealumni/${alumniToDelete.id}`); // Adjust API call to delete alumni
+      setAlumni((prev) => prev.filter((a) => a.id !== alumniToDelete.id)); // Remove alumni from state
+      alert(`ลบเรียบร้อยแล้ว ${alumniToDelete.name}`); // Confirmation alert
+    } catch (error) {
+      console.error("Error deleting alumni:", error);
+    } finally {
+      setOpen(false); // Close dialog after deletion
+    }
   };
 
   return (
@@ -55,54 +70,48 @@ export const Alumni = () => {
 
       <Box className="alumni-card-container">
         <Grid container spacing={10}>
-          <Grid item xs={12} md={4} sm={6} lg={4}>
-            <Card className="card-alumni" >
-              <CardMedia sx={{ height: 140 }} image="/static/images/cards/contemplative-reptile.jpg" title="green iguana" />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">Alumni3</Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Data
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <IconButton
-                  size="small"
-                  sx={{
-                    color: 'indigo',
-                    '&:hover': {
-                      color: 'cyan',
-                    },
-                  }}
-                >
-                  <VisibilityIcon />
-                </IconButton>
+          {alumni.map((alumnus, index) => (
+            <Grid item xs={12} md={4} sm={6} lg={3} key={alumnus.id || index} sx={{ width: 100 }}>
+              <Card className="card-alumni" sx={{ width: 300}}> {/* Set card width to 100px */}
+                <CardMedia
+                  sx={{ height: 250 }} 
+                  image={alumnus.picture ? `data:image/jpeg;base64,${alumnus.picture}` : "/static/images/cards/contemplative-reptile.jpg"}
+                  title={alumnus.name}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h6" component="div">
+                    {alumnus.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    Email: {alumnus.email} <br />
+                    Tel: {alumnus.tel}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <IconButton
+                    size="small"
+                    sx={{ color: 'indigo', '&:hover': { color: 'cyan' } }}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
 
-                <IconButton
-                  size="small"
-                  sx={{
-                    color: 'black',
-                    '&:hover': {
-                      color: 'yellow',
-                    },
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={() => handleClickOpen("Alumni3")} // Pass the alumni info to the delete handler
-                  sx={{
-                    color: 'red',
-                    '&:hover': {
-                      color: 'orange',
-                    },
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </CardActions>
-            </Card>
-          </Grid>
+                  <IconButton
+                    size="small"
+                    sx={{ color: 'black', '&:hover': { color: 'yellow' } }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleClickOpen(alumnus)}  // Pass the alumni info to the delete handler
+                    sx={{ color: 'red', '&:hover': { color: 'orange' } }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </Box>
 
@@ -111,7 +120,7 @@ export const Alumni = () => {
         <DialogTitle>ยืนยันการลบ</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            คุณแน่ใจหรือว่าต้องการลบ {adminToDelete}?
+            คุณแน่ใจหรือว่าต้องการลบ {alumniToDelete?.name}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -125,4 +134,4 @@ export const Alumni = () => {
       </Dialog>
     </>
   );
-}
+};

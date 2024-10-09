@@ -262,11 +262,11 @@ export const Addstudent = () => {
                 required
               >
                 <option value="">Select Advisor</option>
-                <option value="Advisor Kittipich">Kittipich</option>
-                <option value="Advisor Jakkarin">Jakkarin</option>
-                <option value="Advisor Benjamas">Benjamas</option>
-                <option value="Advisor Kamonphop">Kamonphop</option>
-                <option value="Advisor Meetip">Meetip</option>
+                <option value="Kittipich">Kittipich</option>
+                <option value="Jakkarin">Jakkarin</option>
+                <option value="Benjamas">Benjamas</option>
+                <option value="Kamonphop">Kamonphop</option>
+                <option value="Meetip">Meetip</option>
                 <option value="Other">Other</option>
               </select>
               {errorMessages.advisor && <div className="error-message">{errorMessages.advisor}</div>}

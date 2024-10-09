@@ -46,7 +46,7 @@ def post_data():
         if not data or 'Fname' not in data or 'Lname' not in data:
             return jsonify({"message": "Invalid data"}), 400
 
-        print(data)
+        # print(data)
         new_user = User(fname=data['Fname'], lname=data['Lname'])
         db.session.add(new_user)
         db.session.commit()
@@ -190,7 +190,7 @@ password: {password}""",
 @app.route('/data', methods=['GET'])
 # @login_required
 def data():
-    students = Student.query.all()
+    students = Student.query.filter_by(status="study").all()
     result = []
     no = 1
     for student in students:
@@ -239,12 +239,18 @@ def login():
         return jsonify({"message": "Login successful", "isAdmin": user.isAdmin,"currentUser":user.id,"stdID":student.stdID}), 200
     return jsonify({"message": "Invalid credentials"}), 401
 
+from flask import request, jsonify
+import base64
+import binascii
+
 @app.route('/studentfix', methods=['POST'])
 def studentfix():
     try:
         # Receive JSON data
         data = request.json
-        # print("Received data:", data)  # Debugging: show received data
+
+        # Debugging: Show received data (uncomment during development)
+        # print("Received data:", data)
 
         # Check required fields
         required_fields = ['stdID', 'name', 'tel', 'email', 'degree', 'advisor', 'email_advisor']
@@ -280,7 +286,7 @@ def studentfix():
                 else:
                     # If not, update the existing advisor's email
                     existing_advisor.email = data['email_advisor']
-                    db.session.commit()  # Save the changes to the existing advisor
+                    db.session.commit()  # Save changes to the existing advisor
                     student.advisorID = existing_advisor.id
                     print("Updated existing advisor's email.")
         else:
@@ -292,15 +298,16 @@ def studentfix():
             print("New advisor created.")
 
         # Handle image if provided
-        if 'image' in data and data['image']:
+        if 'picture' in data and data['picture']:
             user = User.query.filter_by(email=student.email).first()
             if user:
-                image_data = data['image']
+                image_data = data['picture']  # Use the correct field name here
                 if "," in image_data:
                     _, image_data = image_data.split(",", 1)  # Remove header
                 try:
                     decoded_image = base64.b64decode(image_data)
-                    user.picture = decoded_image
+                    user.picture = decoded_image  # Replace old picture with new picture
+                    print("Updated user's picture.")
                 except binascii.Error:
                     return jsonify({"error": "Invalid image data"}), 400
 
@@ -313,6 +320,8 @@ def studentfix():
         db.session.rollback()  # Rollback on error
         print("Error during studentfix:", str(e))  # Debugging: show error
         return jsonify({"error": "An error occurred while updating student information.", "details": str(e)}), 500
+
+
 
 
 @app.route('/currentstudent', methods=['GET'])
@@ -782,3 +791,44 @@ def get_all_admins():
         }
         admin_list.append(admin_data)
     return jsonify(admin_list), 200
+
+
+@app.route('/uptoalumni', methods=['POST'])
+def uptoalumni():
+    stdID = request.args.get('stdID')  # Get stdID from query parameters
+    print("Received stdID:", stdID)  # Log the received stdID
+    student = Student.query.filter_by(stdID=stdID).first()
+    if student:
+        student.status = "alumni"
+        db.session.commit()
+        return jsonify({"message": "Student status updated to alumni"}), 200
+    else:
+        return jsonify({"message": "Student not found"}), 404
+
+@app.route('/getalumni', methods=['GET'])
+def getalumni():
+    # Fetch students with status "alumni"
+    alumni = Student.query.filter_by(status="alumni").all()
+
+    if alumni:
+        # Prepare a list of alumni data to return
+        alumni_data = []
+        for student in alumni:
+            user = User.query.filter_by(email=student.email).first()  # Fetch the user for the current student
+            picture_base64 = None
+            
+            # Use base64 encoding for the picture
+            if user and user.picture:
+                picture_base64 = base64.b64encode(user.picture).decode('utf-8')  # Encode binary data to base64
+
+            alumni_data.append({
+                'stdID': student.stdID,  # Include any other fields you need
+                'name': student.name,
+                'email': student.email,
+                'tel': student.tel,
+                'picture': picture_base64  # Use the base64 encoded picture
+            })
+
+        return jsonify(alumni_data), 200
+    else:
+        return jsonify({"message": "No alumni found"}), 404

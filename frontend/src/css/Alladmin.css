@@ -1,13 +1,12 @@
 /* Main container styling */
 .card-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  /* Space between cards */
-  padding: 10px;
-}
-
-/* Card styling */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between cards */
+    padding-left: 10px; 
+  }
+  
+  /* Card styling */
 .card-admin {
   flex: 0 0 calc(25% - 15px);
   width: 100%;
