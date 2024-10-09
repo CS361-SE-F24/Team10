@@ -47,8 +47,8 @@ export const Alumni = () => {
     <>
       <Box className="alumni-header">
         <Box className="alumni-text">
-          <Typography variant="h8" ผผ>
-            Add new alumni <br />
+          <Typography variant="h6">
+            Alumni Board<br />
           </Typography>
         </Box>
       </Box>
