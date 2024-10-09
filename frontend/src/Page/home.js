@@ -1,22 +1,22 @@
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
 import { React, useEffect, useState } from "react";
 import "../css/home.css";
 import axios from "axios";
 import { ProgressBar } from "../Page/progressbar.js";
 import DonutChart from "../Page/DonutChart.js";
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 export const Home = (props) => {
   const location = useLocation();
   const stdID =
     location.state?.stdID || props.stdID || localStorage.getItem("stdID") || "";
-  
-  const currentUser =
-    props.currentUser || JSON.parse(localStorage.getItem("currentUser")) || {
+
+  const currentUser = props.currentUser ||
+    JSON.parse(localStorage.getItem("currentUser")) || {
       id: 0,
       isAdmin: false,
     };
-
+  const navigate = useNavigate();
   const [show, setShow] = useState("progress");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -109,6 +109,7 @@ export const Home = (props) => {
     fetchData();
     fetchUploadedFiles();
     fetchPlan();
+    fetchCourses();
   }, [stdID]);
 
   const fetchUploadedFiles = async () => {
@@ -172,6 +173,17 @@ export const Home = (props) => {
     setShow((prevShow) => (prevShow === "progress" ? "update" : "progress"));
   };
 
+  const uptoAlumni = async () => {
+    try {
+      const response = await axios.post(`http://localhost:56733/uptoalumni?stdID=${stdID}`);
+      console.log("Response:", response.data);
+      navigate('/admin');
+    } catch (error) {
+      console.error("Error updating student to alumni:", error);
+    }
+  };
+  
+
   const uploadFile = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -216,6 +228,7 @@ export const Home = (props) => {
       );
       alert("Progress updated successfully");
       fetchPlan(); // Refresh the study plan after the update
+      fetchCourses();
     } catch (error) {
       setError("Progress update failed");
       console.error("Error updating progress:", error);
@@ -246,70 +259,72 @@ export const Home = (props) => {
   //(progressPercentage);
 
   return (
-  <div className="home-container">
-  
-    {/* Display helloworld for mobile screens */}
-    <div className="hidden-mobile"><h4>PhD Student</h4>
-      <div className="sidebar-mb">
-      
-      <div className="rec">
-        <div className="inside">
-          {formData.picture ? (
-            <img className="picture" src={formData.picture} alt="User" />
-          ) : (
-            <p>No Image Available</p>
+    <div className="home-container">
+      {/* Display helloworld for mobile screens */}
+      <div className="hidden-mobile">
+        <h4>PhD Student</h4>
+        <div className="sidebar-mb">
+          <div className="rec">
+            <div className="inside">
+              {formData.picture ? (
+                <img className="picture" src={formData.picture} alt="User" />
+              ) : (
+                <p>No Image Available</p>
+              )}
+              <p>{formData.name}</p>
+              <p>รหัสนักศึกษา {formData.stdID}</p>
+              <hr />
+              <p>{formData.degree}</p>
+            </div>
+          </div>
+          <br />
+          <div className="advisor">
+            Advisor: {formData.advisor || "Not available"}
+          </div>
+          <div className="email">
+            Email of Advisor: {formData.email_advisor || "Not available"}
+          </div>
+
+          {currentUser.isAdmin && show === "progress" && (
+            <div>
+              <button onClick={handleUpdate}>Update Progress</button>
+            </div>
           )}
-          <p>{formData.name}</p>
-          <p>รหัสนักศึกษา {formData.stdID}</p>
-          <hr />
-          <p>{formData.degree}</p>
         </div>
-      </div>
-      <br />
-      <div className="advisor">
-        Advisor: {formData.advisor || "Not available"}
-      </div>
-      <div className="email">
-        Email of Advisor: {formData.email_advisor || "Not available"}
       </div>
 
-      {currentUser.isAdmin && show === "progress" && (
-        <div>
-          <button onClick={handleUpdate}>Update Progress</button>
+      <div className="sidebar">
+        <h4>PhD Student</h4>
+        <div className="rec">
+          <div className="inside">
+            {formData.picture ? (
+              <img className="picture" src={formData.picture} alt="User" />
+            ) : (
+              <p>No Image Available</p>
+            )}
+            <p>{formData.name}</p>
+            <p>รหัสนักศึกษา {formData.stdID}</p>
+            <hr />
+            <p>{formData.degree}</p>
+          </div>
         </div>
-      )}
-    </div></div>
-    
+        <br />
+        <div className="advisor">
+          Advisor: {formData.advisor || "Not available"}
+        </div>
+        <div className="email">
+          Email of Advisor: {formData.email_advisor || "Not available"}
+        </div>
+        <br />
 
-    <div className="sidebar">
-      <h4>PhD Student</h4>
-      <div className="rec">
-        <div className="inside">
-          {formData.picture ? (
-            <img className="picture" src={formData.picture} alt="User" />
-          ) : (
-            <p>No Image Available</p>
-          )}
-          <p>{formData.name}</p>
-          <p>รหัสนักศึกษา {formData.stdID}</p>
-          <hr />
-          <p>{formData.degree}</p>
-        </div>
+        {currentUser.isAdmin && show === "progress" && (
+          <div>
+            <button onClick={handleUpdate} className="editpro">
+              แก้ไข
+            </button>
+          </div>
+        )}
       </div>
-      <br />
-      <div className="advisor">
-        Advisor: {formData.advisor || "Not available"}
-      </div>
-      <div className="email">
-        Email of Advisor: {formData.email_advisor || "Not available"}
-      </div><br />
-
-      {currentUser.isAdmin && show === "progress" && (
-        <div>
-          <button onClick={handleUpdate} className="editpro">แก้ไข</button>
-        </div>
-      )}
-    </div>
 
       {show === "progress" ? (
         <div className="progress-bar-container">
@@ -319,12 +334,17 @@ export const Home = (props) => {
                 stdID={stdID}
                 onProgressUpdate={setProgressPercentage}
               />
+              {currentUser.isAdmin && show === "progress" && progressPercentage === 100 &&(
+                <div>
+                  <button onClick={uptoAlumni}>Graduated</button>
+                </div>
+              )}
             </div>
             <div className="DonutChart">
               <DonutChart progress={progressPercentage} />
               <div className="course"></div><br /><br /><br />
             <div className="box">
-              <p>เรียนให้ครบหน่วยกิต</p>
+            <p>หน่วยกิตที่ได้รับ {credit}</p>
               <button onClick={togglePopup} className="popup-button">
                 หน่วยกิตที่ได้รับ
               </button>
@@ -336,7 +356,7 @@ export const Home = (props) => {
               <div className="popup-modal">
                 <div className="popup-content">
                   <h2>Courses</h2>
-                  <h2>{credit}</h2>
+                  {/* <h2>{credit}</h2> */}
                   {courses.length > 0 ? (
                     <ul>
                       {courses.map((course, index) => (
