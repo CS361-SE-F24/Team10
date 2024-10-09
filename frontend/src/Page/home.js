@@ -4,6 +4,7 @@ import "../css/home.css";
 import axios from "axios";
 import { ProgressBar } from "../Page/progressbar.js";
 import DonutChart from "../Page/DonutChart.js";
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 export const Home = (props) => {
   const location = useLocation();
@@ -314,176 +315,189 @@ const handleInputChange = (event) => {
         </div>
       </div>
     ) : (
-      <div className="editprogress">
-        <form onSubmit={editProgress} enctype="multipart/form-data">
-          <input type="hidden" name="stdID" value={stdID} />
-
-          {/* Test English Section */}
-          <div>
-            <p>Test English</p>
-            {plan.testEng === null ? (
-              <>
-                <input
-                  type="file"
-                  id="testEng"
-                  name="testEng"
-                  className="editprogress_input"
-                />
-                <label htmlFor="testEng" className="editprogress_label">
-                  ไม่ผ่าน
-                </label>
-              </>
-            ) : (
-              <div>
-                <label
-                  onClick={() => {
-                    setFormplan({ ...plan, testEng: null }); // Set testEng to not pass
-                  }}
-                  className="editprogress_label_pass"
-                >
-                  ผ่าน
-                </label>
+      <div className="box-edit">
+        <div className="editprogress-container">
+        {/* ส่วนฟอร์มการแก้ไข Progress */}
+        <div className="editprogress">
+          <form onSubmit={editProgress} encType="multipart/form-data">
+            <input type="hidden" name="stdID" value={stdID} />
+            {/* Test English Section */}
+            <div>
+              <p>Test English</p>
+              {plan.testEng === null ? (
+                <>
+                  <input
+                    type="file"
+                    id="testEng"
+                    name="testEng"
+                    className="editprogress_input"
+                  />
+                  <label htmlFor="testEng" className="editprogress_label">
+                    ไม่ผ่าน
+                  </label>
+                </>
+              ) : (
                 <div>
-                  {/* <p>Uploaded File:</p> */}
-                  <a
-                    href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
-                    download
+                  <label
+                    onClick={() => {
+                      setFormplan({ ...plan, testEng: null });
+                    }}
+                    className="editprogress_label_pass"
                   >
-                    TestEnglish_{stdID}
-                  </a>
+                    ผ่าน
+                  </label>
+                  <div className="file">
+                    <InsertDriveFileIcon style={{ marginRight: '8px' }} />
+                    <a
+                      href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
+                      download
+                    >
+                      TestEnglish_{stdID}
+                    </a>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Comprehensive Exam Section */}
-          <div>
-            <p>Comprehensive Exam</p>
-            {plan.comprehensiveExam === null ? (
-              <>
-                <input
-                  type="file"
-                  id="comprehensiveExam"
-                  name="comprehensiveExam"
-                  className="editprogress_input"
-                />
-                <label
-                  htmlFor="comprehensiveExam"
-                  className="editprogress_label"
-                >
-                  ไม่ผ่าน
-                </label>
-              </>
-            ) : (
-              <div>
-                <label
-                  onClick={() =>
-                    setFormplan({ ...plan, comprehensiveExam: null }) // Set comprehensiveExam to not pass
-                  }
-                  className="editprogress_label_pass"
-                >
-                  ผ่าน
-                </label>
+              )}
+            </div>
+      
+            {/* Comprehensive Exam Section */}
+            <div>
+              <p>Comprehensive Exam</p>
+              {plan.comprehensiveExam === null ? (
+                <>
+                  <input
+                    type="file"
+                    id="comprehensiveExam"
+                    name="comprehensiveExam"
+                    className="editprogress_input"
+                  />
+                  <label
+                    htmlFor="comprehensiveExam"
+                    className="editprogress_label"
+                  >
+                    ไม่ผ่าน
+                  </label>
+                </>
+              ) : (
                 <div>
-                  {/* <p>Uploaded File:</p> */}
-                  <a
-                    href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
-                    download
+                  <label
+                    onClick={() =>
+                      setFormplan({ ...plan, comprehensiveExam: null })
+                    }
+                    className="editprogress_label_pass"
                   >
-                    ComprehensiveExam_{stdID}
-                  </a>
+                    ผ่าน
+                  </label>
+                  <div className="file">
+                    <InsertDriveFileIcon style={{ marginRight: '8px' }} />
+                    {/* <p>Uploaded File:</p> */}
+                    <a
+                      href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
+                      download
+                    >
+                      ComprehensiveExam_{stdID}
+                    </a>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Qualifying Exam Section */}
-          <div>
-            <p>Qualifying Exam</p>
-            {plan.QualifyingExam === null ? (
-              <>
-                <input
-                  type="file"
-                  id="QualifyingExam"
-                  name="QualifyingExam"
-                  className="editprogress_input"
-                />
-                <label htmlFor="QualifyingExam" className="editprogress_label">
-                  ไม่ผ่าน
-                </label>
-              </>
-            ) : (
-              <div>
-                <label
-                  onClick={() =>
-                    setFormplan({ ...plan, QualifyingExam: null }) // Set QualifyingExam to not pass
-                  }
-                  className="editprogress_label_pass"
-                >
-                  ผ่าน
-                </label>
+              )}
+            </div>
+      
+            {/* Qualifying Exam Section */}
+            <div>
+              <p>Qualifying Exam</p>
+              {plan.QualifyingExam === null ? (
+                <>
+                  <input
+                    type="file"
+                    id="QualifyingExam"
+                    name="QualifyingExam"
+                    className="editprogress_input"
+                  />
+                  <label htmlFor="QualifyingExam" className="editprogress_label">
+                    ไม่ผ่าน
+                  </label>
+                </>
+              ) : (
                 <div>
-                  {/* <p>Uploaded File:</p> */}
-                  <a
-                    href={`http://localhost:56733/downloadplan/${stdID}/quality`}
-                    download
+                  <label
+                    onClick={() =>
+                      setFormplan({ ...plan, QualifyingExam: null })
+                    }
+                    className="editprogress_label_pass"
                   >
-                    QualifyingExam_{stdID}
-                  </a>
+                    ผ่าน
+                  </label>
+                <div className="file">
+                  <InsertDriveFileIcon style={{ marginRight: '8px' }} />
+                  {/* <p>Uploaded File:</p> */}
+                    <a
+                      href={`http://localhost:56733/downloadplan/${stdID}/quality`}
+                      download
+                    >
+                      QualifyingExam_{stdID}
+                    </a>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Complete all required courses */}
-          <div>
-            <p>Complete Course</p>
-            {plan.Complete_Course === false ? (
-              <>
-                <label htmlFor="Complete_Course" className="editprogress_label" onClick={() =>
-                    setFormplan({ ...plan, Complete_Course: true}) // Set Complete_Course to not pass
-                  }>
-                  ไม่ผ่าน
-                </label>
-              </>
-            ) : (
-              <div>
-                <label
-                  onClick={() =>
-                    setFormplan({ ...plan, Complete_Course: false }) // Set Complete_Course to not pass
-                  }
-                  className="editprogress_label_pass"
-                >
-                  ผ่าน
-                </label>
-              </div>
-            )}
-          </div>
-          {/* Course Selection */}
-          <label>เลือกตัวที่เรียน</label>
-          <input 
-            type="text" 
-            // value={selectedCourses} 
-            onChange={handleInputChange} 
-            placeholder="Enter course IDs separated by commas" 
-          />
-
-          <button type="submit">Save Progress</button>
-        </form>
-        <form onSubmit={uploadFile} enctype="multipart/form-data">
+              )}
+            </div>
+      
+            {/* Complete all required courses */}
+            <div>
+              <p>Complete Course</p>
+              {plan.Complete_Course === false ? (
+                <>
+                  <label
+                    htmlFor="Complete_Course"
+                    className="editprogress_label"
+                    onClick={() =>
+                      setFormplan({ ...plan, Complete_Course: true })
+                    }
+                  >
+                    ไม่ผ่าน
+                  </label>
+                </>
+              ) : (
+                <div>
+                  <label
+                    onClick={() =>
+                      setFormplan({ ...plan, Complete_Course: false })
+                    }
+                    className="editprogress_label_pass"
+                  >
+                    ผ่าน
+                  </label>
+                </div>
+              )}
+            </div><br />
+      
+            {/* Course Selection */}
+            <label>เลือกตัวที่เรียน</label><br />
+            <input
+              type="text"
+              onChange={handleInputChange}
+              placeholder="Enter course IDs separated by commas"
+            />
+            <br/><br />
+            <button type="submit">Save Progress</button>
+          </form>
+        </div>
+      
+        {/* ส่วนการอัปโหลดไฟล์ */}
+        <div className="upload-section">
+          <p>วิจัยที่ถูกตีพิมพ์</p>
+          <form onSubmit={uploadFile} encType="multipart/form-data">
             <input type="file" name="file" />
-            <br></br>
+            <br /><br />
             <select name="type" required>
               <option value="journal">Journal</option>
               <option value="proceeding">Proceeding</option>
               <option value="conference">Conference</option>
-          </select>
-          <br></br>
-
+            </select><br/>
+            <br />
+      
             <input type="hidden" name="stdID" value={stdID} />
             <button type="submit">Upload File</button>
-          </form>
-
+          </form><br/><br />
+      
           <h3>Uploaded Files:</h3>
           <ul>
             {files.map((file) => (
@@ -494,8 +508,11 @@ const handleInputChange = (event) => {
               </li>
             ))}
           </ul>
-        <button onClick={handleUpdate}>ยืนยัน</button>
+          <button onClick={handleUpdate} className="confirm">ยืนยันการแก้ไข</button>
+        </div>
       </div>
+    </div>
+    
     )}
   </div>
 );
