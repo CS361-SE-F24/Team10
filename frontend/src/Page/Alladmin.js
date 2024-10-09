@@ -64,7 +64,7 @@ export const Alladmin = () => {
       <Box className="admin-header">
         <Box className="admin-text">
           <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left' }}>
-            Add new admin <br />
+            Alladmin <br />
           </Typography>
         </Box>
 
@@ -78,7 +78,7 @@ export const Alladmin = () => {
       <Box className="admin-card-container">
         <Grid container spacing={10}>
           {admins.map((admin, index) => (
-            <Grid item xs={12} md={4} sm={6} lg={3} key={index}>
+            <Grid item xs={12} md={4} sm={6} lg={4} key={index}>
               <Card className="card-admin">
                 <CardMedia
                   sx={{

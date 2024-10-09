@@ -69,13 +69,14 @@ export const Admin = () => {
           <Box className="admin-page-header">
             <Box className="left-container">
               <FormGroup>
-                <FormControlLabel control={<Checkbox defaultChecked />} label="Master Degree" />
-                <FormControlLabel control={<Checkbox defaultChecked />} label="PHD Degree" />
+                {/* <FormControlLabel control={<Checkbox defaultChecked />} label="Master Degree" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="PHD Degree" /> */}
                 <Button
                   variant="contained"
                   onClick={() => navigate("/alumni")}
                   startIcon={<SchoolIcon />}
                   sx={{
+                    justifyContent: 'center',
                     width: '200px',
                     height: '50px',
                     fontSize: '16px',
@@ -102,11 +103,12 @@ export const Admin = () => {
           <Box className="right-container"
             sx={{
               display: 'flex',
+              padding: '5px',
               flexDirection: 'column',
-              alignItems: 'right', // Center horizontally
-              justifyContent: 'right', // Center vertically within the container
+              alignItems: 'flex-end', // Align to the right horizontally
+              justifyContent: 'center', // Center vertically within the container
               gap: '10px',
-              height: '100%', // Make sure the parent container allows vertical centering
+              height: '100%', // Ensure the container has enough height for vertical centering
             }}
           >
             <Button
