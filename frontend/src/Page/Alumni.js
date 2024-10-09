@@ -60,6 +60,14 @@ export const Alumni = () => {
 
   return (
     <>
+      <Box className="alumni-header">
+        <Box className="alumni-text">
+          <Typography variant="h6">
+            Alumni Board<br />
+          </Typography>
+        </Box>
+      </Box>
+
       <Box className="alumni-card-container">
         <Grid container spacing={10}>
           {alumni.map((alumnus, index) => (

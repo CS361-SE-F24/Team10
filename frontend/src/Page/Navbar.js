@@ -5,7 +5,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -81,18 +81,39 @@ export const Navbar = ({ user = { isAdmin: false }, setCurrentUser }) => {
           {"ว่าจะออกจากระบบ"}
         </DialogTitle>
         <DialogActions>
-          <Button 
-            onClick={handleClose} 
-            className="cancel-button" // เพิ่ม class สำหรับปุ่มยกเลิก
-          >
-            ยกเลิก
-          </Button>
-          <Button 
-            onClick={handleLogout} 
-            className="confirm-button" // เพิ่ม class สำหรับปุ่มยืนยัน
+          <Button
+            onClick={handleLogout}
+            sx={{
+              backgroundColor: '#4caf50',  // สีเขียว
+              color: 'white',
+              padding: '10px 20px',
+              borderRadius: '5px',
+              fontSize: '16px',
+              '&:hover': {
+                backgroundColor: '#45a049'  // สีเมื่อ hover
+              }
+            }}
           >
             ยืนยัน
           </Button>
+
+          <Button
+            onClick={handleClose}
+            sx={{
+              backgroundColor: '#f44336',  // สีแดง
+              color: 'white',
+              padding: '10px 20px',
+              borderRadius: '5px',
+              fontSize: '16px',
+              '&:hover': {
+                backgroundColor: '#e53935'  // สีเมื่อ hover
+              }
+            }}
+          >
+            ยกเลิก
+          </Button>
+
+
         </DialogActions>
       </Dialog>
     </div>

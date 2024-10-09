@@ -92,7 +92,7 @@ export const Addadmin = () => {
         console.log(response.data);
         setResponseMessage("Admin added successfully!"); // Set success message
         setLoading(false); // Stop loading
-        alert("ฟกกเเล้วจ้า")
+        alert("Admin Already Added")
         navigate("/admin");
       })
       .catch((error) => {
