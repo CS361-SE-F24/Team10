@@ -500,9 +500,9 @@
   justify-content: center;
 }
 
-input[type="file"] {
-  display: none; /* Hide the actual file input */
-}
+/* input[type="file"] {
+  display: none;
+} */
 
 .button-save {
   background-color: #999;

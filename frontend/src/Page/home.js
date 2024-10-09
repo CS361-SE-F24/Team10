@@ -257,22 +257,25 @@ export const Home = (props) => {
     const formData = new FormData(event.currentTarget); // Create FormData from form elements
 
     try {
-        const response = await axios.post(
-            "http://localhost:56733/uploadtopic",
-            formData,
-            {
-                headers: { "Content-Type": "multipart/form-data" }, // Set headers for file upload
-            }
-        );
-        alert(response.data.message); // Show success message from backend
-        event.target.reset(); // Reset the form after successful upload
-        fetchUploadedFiles(); // Refresh file list after uploading
-        fetchUploadedTopic();
+      const response = await axios.post(
+        "http://localhost:56733/uploadtopic",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" }, // Set headers for file upload
+        }
+      );
+      alert(response.data.message); // Show success message from backend
+      event.target.reset(); // Reset the form after successful upload
+      fetchUploadedFiles(); // Refresh file list after uploading
+      fetchUploadedTopic();
     } catch (error) {
-        console.error("Error uploading the file:", error);
-        alert("File upload failed: " + (error.response?.data?.message || "Unknown error")); // Alert the user in case of error
+      console.error("Error uploading the file:", error);
+      alert(
+        "File upload failed: " +
+          (error.response?.data?.message || "Unknown error")
+      ); // Alert the user in case of error
     }
-};
+  };
 
   const editProgress = async (event) => {
     event.preventDefault();
@@ -412,14 +415,18 @@ export const Home = (props) => {
             </div>
             <div className="DonutChart">
               <DonutChart progress={progressPercentage} />
-              <div className="course"></div><br /><br /><br />
-            <div className="box">
-            <p>หน่วยกิตที่ได้รับ {credit}</p>
-              <button onClick={togglePopup} className="popup-button">
-                หน่วยกิตที่ได้รับ
-              </button>
-            </div><br/>
-            <div className="box2">
+              <div className="course"></div>
+              <br />
+              <br />
+              <br />
+              <div className="box">
+                <p>หน่วยกิตที่ได้รับ {credit}</p>
+                <button onClick={togglePopup} className="popup-button">
+                  หน่วยกิตที่ได้รับ
+                </button>
+              </div>
+              <br />
+              <div className="box2">
                 <h2>Meetings</h2>
                 {meeting.length > 0 ? (
                   <ul>
@@ -431,242 +438,269 @@ export const Home = (props) => {
                   <p>No meetings scheduled for this student.</p>
                 )}
               </div>
-            {showPopup && (
-              <div className="popup-modal">
-                <div className="popup-content">
-                  <h2>Courses</h2>
-                  {/* <h2>{credit}</h2> */}
-                  {courses.length > 0 ? (
-                    <ul>
-                      {courses.map((course, index) => (
-                        <li key={index} className={course.registered ? ("registered"):("notregis")}>
-                          {course.courseID} - {course.planName} (
-                          {course.credit} credits{})
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No courses found for this student.</p>
-                  )}
-                  <button onClick={togglePopup} className="close-popup">
-                    Close
-                  </button>
+              {showPopup && (
+                <div className="popup-modal">
+                  <div className="popup-content">
+                    <h2>Courses</h2>
+                    {/* <h2>{credit}</h2> */}
+                    {courses.length > 0 ? (
+                      <ul>
+                        {courses.map((course, index) => (
+                          <li
+                            key={index}
+                            className={
+                              course.registered ? "registered" : "notregis"
+                            }
+                          >
+                            {course.courseID} - {course.planName} (
+                            {course.credit} credits{})
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No courses found for this student.</p>
+                    )}
+                    <button onClick={togglePopup} className="close-popup">
+                      Close
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    ) : (
-      <div className="box-edit">
-        <div className="editprogress-container">
-        {/* ส่วนฟอร์มการแก้ไข Progress */}
-        <div className="editprogress">
-          <form onSubmit={editProgress} encType="multipart/form-data">
-            <input type="hidden" name="stdID" value={stdID} />
-            {/* Test English Section */}
-            <div>
-              <p>Test English</p>
-              {plan.testEng === null ? (
-                <>
-                  <input
-                    type="file"
-                    id="testEng"
-                    name="testEng"
-                    className="editprogress_input"
-                  />
-                  <label htmlFor="testEng" className="editprogress_label">
-                    ไม่ผ่าน
-                  </label>
-                </>
-              ) : (
-                <div>
-                  <label
-                    onClick={() => {
-                      setFormplan({ ...plan, testEng: null });
-                    }}
-                    className="editprogress_label_pass"
-                  >
-                    ผ่าน
-                  </label>
-                  <div className="file">
-                    <InsertDriveFileIcon style={{ marginRight: '8px' }} />
-                    <a
-                      href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
-                      download
-                    >
-                      TestEnglish_{stdID}
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-      
-            {/* Comprehensive Exam Section */}
-            <div>
-              <p>Comprehensive Exam</p>
-              {plan.comprehensiveExam === null ? (
-                <>
-                  <input
-                    type="file"
-                    id="comprehensiveExam"
-                    name="comprehensiveExam"
-                    className="editprogress_input"
-                  />
-                  <label
-                    htmlFor="comprehensiveExam"
-                    className="editprogress_label"
-                  >
-                    ไม่ผ่าน
-                  </label>
-                </>
-              ) : (
-                <div>
-                  <label
-                    onClick={() =>
-                      setFormplan({ ...plan, comprehensiveExam: null })
-                    }
-                    className="editprogress_label_pass"
-                  >
-                    ผ่าน
-                  </label>
-                  <div className="file">
-                    <InsertDriveFileIcon style={{ marginRight: '8px' }} />
-                    {/* <p>Uploaded File:</p> */}
-                    <a
-                      href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
-                      download
-                    >
-                      ComprehensiveExam_{stdID}
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-      
-            {/* Qualifying Exam Section */}
-            <div>
-              <p>Qualifying Exam</p>
-              {plan.QualifyingExam === null ? (
-                <>
-                  <input
-                    type="file"
-                    id="QualifyingExam"
-                    name="QualifyingExam"
-                    className="editprogress_input"
-                  />
-                  <label htmlFor="QualifyingExam" className="editprogress_label">
-                    ไม่ผ่าน
-                  </label>
-                </>
-              ) : (
-                <div>
-                  <label
-                    onClick={() =>
-                      setFormplan({ ...plan, QualifyingExam: null })
-                    }
-                    className="editprogress_label_pass"
-                  >
-                    ผ่าน
-                  </label>
-                <div className="file">
-                  <InsertDriveFileIcon style={{ marginRight: '8px' }} />
-                  {/* <p>Uploaded File:</p> */}
-                    <a
-                      href={`http://localhost:56733/downloadplan/${stdID}/quality`}
-                      download
-                    >
-                      QualifyingExam_{stdID}
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-      
-            {/* Complete all required courses */}
-            <div>
-              <p>Complete Course</p>
-              {plan.Complete_Course === false ? (
-                <>
-                  <label
-                    htmlFor="Complete_Course"
-                    className="editprogress_label"
-                    onClick={() =>
-                      setFormplan({ ...plan, Complete_Course: true })
-                    }
-                  >
-                    ไม่ผ่าน
-                  </label>
-                </>
-              ) : (
-                <div>
-                  <label
-                    onClick={() =>
-                      setFormplan({ ...plan, Complete_Course: false })
-                    }
-                    className="editprogress_label_pass"
-                  >
-                    ผ่าน
-                  </label>
-                </div>
-              )}
-            </div><br /><br/>
-      
-            {/* Course Selection */}
-            <label>เลือกตัวที่เรียน</label><br /><br/>
-            <input
-              className="course-id"
-              type="text"
-              onChange={handleInputChange}
-              placeholder="Enter course IDs separated by commas"
-            />
-            <br/><br />
-            <button className="button-save" type="submit">Save Progress</button>
-          </form>
-        </div>
-      
-        {/* ส่วนการอัปโหลดไฟล์ */}
-        <div className="upload-section">
-          <p>วิจัยที่ถูกตีพิมพ์</p>
-          <div className="box-research">
-            <form onSubmit={uploadFile} encType="multipart/form-data" className="choosefile">
-              <div className="file-upload-container">
-                <input type="file" id="file-upload" name="file" hidden />
-                <label htmlFor="file-upload" className="file-upload-label">
-                  <div className="file-upload-icon">+</div>
-                  Add files
-                </label>
-              </div><br/>
-            
-              <select name="type" className="dropdown" required>
-                <option value="journal">Journal</option>
-                <option value="proceeding">Proceeding</option>
-                <option value="conference">Conference</option>
-              </select><br/>
-              <input type="hidden" name="stdID" value={stdID} />
-              <button type="submit" className="button-save">Upload File</button>
-            </form>
-          </div>
-
-        
-            <p>วิจัยทั้งหมด</p>
-
-            {files.map((file) => (
-              <div className="file">
-                <InsertDriveFileIcon style={{ marginRight: '8px' }} />
-                <a href={`http://localhost:56733/download/${file.id}`} download>
-                  {file.filename}
-                </a>
-              </div>
-            ))}
-            <form onSubmit={uploadTopic} encType="multipart/form-data">
-                <input type="file" name="file" />
-                <br />
-                <br />
-
+      ) : (
+        <div className="box-edit">
+          <div className="editprogress-container">
+            {/* ส่วนฟอร์มการแก้ไข Progress */}
+            <div className="editprogress">
+              <form onSubmit={editProgress} encType="multipart/form-data">
                 <input type="hidden" name="stdID" value={stdID} />
-                <button type="submit">Upload File</button>
+                {/* Test English Section */}
+                <div>
+                  <p>Test English</p>
+                  {plan.testEng === null ? (
+                    <>
+                      <input
+                        type="file"
+                        id="testEng"
+                        name="testEng"
+                        className="editprogress_input"
+                      />
+                      <label htmlFor="testEng" className="editprogress_label">
+                        ไม่ผ่าน
+                      </label>
+                    </>
+                  ) : (
+                    <div>
+                      <label
+                        onClick={() => {
+                          setFormplan({ ...plan, testEng: null });
+                        }}
+                        className="editprogress_label_pass"
+                      >
+                        ผ่าน
+                      </label>
+                      <div className="file">
+                        <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                        <a
+                          href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
+                          download
+                        >
+                          TestEnglish_{stdID}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Comprehensive Exam Section */}
+                <div>
+                  <p>Comprehensive Exam</p>
+                  {plan.comprehensiveExam === null ? (
+                    <>
+                      <input
+                        type="file"
+                        id="comprehensiveExam"
+                        name="comprehensiveExam"
+                        className="editprogress_input"
+                      />
+                      <label
+                        htmlFor="comprehensiveExam"
+                        className="editprogress_label"
+                      >
+                        ไม่ผ่าน
+                      </label>
+                    </>
+                  ) : (
+                    <div>
+                      <label
+                        onClick={() =>
+                          setFormplan({ ...plan, comprehensiveExam: null })
+                        }
+                        className="editprogress_label_pass"
+                      >
+                        ผ่าน
+                      </label>
+                      <div className="file">
+                        <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                        {/* <p>Uploaded File:</p> */}
+                        <a
+                          href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
+                          download
+                        >
+                          ComprehensiveExam_{stdID}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Qualifying Exam Section */}
+                <div>
+                  <p>Qualifying Exam</p>
+                  {plan.QualifyingExam === null ? (
+                    <>
+                      <input
+                        type="file"
+                        id="QualifyingExam"
+                        name="QualifyingExam"
+                        className="editprogress_input"
+                      />
+                      <label
+                        htmlFor="QualifyingExam"
+                        className="editprogress_label"
+                      >
+                        ไม่ผ่าน
+                      </label>
+                    </>
+                  ) : (
+                    <div>
+                      <label
+                        onClick={() =>
+                          setFormplan({ ...plan, QualifyingExam: null })
+                        }
+                        className="editprogress_label_pass"
+                      >
+                        ผ่าน
+                      </label>
+                      <div className="file">
+                        <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                        {/* <p>Uploaded File:</p> */}
+                        <a
+                          href={`http://localhost:56733/downloadplan/${stdID}/quality`}
+                          download
+                        >
+                          QualifyingExam_{stdID}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Complete all required courses */}
+                <div>
+                  <p>Complete Course</p>
+                  {plan.Complete_Course === false ? (
+                    <>
+                      <label
+                        htmlFor="Complete_Course"
+                        className="editprogress_label"
+                        onClick={() =>
+                          setFormplan({ ...plan, Complete_Course: true })
+                        }
+                      >
+                        ไม่ผ่าน
+                      </label>
+                    </>
+                  ) : (
+                    <div>
+                      <label
+                        onClick={() =>
+                          setFormplan({ ...plan, Complete_Course: false })
+                        }
+                        className="editprogress_label_pass"
+                      >
+                        ผ่าน
+                      </label>
+                    </div>
+                  )}
+                </div>
+                <br />
+                <br />
+
+                {/* Course Selection */}
+                <label>เลือกตัวที่เรียน</label>
+                <br />
+                <br />
+                <input
+                  className="course-id"
+                  type="text"
+                  onChange={handleInputChange}
+                  placeholder="Enter course IDs separated by commas"
+                />
+                <br />
+                <br />
+                <button className="button-save" type="submit">
+                  Save Progress
+                </button>
               </form>
+            </div>
+
+            {/* ส่วนการอัปโหลดไฟล์ */}
+            <div className="upload-section">
+              <p>วิจัยที่ถูกตีพิมพ์</p>
+              <div className="box-research">
+                <form
+                  onSubmit={uploadFile}
+                  encType="multipart/form-data"
+                  className="choosefile"
+                >
+                  <div className="file-upload-container">
+                    <input type="file" id="file-upload" name="file" hidden />
+                    <label htmlFor="file-upload" className="file-upload-label">
+                      <div className="file-upload-icon">+</div>
+                      Add files
+                    </label>
+                  </div>
+                  <br />
+
+                  <select name="type" className="dropdown" required>
+                    <option value="journal">Journal</option>
+                    <option value="proceeding">Proceeding</option>
+                    <option value="conference">Conference</option>
+                  </select>
+                  <br />
+                  <input type="hidden" name="stdID" value={stdID} />
+                  <button type="submit" className="button-save">
+                    Upload File
+                  </button>
+                </form>
+              </div>
+
+              <p>วิจัยทั้งหมด</p>
+
+              {files.map((file) => (
+                <div className="file">
+                  <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                  <a
+                    href={`http://localhost:56733/download/${file.id}`}
+                    download
+                  >
+                    {file.filename}
+                  </a>
+                </div>
+              ))}
+              {/* <div>
+                <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
+                  <label>sdsadasdas</label>
+                  <input type="file" name="file" />
+                  <br />
+                  <br />
+
+                  <input type="hidden" name="stdID" value={stdID} />
+                  <button type="submit">Upload File</button>
+                </form>
               <h3>Uploaded Files:</h3>
               <ul>
                 {topic.map((file) => (
@@ -679,26 +713,53 @@ export const Home = (props) => {
                     </a>
                   </li>
                 ))}
-              </ul>
+              </ul></div> */}
+              <div>
+                <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
+                    <label>Upload Topic</label>
+                    <div className="file-upload-container">
+                        <input type="file" id="topic-file-upload" name="file" hidden />
+                        <label htmlFor="topic-file-upload" className="file-upload-label">
+                            <div className="file-upload-icon">+</div>
+                            Add Topic File
+                        </label>
+                    </div>
+                    <br />
+
+                    <input type="hidden" name="stdID" value={stdID} />
+                    <button type="submit">Upload File</button>
+                </form>
+                <h3>Uploaded Files:</h3>
+                <ul>
+                    {topic.map((file) => (
+                        <li key={file.id}>
+                            <a href={`http://localhost:56733/downloadtopic/${file.id}`} download>
+                                {file.filename}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+              </div>
+
+              
 
               <form onSubmit={addMeeting}>
-                <label>เข้าร่วมประชุม</label><br/>
+                <label>เข้าร่วมประชุม</label>
+                <br />
                 <input type="date" name="date-meeting" />
                 <br />
                 <br />
                 <input type="hidden" name="stdID" value={stdID} />
                 <button type="submit">Add meeting</button>
               </form>
-         
-     
-          
-          <button onClick={handleUpdate} className="confirm">ยืนยันการแก้ไข</button>
-        </div>
-      </div>
-    </div>
-    
-    )}
-  </div>
-);
 
+              <button onClick={handleUpdate} className="confirm">
+                ยืนยันการแก้ไข
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
