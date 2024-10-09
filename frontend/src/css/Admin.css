@@ -2,6 +2,22 @@
   padding: 10px 15px;
 }
 
+.left-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.right-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: right; /* Center vertically */
+  align-items: right; /* Center horizontally */
+  height: 100%; /* Ensure the box stretches to its parent container's height */
+}
+
+
+
 table {
   border-collapse: collapse;
   width: 70%;

@@ -65,37 +65,102 @@ export const Admin = () => {
   return (
     <>
       <Grid container spacing={2} sx={{ px: 1 }}>
-        <Grid item xs={6} md={6} >
+        <Grid item xs={6} md={6}>
           <Box className="admin-page-header">
             <Box className="left-container">
               <FormGroup>
                 <FormControlLabel control={<Checkbox defaultChecked />} label="Master Degree" />
                 <FormControlLabel control={<Checkbox defaultChecked />} label="PHD Degree" />
-                <Button container spacing={10} variant="contained" onClick={() => navigate("/alumni")} startIcon={<SchoolIcon />}>
-                  alumni
+                <Button
+                  variant="contained"
+                  onClick={() => navigate("/alumni")}
+                  startIcon={<SchoolIcon />}
+                  sx={{
+                    width: '200px',
+                    height: '50px',
+                    fontSize: '16px',
+                    '@media (max-width: 900px)': {
+                      width: '150px',
+                      height: '45px',
+                      fontSize: '14px',
+                    },
+                    '@media (max-width: 600px)': {
+                      width: '120px',
+                      height: '40px',
+                      fontSize: '12px',
+                    },
+                  }}
+                >
+                  Alumni
                 </Button>
               </FormGroup>
             </Box>
           </Box>
         </Grid>
+
         <Grid item xs={6} md={6}>
-          <Box className="right-container "
+          <Box className="right-container"
             sx={{
               display: 'flex',
-              flexDirection: 'column', // Stack buttons vertically
-              gap: '10px', // Add space between the buttons
-              alignItems: 'center', // Center the buttons
-            }}>
-            <Button container spacing={10} variant="contained" onClick={() => navigate("/addstudent")} startIcon={<AddIcon />}>
+              flexDirection: 'column',
+              alignItems: 'right', // Center horizontally
+              justifyContent: 'right', // Center vertically within the container
+              gap: '10px',
+              height: '100%', // Make sure the parent container allows vertical centering
+            }}
+          >
+            <Button
+              variant="contained"
+              onClick={() => navigate("/addstudent")}
+              startIcon={<AddIcon />}
+              sx={{
+                width: '200px',
+                height: '50px',
+                fontSize: '16px',
+                '@media (max-width: 900px)': {
+                  width: '150px',
+                  height: '45px',
+                  fontSize: '14px',
+                },
+                '@media (max-width: 600px)': {
+                  width: '120px',
+                  height: '40px',
+                  fontSize: '12px',
+                },
+              }}
+            >
               เพิ่มนักศึกษา
             </Button>
-            <Button container spacing={10} variant="contained" onClick={() => navigate("/alladmin")} startIcon={<SupervisorAccountIcon />}>
+
+            <Button
+              variant="contained"
+              onClick={() => navigate("/alladmin")}
+              startIcon={<SupervisorAccountIcon />}
+              sx={{
+                width: '200px',
+                height: '50px',
+                fontSize: '16px',
+                '@media (max-width: 900px)': {
+                  width: '150px',
+                  height: '45px',
+                  fontSize: '14px',
+                },
+                '@media (max-width: 600px)': {
+                  width: '120px',
+                  height: '40px',
+                  fontSize: '12px',
+                },
+              }}
+            >
               รวม admin
             </Button>
-            
           </Box>
+
         </Grid>
       </Grid>
+
+
+
 
       <div className="admin-table-container" style={{ marginTop: '20px' }}>
         <TableContainer component={Paper} sx={{ maxHeight: 440, overflow: 'auto', }}>

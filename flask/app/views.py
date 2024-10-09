@@ -242,12 +242,18 @@ def login():
         return jsonify({"message": "Login successful", "isAdmin": user.isAdmin,"currentUser":user.id,"stdID":student.stdID}), 200
     return jsonify({"message": "Invalid credentials"}), 401
 
+from flask import request, jsonify
+import base64
+import binascii
+
 @app.route('/studentfix', methods=['POST'])
 def studentfix():
     try:
         # Receive JSON data
         data = request.json
-        # print("Received data:", data)  # Debugging: show received data
+
+        # Debugging: Show received data (uncomment during development)
+        # print("Received data:", data)
 
         # Check required fields
         required_fields = ['stdID', 'name', 'tel', 'email', 'degree', 'advisor', 'email_advisor']
@@ -283,7 +289,7 @@ def studentfix():
                 else:
                     # If not, update the existing advisor's email
                     existing_advisor.email = data['email_advisor']
-                    db.session.commit()  # Save the changes to the existing advisor
+                    db.session.commit()  # Save changes to the existing advisor
                     student.advisorID = existing_advisor.id
                     print("Updated existing advisor's email.")
         else:
@@ -295,15 +301,16 @@ def studentfix():
             print("New advisor created.")
 
         # Handle image if provided
-        if 'image' in data and data['image']:
+        if 'picture' in data and data['picture']:
             user = User.query.filter_by(email=student.email).first()
             if user:
-                image_data = data['image']
+                image_data = data['picture']  # Use the correct field name here
                 if "," in image_data:
                     _, image_data = image_data.split(",", 1)  # Remove header
                 try:
                     decoded_image = base64.b64decode(image_data)
-                    user.picture = decoded_image
+                    user.picture = decoded_image  # Replace old picture with new picture
+                    print("Updated user's picture.")
                 except binascii.Error:
                     return jsonify({"error": "Invalid image data"}), 400
 
@@ -316,6 +323,8 @@ def studentfix():
         db.session.rollback()  # Rollback on error
         print("Error during studentfix:", str(e))  # Debugging: show error
         return jsonify({"error": "An error occurred while updating student information.", "details": str(e)}), 500
+
+
 
 
 @app.route('/currentstudent', methods=['GET'])
