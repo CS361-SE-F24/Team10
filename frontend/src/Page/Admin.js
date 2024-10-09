@@ -103,8 +103,8 @@ export const Admin = () => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center', // Center horizontally
-              justifyContent: 'center', // Center vertically within the container
+              alignItems: 'right', // Center horizontally
+              justifyContent: 'right', // Center vertically within the container
               gap: '10px',
               height: '100%', // Make sure the parent container allows vertical centering
             }}

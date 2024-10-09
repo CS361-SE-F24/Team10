@@ -11,8 +11,8 @@
 .right-container {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center vertically */
-  align-items: center; /* Center horizontally */
+  justify-content: right; /* Center vertically */
+  align-items: right; /* Center horizontally */
   height: 100%; /* Ensure the box stretches to its parent container's height */
 }
 
