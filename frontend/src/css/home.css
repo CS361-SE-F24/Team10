@@ -339,5 +339,105 @@
   border-radius: 12px;
   margin: 5px;
   padding: 10px;
-  width: 120px;
+  width: 100px;
 }
+
+.editprogress-container {
+  display: flex;
+  justify-content: space-between; /* จัดเรียงสองส่วนให้ห่างกัน */
+  gap: 50px; /* ระยะห่างระหว่างสองส่วน */
+  width: 100%;
+  /* margin-left: 100px; */
+  
+}
+
+.editprogress {
+  flex: 1; /* กำหนดให้ฟอร์มแก้ไข progress ขยายเต็มที่ */
+}
+
+.upload-section {
+  flex: 1; /* กำหนดให้ฟอร์มการอัปโหลดไฟล์ขยายเต็มที่ */
+  margin-top: 20px;
+  width: 100%; /* กำหนดให้เนื้อหาเต็มกล่อง */
+}
+
+.editprogress_input {
+  display: none;
+}
+
+.editprogress_label, .editprogress_label_pass {
+  padding: 2px 6px;  /* ลด padding ทั้งแนวตั้งและแนวนอน */
+  font-size: 15px;   /* ลดขนาดตัวอักษร */
+  border-radius: 4px;  /* ปรับมุมโค้งให้เล็กลง */
+  border: 1px solid #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #fc6c85;  /* สีพื้นหลัง */
+  color: white;   /* สีตัวอักษร */
+}
+
+
+.editprogress_label_pass {
+  background-color: #90ef90;
+}
+
+.editprogress_label:hover {
+  background-color: #bc0009;
+}
+
+.editprogress_label_pass:hover {
+  background-color: #02af0e;
+}
+
+.confirm {
+  /* position: ; */
+  bottom: 10px; /* ระยะห่างจากขอบล่าง */
+  right: 20px;  /* ระยะห่างจากขอบขวา */
+  padding: 10px 20px;
+  background-color: #D9D9D9; /* สีของปุ่ม */
+  border-color: black;
+  border-radius: 5px;
+  cursor: pointer;
+  color: black;
+}
+
+.confirm:hover {
+  background-color: #8b8b8b;
+}
+
+.box-edit{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  margin: 0 auto;
+  width: 80%;
+  max-width: 800px;
+  padding: 50px; /* เพิ่ม padding */
+  min-height: 200px; /* เพิ่มความสูงขั้นต่ำ */
+  border-radius: 8px;
+  /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); */
+}
+
+.file {
+  border: 1px solid #ccc; /* กำหนดกรอบ */
+  padding: 2px; /* ระยะห่างภายในกรอบ */
+  border-radius: 5px; /* มุมกรอบมน */
+  margin-top: 5px; /* ระยะห่างด้านบน */
+  background-color: #f9f9f9; /* สีพื้นหลัง */
+  text-decoration: none;
+  width: 210px;
+}
+
+.file a {
+  text-decoration: none;
+  color: black; /* เปลี่ยนสีข้อความถ้าต้องการ */
+  font-size: 12px;
+  padding-top: 2px; /* เพิ่มพื้นที่ด้านบน */
+  position: relative; /* ใช้ร่วมกับ top */
+  top: -5px; /* ย้ายขึ้น */
+}
+
+

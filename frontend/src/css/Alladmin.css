@@ -3,7 +3,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px; /* Space between cards */
-    padding: 10px; 
+    padding-left: 10px; 
   }
   
   /* Card styling */

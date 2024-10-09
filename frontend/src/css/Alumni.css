@@ -3,7 +3,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px; /* Space between cards */
-    padding: 10px; 
+    padding-left: 10px; 
   }
   
   /* Card styling */
@@ -17,6 +17,7 @@
     overflow: hidden;
     transition: transform 0.2s ease-in-out;
     margin-top: 0px; /* เพิ่ม margin-top สำหรับแต่ละ Card */
+    margin-left: 10px;
 }
 
   
@@ -77,6 +78,6 @@
   .alumni-card-container {
     display: flex; /* ใช้ Flexbox */
     align-items: center; /* จัดให้อยู่กลางแนวตั้ง */
-    padding: 30px; /* เพิ่ม padding รอบๆ */
+    margin: 30px; /* เพิ่ม padding รอบๆ */
   }
   
