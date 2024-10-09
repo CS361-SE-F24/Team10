@@ -27,26 +27,6 @@ export const Addadmin = () => {
     event.preventDefault();
     setLoading(true); // Start loading
     setResponseMessage(""); // Clear any previous message
-
-    const formDataToSend = new FormData();
-    formDataToSend.append("name_admin", formData.name_admin);
-    formDataToSend.append("email_admin", formData.email_admin);
-    formDataToSend.append("tel_admin", formData.tel_admin);
-    formDataToSend.append("pw_admin", formData.pw_admin);
-    formDataToSend.append("picture", formData.picture);
-
-    // Log the form data to console before sending
-    console.log("Form Data being sent:", {
-      name_admin: formData.name_admin,
-      email_admin: formData.email_admin,
-      tel_admin: formData.tel_admin,
-      pw_admin: formData.pw_admin,
-      picture: formData.picture ? formData.picture.name : null, // Log file name if present
-    });
-
-    // Send the form data
-    // setLoading(true);
-    // setResponseMessage('');
     setErrorMessages({}); // Reset error messages
 
     const errors = {};
@@ -71,13 +51,34 @@ export const Addadmin = () => {
       errors.pw_admin = "Password is required!";
     }
 
+    const formDataToSend = new FormData();
+    formDataToSend.append("name_admin", formData.name_admin);
+    formDataToSend.append("email_admin", formData.email_admin);
+    formDataToSend.append("tel_admin", formData.tel_admin);
+    formDataToSend.append("pw_admin", formData.pw_admin);
+    formDataToSend.append("picture", formData.picture);
 
-    // Check if there are any errors
     if (Object.keys(errors).length > 0) {
       setErrorMessages(errors);
       setLoading(false);
       return;
     }
+
+    // Log the form data to console before sending
+    console.log("Form Data being sent:", {
+      name_admin: formData.name_admin,
+      email_admin: formData.email_admin,
+      tel_admin: formData.tel_admin,
+      pw_admin: formData.pw_admin,
+      picture: formData.picture ? formData.picture.name : null, // Log file name if present
+    });
+
+    // Send the form data
+    // setLoading(true);
+    // setResponseMessage('');
+
+
+    // Check if there are any errors
 
     const newAdmin = { ...formData }; // Spread the form data
 
@@ -91,7 +92,7 @@ export const Addadmin = () => {
         console.log(response.data);
         setResponseMessage("Admin added successfully!"); // Set success message
         setLoading(false); // Stop loading
-        alert("ฟกกเเล้วจ้า")
+        alert("Admin Already Added")
         navigate("/admin");
       })
       .catch((error) => {
@@ -130,7 +131,7 @@ export const Addadmin = () => {
       )} */}
       <div className="containers">
         {!loading && (
-          <form onSubmit={AddNewAdmin}>
+          <form onSubmit={AddNewAdmin} noValidate>
             <div className="form-group">
               <label htmlFor="imageUpload">
                 <img
@@ -154,50 +155,58 @@ export const Addadmin = () => {
             <div className="form-group">
               <label htmlFor="name_admin">Name Admin</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.name_admin ? 'is-invalid' : ''}`}
                 type="text"
                 id="name_admin"
                 name="name_admin"
+                placeholder="Enter Fistname and Lastname"
                 value={formData.name_admin}
                 onChange={handleChange}
                 required
               />
+              {errorMessages.name_admin && <div className="error-message">{errorMessages.name_admin}</div>}
             </div>
             <div className="form-group">
               <label htmlFor="email_admin">Email</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.email_admin ? 'is-invalid' : ''}`}
                 type="email"
                 id="email_admin"
                 name="email_admin"
+                placeholder="Enter Email"
                 value={formData.email_admin}
                 onChange={handleChange}
                 required
               />
+              {errorMessages.email_admin && <div className="error-message">{errorMessages.email_admin}</div>}
             </div>
             <div className="form-group">
               <label htmlFor="tel_admin">Tel</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.tel_admin ? 'is-invalid' : ''}`}
                 type="text"
                 id="tel_admin"
                 name="tel_admin"
+                placeholder="Enter Telephone"
                 value={formData.tel_admin}
                 onChange={handleChange}
                 required
               />
+              {errorMessages.tel_admin && <div className="error-message">{errorMessages.tel_admin}</div>}
             </div>
             <div className="form-group">
               <label htmlFor="pw_admin">Password</label><br />
               <input
-                className="input_select_text"
+                className={`input_select_text ${errorMessages.pw_admin ? 'is-invalid' : ''}`}
                 type="text"
                 id="pw_admin"
                 name="pw_admin"
+                placeholder="Enter Password"
                 value={formData.pw_admin}
                 onChange={handleChange}
                 required
               />
+              {errorMessages.pw_admin && <div className="error-message">{errorMessages.pw_admin}</div>}
             </div>
             <button type="submit" className="button_add">เพิ่ม Admin</button>
           </form>

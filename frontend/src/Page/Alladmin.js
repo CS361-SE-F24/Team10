@@ -27,6 +27,7 @@ export const Alladmin = () => {
       try {
         const response = await axios.get("http://localhost:56733/alladmins");  // Adjust the API endpoint if necessary
         console.log(response.data);
+
         setAdmins(response.data);  // Store the fetched admin data in state
       } catch (err) {
         console.error("Error fetching admins", err);
@@ -80,7 +81,19 @@ export const Alladmin = () => {
             <Grid item xs={12} md={4} sm={6} lg={3} key={index}>
               <Card className="card-admin">
                 <CardMedia
-                  sx={{ height: 140 }}
+                  sx={{
+                    width: '400px', // Default width
+                    height: '300px', // Default height
+                    '@media (max-width: 900px)': {
+                      width: '300px', // Adjust width for screens smaller than 900px
+                      height: '250px', // Adjust height for smaller screens
+                    },
+                    '@media (max-width: 600px)': {
+                      width: '250px', // Adjust width for screens smaller than 600px
+                      height: '200px', // Adjust height for smaller screens
+                    },
+                    margin: '0 auto',
+                  }}
                   image={admin.picture ? `data:image/jpeg;base64,${admin.picture}` : "/static/images/cards/contemplative-reptile.jpg"}
                   title={admin.name}
                 />
