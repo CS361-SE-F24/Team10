@@ -189,7 +189,7 @@ export const StudentFixinformation = (props) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="input_select_text"
+            className={`input_select_text ${errorMessages.name ? 'is-invalid' : ''}`}
           />
           {errorMessages.name && <div className="error-message">{errorMessages.name}</div>}
         </div>
@@ -217,7 +217,7 @@ export const StudentFixinformation = (props) => {
             value={formData.tel}
             onChange={handleChange}
             maxLength={10}
-            className="input_select_text"
+            className={`input_select_text ${errorMessages.tel ? 'is-invalid' : ''}`}
           />
           {errorMessages.tel && <div className="error-message">{errorMessages.tel}</div>}
         </div>
@@ -256,7 +256,7 @@ export const StudentFixinformation = (props) => {
             name="advisor"
             value={formData.advisor}
             onChange={handleChange}
-            className="input_select_text"
+            className={`input_select_text ${errorMessages.advisor ? 'is-invalid' : ''}`}
           />
           {errorMessages.advisor && <div className="error-message">{errorMessages.advisor}</div>}
         </div>
@@ -270,7 +270,7 @@ export const StudentFixinformation = (props) => {
             name="email_advisor"
             value={formData.email_advisor}
             onChange={handleChange}
-            className="input_select_text"
+            className={`input_select_text ${errorMessages.email_advisor ? 'is-invalid' : ''}`}
           />
           {errorMessages.email_advisor && <div className="error-message">{errorMessages.email_advisor}</div>}
         </div>
