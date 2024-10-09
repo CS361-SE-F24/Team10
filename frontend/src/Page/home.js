@@ -269,7 +269,7 @@ export const Home = (props) => {
               {formData.picture ? (
                 <img className="picture" src={formData.picture} alt="User" />
               ) : (
-                <p>No Image Available</p>
+                <img className="picture" src="pic.png" alt="User" />
               )}
               <p>{formData.name}</p>
               <p>รหัสนักศึกษา {formData.stdID}</p>
@@ -298,9 +298,9 @@ export const Home = (props) => {
         <div className="rec">
           <div className="inside">
             {formData.picture ? (
-              <img className="picture" src={formData.picture} alt="User" />
+              <img className="picture" src={formData.picture } alt="User" />
             ) : (
-              <p>No Image Available</p>
+                <img className="picture" src="pic.png" alt="User" />
             )}
             <p>{formData.name}</p>
             <p>รหัสนักศึกษา {formData.stdID}</p>

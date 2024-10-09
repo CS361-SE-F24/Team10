@@ -73,14 +73,27 @@ export const Alumni = () => {
           {alumni.map((alumnus, index) => (
             <Grid item xs={12} md={4} sm={6} lg={3} key={alumnus.id || index} sx={{ width: 100 }}>
               <Card className="card-alumni" sx={{ width: 300}}> {/* Set card width to 100px */}
-                <CardMedia
-                  sx={{ height: 250 }} 
-                  image={alumnus.picture ? `data:image/jpeg;base64,${alumnus.picture}` : "/static/images/cards/contemplative-reptile.jpg"}
+              <CardMedia
+                sx={{
+                  width: '100%', // ให้กว้างพอดีกับการ์ด
+                  height: '300px', // ความสูงของการ์ด
+                  '@media (max-width: 900px)': {
+                    height: '250px', // ความสูงสำหรับหน้าจอที่เล็กกว่า 900px
+                  },
+                  '@media (max-width: 600px)': {
+                    height: '200px', // ความสูงสำหรับหน้าจอที่เล็กกว่า 600px
+                  },
+                  margin: '0 auto',
+                  objectFit: 'cover', // ทำให้รูปครอบคลุมพื้นที่การ์ดแบบสัดส่วน
+                }}
+                  image={alumnus.picture ? `data:image/jpeg;base64,${alumnus.picture}` : "pic.png"}
                   title={alumnus.name}
                 />
                 <CardContent>
                   <Typography gutterBottom variant="h6" component="div">
-                    {alumnus.name}
+                    {alumnus.name.split(" ")[0]}
+                    <br />
+                    {alumnus.name.split(" ")[1]}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     Email: {alumnus.email} <br />

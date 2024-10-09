@@ -130,6 +130,7 @@ export const Addadmin = () => {
         </div>
       )} */}
       <div className="containers">
+        <br/>
         {!loading && (
           <form onSubmit={AddNewAdmin} noValidate>
             <div className="form-group">
@@ -190,6 +191,7 @@ export const Addadmin = () => {
                 placeholder="Enter Telephone"
                 value={formData.tel_admin}
                 onChange={handleChange}
+                maxLength={10}
                 required
               />
               {errorMessages.tel_admin && <div className="error-message">{errorMessages.tel_admin}</div>}
@@ -209,7 +211,9 @@ export const Addadmin = () => {
               {errorMessages.pw_admin && <div className="error-message">{errorMessages.pw_admin}</div>}
             </div>
             <button type="submit" className="button_add">เพิ่ม Admin</button>
+            
           </form>
+          
         )}
 
         {/* Display response message */}
@@ -217,7 +221,7 @@ export const Addadmin = () => {
           <div className="response-message">
             {responseMessage}
           </div>
-        )}
+        )}<br/>
       </div>
     </>
   );
