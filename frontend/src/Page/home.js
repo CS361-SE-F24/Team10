@@ -511,47 +511,58 @@ export const Home = (props) => {
                   </label>
                 </div>
               )}
-            </div><br />
+            </div><br /><br/>
       
             {/* Course Selection */}
-            <label>เลือกตัวที่เรียน</label><br />
+            <label>เลือกตัวที่เรียน</label><br /><br/>
             <input
+              className="course-id"
               type="text"
               onChange={handleInputChange}
               placeholder="Enter course IDs separated by commas"
             />
             <br/><br />
-            <button type="submit">Save Progress</button>
+            <button className="button-save" type="submit">Save Progress</button>
           </form>
         </div>
       
         {/* ส่วนการอัปโหลดไฟล์ */}
         <div className="upload-section">
           <p>วิจัยที่ถูกตีพิมพ์</p>
-          <form onSubmit={uploadFile} encType="multipart/form-data">
-            <input type="file" name="file" />
-            <br /><br />
-            <select name="type" required>
-              <option value="journal">Journal</option>
-              <option value="proceeding">Proceeding</option>
-              <option value="conference">Conference</option>
-            </select><br/>
-            <br />
-      
-            <input type="hidden" name="stdID" value={stdID} />
-            <button type="submit">Upload File</button>
-          </form><br/><br />
-      
-          <h3>Uploaded Files:</h3>
-          <ul>
+          <div className="box-research">
+            <form onSubmit={uploadFile} encType="multipart/form-data" className="choosefile">
+              <div className="file-upload-container">
+                <input type="file" id="file-upload" name="file" hidden />
+                <label htmlFor="file-upload" className="file-upload-label">
+                  <div className="file-upload-icon">+</div>
+                  Add files
+                </label>
+              </div><br/>
+            
+              <select name="type" className="dropdown" required>
+                <option value="journal">Journal</option>
+                <option value="proceeding">Proceeding</option>
+                <option value="conference">Conference</option>
+              </select><br/>
+              <input type="hidden" name="stdID" value={stdID} />
+              <button type="submit" className="button-save">Upload File</button>
+            </form>
+          </div>
+
+        
+            <p>วิจัยทั้งหมด</p>
+
             {files.map((file) => (
-              <li key={file.id}>
+              <div className="file">
+                <InsertDriveFileIcon style={{ marginRight: '8px' }} />
                 <a href={`http://localhost:56733/download/${file.id}`} download>
                   {file.filename}
                 </a>
-              </li>
+              </div>
             ))}
-          </ul>
+         
+     
+          
           <button onClick={handleUpdate} className="confirm">ยืนยันการแก้ไข</button>
         </div>
       </div>
