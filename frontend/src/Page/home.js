@@ -740,15 +740,15 @@ export const Home = (props) => {
               <br />
 
               <div className="meet">
-                <form onSubmit={addMeeting}>
-                  <label>เข้าร่วมประชุม</label>
-                  <br /><br />
-                  <input type="date" name="date-meeting" />
-                  <br />
-                  <br />
-                  <input type="hidden" name="stdID" value={stdID} />
-                  <button type="submit" className="button-save">Add meeting</button>
-                </form>
+              <form onSubmit={addMeeting}>
+                <label>เข้าร่วมประชุม</label>
+                <br /><br/>
+                <input type="date" name="date-meeting" max={new Date().toISOString().split("T")[0]} />
+                <br />
+                <br />
+                <input type="hidden" name="stdID" value={stdID} />
+                <button type="submit" className="button-save">Add meeting</button>
+              </form>
                 <br />
 
               </div>
@@ -788,15 +788,7 @@ export const Home = (props) => {
               ))}
               <br />
 
-              <form onSubmit={addMeeting}>
-                <label>เข้าร่วมประชุม</label>
-                <br />
-                <input type="date" name="date-meeting" max={new Date().toISOString().split("T")[0]} />
-                <br />
-                <br />
-                <input type="hidden" name="stdID" value={stdID} />
-                <button type="submit">Add meeting</button>
-              </form>
+              
 
 
               <button onClick={handleUpdate} className="confirm">
