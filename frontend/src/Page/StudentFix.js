@@ -9,6 +9,8 @@ export const StudentFixinformation = (props) => {
   const [loading, setLoading] = useState(true);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [error, setError] = useState(null);
+  const [responseMessage, setResponseMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState({});
   const [formData, setFormData] = useState({
     name: '',
     stdID: stdID,
@@ -17,54 +19,56 @@ export const StudentFixinformation = (props) => {
     degree: '',
     advisor: '',
     email_advisor: '',
-    picture: null, // This will hold the image URL or base64 string
+    picture: null,
   });
 
   const navigate = useNavigate(); 
 
-  // Fetch student data from the API
-  const fetchData = useCallback(async () => {
-    try {
-      const response = await axios.get(`http://localhost:56733/currentstudent?stdID=${stdID}`);
-      const studentData = response.data;
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
-      // Set form data with fetched student data
-      setFormData(prevData => ({
-        ...prevData,
-        name: studentData.name || '',
-        tel: studentData.tel || '',
-        email: studentData.email || '',
-        degree: studentData.plan || '',
-        advisor: studentData.advisor || "",
-        email_advisor: studentData.advisor_email || "",
-        picture: studentData.picture ? `data:image/jpeg;base64,${studentData.picture}` : null, // Assuming picture is stored as Base64
-      }));
-    } catch (err) {
-      setError("Error fetching data. Please try again.");
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
+  const validateForm = () => {
+    const errors = {};
+
+    // Name validation
+    if (!formData.name) {
+      errors.name = "Name is required!";
     }
-  }, [stdID]);
 
-  // Fetch data when component mounts or stdID changes
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    // Tel validation
+    if (!formData.tel) {
+      errors.tel = "Tel is required!";
+    } else if (formData.tel.length !== 10 || !/^\d+$/.test(formData.tel)) {
+      errors.tel = "Tel is not valid!";
+    }
 
-  // Handle form submission
+    // Advisor validation
+    if (!formData.advisor) {
+      errors.advisor = "Advisor is required!";
+    }
+
+    // Email advisor validation
+    if (!formData.email_advisor) {
+      errors.email_advisor = "Email Advisor is required!";
+    } else if (!isValidEmail(formData.email_advisor)) {
+      errors.email_advisor = "Email is not valid!";
+    }
+
+    setErrorMessages(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     setLoadingSubmit(true);  
     setError(null);  
 
-    const requiredFields = ['name', 'tel', 'advisor', 'email_advisor'];
-    for (const field of requiredFields) {
-      if (!formData[field]) {
-        setError(`${field.charAt(0).toUpperCase() + field.slice(1)} is required.`);
-        setLoadingSubmit(false);
-        return;
-      }
+    // Perform validation
+    if (!validateForm()) {
+      setLoadingSubmit(false);
+      return;
     }
 
     // Prepare data for submission
@@ -76,7 +80,7 @@ export const StudentFixinformation = (props) => {
       degree: formData.degree,
       advisor: formData.advisor,
       email_advisor: formData.email_advisor,
-      picture: formData.picture ? formData.picture.split(',')[1] : null, // Use base64 if needed
+      picture: formData.picture ? formData.picture.split(',')[1] : null,
     };
 
     try {
@@ -86,7 +90,7 @@ export const StudentFixinformation = (props) => {
         },
       });
 
-      await fetchData();  // Fetch updated data after submission
+      await fetchData();  
       navigate("/admin");  
     } catch (error) {
       setError(error.response?.data?.error || "Error updating data. Please try again.");
@@ -96,7 +100,34 @@ export const StudentFixinformation = (props) => {
     }
   };
 
-  // Handle file input change
+  // Fetch student data from the API
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get(`http://localhost:56733/currentstudent?stdID=${stdID}`);
+      const studentData = response.data;
+
+      setFormData(prevData => ({
+        ...prevData,
+        name: studentData.name || '',
+        tel: studentData.tel || '',
+        email: studentData.email || '',
+        degree: studentData.plan || '',
+        advisor: studentData.advisor || "",
+        email_advisor: studentData.advisor_email || "",
+        picture: studentData.picture ? `data:image/jpeg;base64,${studentData.picture}` : null,
+      }));
+    } catch (err) {
+      setError("Error fetching data. Please try again.");
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [stdID]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const HandleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -104,16 +135,15 @@ export const StudentFixinformation = (props) => {
       reader.onloadend = () => {
         setFormData(prevData => ({
           ...prevData,
-          picture: reader.result,  // Store the new image as a base64 URL
+          picture: reader.result,
         }));
       };
-      reader.readAsDataURL(file); // Convert the file to base64
+      reader.readAsDataURL(file);
     } else {
       alert("Please upload a valid image file.");
     }
   };
 
-  // Handle input field changes
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData(prevState => ({
@@ -122,7 +152,6 @@ export const StudentFixinformation = (props) => {
     }));
   };
 
-  // Show loading spinner if data is being fetched
   if (loading) {
     return <div className="loading-screen"><div className="loader"></div></div>;
   }
@@ -136,10 +165,10 @@ export const StudentFixinformation = (props) => {
         <div className="form-group">
           <label htmlFor="imageUpload">
             <img
-              src={formData.picture ? formData.picture : 'pic.png'} // Display existing picture or default image
+              src={formData.picture ? formData.picture : 'pic.png'}
               className="uploaded-image"
               alt="Student"
-              style={{ cursor: 'pointer', width: '200px', height: '200px' }}
+              // style={{ cursor: 'pointer', width: '200px', height: '200px' }}
             />
           </label>
           <input
@@ -160,9 +189,9 @@ export const StudentFixinformation = (props) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            required
             className="input_select_text"
           />
+          {errorMessages.name && <div className="error-message">{errorMessages.name}</div>}
         </div>
 
         {/* Student ID */}
@@ -187,9 +216,10 @@ export const StudentFixinformation = (props) => {
             name="tel"
             value={formData.tel}
             onChange={handleChange}
-            required
+            maxLength={10}
             className="input_select_text"
           />
+          {errorMessages.tel && <div className="error-message">{errorMessages.tel}</div>}
         </div>
 
         {/* Email Field */}
@@ -200,7 +230,6 @@ export const StudentFixinformation = (props) => {
             id="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}
             readOnly
             className="input_select_text"
           />
@@ -227,9 +256,9 @@ export const StudentFixinformation = (props) => {
             name="advisor"
             value={formData.advisor}
             onChange={handleChange}
-            required
             className="input_select_text"
           />
+          {errorMessages.advisor && <div className="error-message">{errorMessages.advisor}</div>}
         </div>
 
         {/* Advisor Email */}
@@ -241,9 +270,9 @@ export const StudentFixinformation = (props) => {
             name="email_advisor"
             value={formData.email_advisor}
             onChange={handleChange}
-            required
             className="input_select_text"
           />
+          {errorMessages.email_advisor && <div className="error-message">{errorMessages.email_advisor}</div>}
         </div>
 
         {/* Submit Button */}
