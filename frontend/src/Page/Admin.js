@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button, Select, MenuItem, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,6 +15,8 @@ export const Admin = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [masterChecked, setMasterChecked] = useState(true);
+  const [phdChecked, setPhdChecked] = useState(true);
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -32,24 +34,37 @@ export const Admin = () => {
     fetchData(); // Call fetchData when the component mounts
   }, []);
 
+  // Function to filter students based on checkboxes
+  const getFilteredStudents = () => {
+    return students.filter(student => {
+      const degreePart = student.degree.split(" ")[0]; // Split the degree
+
+      // Check for Master Degree
+      if (masterChecked && phdChecked) {
+        return degreePart === "Master_Degree" || degreePart === "PhD";
+      } else if (masterChecked) {
+        return degreePart === "Master_Degree";
+      } else if (phdChecked) {
+        return degreePart === "PhD";
+      }
+      return false; // If neither checkbox is checked, return no students
+    });
+  };
+
   const handleView = (stdID) => {
     navigate('/', { state: { stdID } });
-  }
+  };
 
   const handleEdit = (stdID) => {
     navigate('/studentfix', { state: { stdID } });
   };
 
   const handleDelete = async (stdID) => {
-    // Confirm the deletion action from the user
     const confirmDelete = window.confirm(`Are you sure you want to delete student with ID: ${stdID}?`);
 
     if (confirmDelete) {
       try {
-        // Send DELETE request to the backend
         await axios.delete(`http://localhost:56733/deleteStudent/${stdID}`);
-
-        // Call fetchData to refresh the student list after deletion
         await fetchData();
         alert(`Student with ID: ${stdID} has been deleted successfully.`);
       } catch (error) {
@@ -62,6 +77,8 @@ export const Admin = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
+  const filteredStudents = getFilteredStudents(); // Apply filtering here
+
   return (
     <>
       <Grid container spacing={2} sx={{ px: 1 }}>
@@ -69,8 +86,14 @@ export const Admin = () => {
           <Box className="admin-page-header">
             <Box className="left-container">
               <FormGroup>
-                <FormControlLabel control={<Checkbox defaultChecked />} label="Master Degree" />
-                <FormControlLabel control={<Checkbox defaultChecked />} label="PHD Degree" />
+                <FormControlLabel
+                  control={<Checkbox checked={masterChecked} onChange={() => setMasterChecked(!masterChecked)} />}
+                  label="Master Degree"
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={phdChecked} onChange={() => setPhdChecked(!phdChecked)} />}
+                  label="PhD"
+                />
                 <Button
                   variant="contained"
                   onClick={() => navigate("/alumni")}
@@ -103,10 +126,10 @@ export const Admin = () => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'right', // Center horizontally
-              justifyContent: 'right', // Center vertically within the container
+              alignItems: 'right',
+              justifyContent: 'right',
               gap: '10px',
-              height: '100%', // Make sure the parent container allows vertical centering
+              height: '100%',
             }}
           >
             <Button
@@ -159,9 +182,6 @@ export const Admin = () => {
         </Grid>
       </Grid>
 
-
-
-
       <div className="admin-table-container" style={{ marginTop: '20px' }}>
         <TableContainer component={Paper} sx={{ maxHeight: 440, overflow: 'auto', }}>
           <Table stickyHeader>
@@ -169,8 +189,8 @@ export const Admin = () => {
               <TableRow>
                 <TableCell
                   sx={{
-                    backgroundColor: '#11009E', // Header background color
-                    color: 'white', // Header text color
+                    backgroundColor: '#11009E',
+                    color: 'white',
                     textAlign: 'center',
                   }}
                 >
@@ -233,7 +253,7 @@ export const Admin = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {students.map((student) => (
+              {filteredStudents.map((student) => (
                 <TableRow key={student.stdID}>
                   <TableCell>{student.no}</TableCell>
                   <TableCell>{student.name}</TableCell>
