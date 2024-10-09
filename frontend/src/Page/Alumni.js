@@ -61,31 +61,32 @@ export const Alumni = () => {
   return (
     <>
       <Box className="alumni-header">
-        <Box className="alumni-text">
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '20px' }}>
           <Typography variant="h6">
             Alumni Board<br />
           </Typography>
         </Box>
+
       </Box>
 
       <Box className="alumni-card-container">
         <Grid container spacing={10}>
           {alumni.map((alumnus, index) => (
             <Grid item xs={12} md={4} sm={6} lg={3} key={alumnus.id || index} sx={{ width: 100 }}>
-              <Card className="card-alumni" sx={{ width: 300}}> {/* Set card width to 100px */}
-              <CardMedia
-                sx={{
-                  width: '100%', // ให้กว้างพอดีกับการ์ด
-                  height: '300px', // ความสูงของการ์ด
-                  '@media (max-width: 900px)': {
-                    height: '250px', // ความสูงสำหรับหน้าจอที่เล็กกว่า 900px
-                  },
-                  '@media (max-width: 600px)': {
-                    height: '200px', // ความสูงสำหรับหน้าจอที่เล็กกว่า 600px
-                  },
-                  margin: '0 auto',
-                  objectFit: 'cover', // ทำให้รูปครอบคลุมพื้นที่การ์ดแบบสัดส่วน
-                }}
+              <Card className="card-alumni" sx={{ width: 300 }}> {/* Set card width to 100px */}
+                <CardMedia
+                  sx={{
+                    width: '100%', // ให้กว้างพอดีกับการ์ด
+                    height: '300px', // ความสูงของการ์ด
+                    '@media (max-width: 900px)': {
+                      height: '250px', // ความสูงสำหรับหน้าจอที่เล็กกว่า 900px
+                    },
+                    '@media (max-width: 600px)': {
+                      height: '200px', // ความสูงสำหรับหน้าจอที่เล็กกว่า 600px
+                    },
+                    margin: '0 auto',
+                    objectFit: 'cover', // ทำให้รูปครอบคลุมพื้นที่การ์ดแบบสัดส่วน
+                  }}
                   image={alumnus.picture ? `data:image/jpeg;base64,${alumnus.picture}` : "pic.png"}
                   title={alumnus.name}
                 />
@@ -101,7 +102,7 @@ export const Alumni = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <IconButton
+                  {/* <IconButton
                     size="small"
                     sx={{ color: 'indigo', '&:hover': { color: 'cyan' } }}
                   >
@@ -113,7 +114,7 @@ export const Alumni = () => {
                     sx={{ color: 'black', '&:hover': { color: 'yellow' } }}
                   >
                     <EditIcon />
-                  </IconButton>
+                  </IconButton> */}
                   <IconButton
                     size="small"
                     onClick={() => handleClickOpen(alumnus)}  // Pass the alumni info to the delete handler

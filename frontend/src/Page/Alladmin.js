@@ -63,9 +63,9 @@ export const Alladmin = () => {
     <>
       <Box className="admin-header">
         <Box className="admin-text">
-          <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left' }}>
+          {/* <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left' }}>
             Alladmin <br />
-          </Typography>
+          </Typography> */}
         </Box>
 
         <Box className="admin-container">
@@ -110,7 +110,7 @@ export const Alladmin = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <IconButton
+                  {/* <IconButton
                     size="small"
                     sx={{
                       color: 'indigo',
@@ -120,7 +120,7 @@ export const Alladmin = () => {
                     }}
                   >
                     <VisibilityIcon />
-                  </IconButton>
+                  </IconButton> */}
 
                   <IconButton
                     size="small"
