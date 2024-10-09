@@ -80,26 +80,29 @@ export const Alladmin = () => {
           {admins.map((admin, index) => (
             <Grid item xs={12} md={4} sm={6} lg={4} key={index}>
               <Card className="card-admin">
-                <CardMedia
-                  sx={{
-                    width: '400px', // Default width
-                    height: '300px', // Default height
-                    '@media (max-width: 900px)': {
-                      width: '300px', // Adjust width for screens smaller than 900px
-                      height: '250px', // Adjust height for smaller screens
-                    },
-                    '@media (max-width: 600px)': {
-                      width: '250px', // Adjust width for screens smaller than 600px
-                      height: '200px', // Adjust height for smaller screens
-                    },
-                    margin: '0 auto',
-                  }}
-                  image={admin.picture ? `data:image/jpeg;base64,${admin.picture}` : "/static/images/cards/contemplative-reptile.jpg"}
-                  title={admin.name}
-                />
+              <CardMedia
+                sx={{
+                  width: '100%', // ให้กว้างพอดีกับการ์ด
+                  height: '300px', // ความสูงของการ์ด
+                  '@media (max-width: 900px)': {
+                    height: '250px', // ความสูงสำหรับหน้าจอที่เล็กกว่า 900px
+                  },
+                  '@media (max-width: 600px)': {
+                    height: '200px', // ความสูงสำหรับหน้าจอที่เล็กกว่า 600px
+                  },
+                  margin: '0 auto',
+                  objectFit: 'cover', // ทำให้รูปครอบคลุมพื้นที่การ์ดแบบสัดส่วน
+                }}
+                image={admin.picture ? `data:image/jpeg;base64,${admin.picture}` : "pic.png"}
+                title={admin.name}
+              />
+
+
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
-                    {admin.name}
+                    {admin.name.split(" ")[0]}
+                    <br />
+                    {admin.name.split(" ")[1]}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     Email: {admin.email} <br />
