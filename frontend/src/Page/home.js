@@ -9,11 +9,13 @@ export const Home = (props) => {
   const location = useLocation();
   const stdID =
     location.state?.stdID || props.stdID || localStorage.getItem("stdID") || "";
-  const currentUser = props.currentUser ||
-    JSON.parse(localStorage.getItem("currentUser")) || {
+  
+  const currentUser =
+    props.currentUser || JSON.parse(localStorage.getItem("currentUser")) || {
       id: 0,
       isAdmin: false,
     };
+
   const [show, setShow] = useState("progress");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,8 +33,8 @@ export const Home = (props) => {
     degree: "",
     advisor: "",
     email_advisor: "",
-    image: null,
-    picture: null, // Add this field to store the image
+    // image: null, // For uploading new image
+    picture: null, // Displaying the current image fetched from API
   });
 
   const [plan, setFormplan] = useState({
@@ -62,6 +64,7 @@ export const Home = (props) => {
   };
 
   useEffect(() => {
+    // Save stdID to localStorage if not already saved
     if (stdID && !localStorage.getItem("stdID")) {
       localStorage.setItem("stdID", stdID);
     }
@@ -78,7 +81,9 @@ export const Home = (props) => {
           ? `data:image/jpeg;base64,${studentData.picture}`
           : null;
 
-        setFormData({
+        // Update formData with student data and the picture (if available)
+        setFormData((prevData) => ({
+          ...prevData,
           name: studentData.name || "",
           stdID: stdID,
           tel: studentData.tel || "",
@@ -88,7 +93,7 @@ export const Home = (props) => {
           email_advisor: studentData.advisor_email || "",
           image: null,
           picture: picture,
-        });
+        }));
 
         //(formData);
 
@@ -240,36 +245,36 @@ export const Home = (props) => {
   //(progressPercentage);
 
   return (
-    <div className="home-container">
-      <div className="sidebar">
-        <h4>PhD Student</h4>
-        <div className="rec">
-          <div className="inside">
-            {formData.picture ? (
-              <img className="picture" src={formData.picture} alt="User" />
-            ) : (
-              <p>No Image Available</p>
-            )}
-            <p>{formData.name}</p>
-            <p>รหัสนักศึกษา {formData.stdID}</p>
-            <hr />
-            <p>{formData.degree}</p>
-          </div>
+  <div className="home-container">
+    <div className="sidebar">
+      <h4>PhD Student</h4>
+      <div className="rec">
+        <div className="inside">
+          {formData.picture ? (
+            <img className="picture" src={formData.picture} alt="User" />
+          ) : (
+            <p>No Image Available</p>
+          )}
+          <p>{formData.name}</p>
+          <p>รหัสนักศึกษา {formData.stdID}</p>
+          <hr />
+          <p>{formData.degree}</p>
         </div>
-        <br />
-        <div className="advisor">
-          Advisor: {formData.advisor || "Not available"}
-        </div>
-        <div className="email">
-          Email of Advisor: {formData.email_advisor || "Not available"}
-        </div>
-
-        {currentUser.isAdmin && show === "progress" && (
-          <div>
-            <button onClick={handleUpdate}>Update Progress</button>
-          </div>
-        )}
       </div>
+      <br />
+      <div className="advisor">
+        Advisor: {formData.advisor || "Not available"}
+      </div>
+      <div className="email">
+        Email of Advisor: {formData.email_advisor || "Not available"}
+      </div><br />
+
+      {currentUser.isAdmin && show === "progress" && (
+        <div>
+          <button onClick={handleUpdate} className="editpro">แก้ไข</button>
+        </div>
+      )}
+    </div>
 
       {show === "progress" ? (
         <div className="progress-bar-container">
@@ -282,10 +287,16 @@ export const Home = (props) => {
             </div>
             <div className="DonutChart">
               <DonutChart progress={progressPercentage} />
-              <div className="course"></div>
+              <div className="course"></div><br /><br /><br />
+            <div className="box">
+              <p>เรียนให้ครบหน่วยกิต</p>
               <button onClick={togglePopup} className="popup-button">
-                Open Popup
+                หน่วยกิตที่ได้รับ
               </button>
+            </div><br/>
+            <div className="box2">
+              การเข้าร่วมประชุม
+            </div>
               {showPopup && (
                 <div className="popup-modal">
                   <div className="popup-content">

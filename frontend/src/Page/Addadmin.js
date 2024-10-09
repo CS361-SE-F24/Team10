@@ -15,6 +15,13 @@ export const Addadmin = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [responseMessage, setResponseMessage] = useState(""); // Response message state
   const navigate = useNavigate();
+  const [errorMessages, setErrorMessages] = useState({});
+  // const [responseMessage, setResponseMessage] = useState('');
+
+  const isValidEmail = (email) => {
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(email);
+  };
 
   const AddNewAdmin = (event) => {
     event.preventDefault();
@@ -38,6 +45,42 @@ export const Addadmin = () => {
     });
 
     // Send the form data
+    // setLoading(true);
+    // setResponseMessage('');
+    setErrorMessages({}); // Reset error messages
+
+    const errors = {};
+
+    // Basic validation
+    if (!formData.name_admin) {
+      errors.name_admin = "Name is required!";
+    }
+    if (!formData.email_admin) {
+      errors.email_admin = "Email is required!";
+    } else if (!isValidEmail(formData.email_admin)) { // Validate Email
+      errors.email_admin = "Email is not valid!";
+    }
+    if (!formData.tel_admin) {
+      errors.tel_admin = "Tel is required!";
+    } else if (formData.tel_admin.length !== 10) {
+      errors.tel_admin = "Tel must be 10 digits!";
+    } else if (!/^\d+$/.test(formData.tel_admin)) {
+      errors.tel_admin = "Tel is not valid!";
+    }
+    if (!formData.pw_admin) {
+      errors.pw_admin = "Password is required!";
+    }
+
+
+    // Check if there are any errors
+    if (Object.keys(errors).length > 0) {
+      setErrorMessages(errors);
+      setLoading(false);
+      return;
+    }
+
+    const newAdmin = { ...formData }; // Spread the form data
+
     axios
       .post("http://localhost:56733/addadmin", formDataToSend, {
         headers: {

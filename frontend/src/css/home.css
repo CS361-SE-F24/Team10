@@ -7,7 +7,7 @@
   
 .sidebar {
   width: 275px;
-  height: 100%; /* ใช้ความสูง 100% ของ .home-container */
+  height: 100%;
   background-color: #11009e;
   color: white;
   display: flex;
@@ -37,6 +37,10 @@
     flex: 1; /* ขยายให้เต็มพื้นที่ที่เหลือ */
     padding: 20px;
     background-color: white; /* สีพื้นหลังสำหรับ progress bar */
+    margin-left: 20px; /* ขยับไปทางขวา */
+    position: relative; /* เปลี่ยนเป็น relative สำหรับควบคุมการขยับ */
+    top: 20px; /* ขยับลงล่าง */
+    left: 50px; /* ขยับไปทางขวา */
   }
   
 .email, .advisor {
@@ -173,7 +177,7 @@
   width: 20%; /* ปรับขนาดให้เหมาะสม */
   max-width: 300px;
   position: absolute; /* ตั้งตำแหน่งแบบ absolute */
-  top: 150px; /* ระยะห่างจากด้านบน */
+  top: 175px; /* ระยะห่างจากด้านบน */
   right: 10px; /* ระยะห่างจากด้านขวา */
 }
 
@@ -220,13 +224,13 @@
 .popup-button {
   margin-top: 20px;
   padding: 5px 10px; /* Smaller padding for a smaller button */
-  background-color: #007bff;
+  background-color: #11009E;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 5px;
   font-size: 14px; /* Smaller font size */
-
+  
 }
 
 .popup-content ul {
@@ -268,10 +272,22 @@
   opacity: 0.9;
 }
 
-.course-registered {
-  background-color: #06de14; /* Green background for registered courses */
+.box ,.box2{
+  background-color: #EEEEEE;
+  height: 100px;
+  width: 225px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  position: relative;
+  left: -20px; /* ปรับระยะขยับไปทางซ้าย */
 }
 
-.course-unregistered {
-  background-color: #f1f1f1; /* Default background for unregistered courses */
+.editpro{
+  border-radius: 12px;
+  margin: 5px;
+  padding: 10px;
+  width: 120px;
 }

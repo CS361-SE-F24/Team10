@@ -11,10 +11,11 @@
   flex-direction: column;
   display: grid; 
   grid-template-columns: 1fr 1fr; /* Define two columns: one for the circle, and one for the step name */
-  column-gap: 35px; /* Adjust spacing between the circle and step name */
-  margin-bottom: 30px;
-  padding-bottom: 45px;
-  margin-top: -5px;
+  align-items: center; /* Vertically align content in both columns */
+  column-gap: 15px; /* Adjust spacing between the circle and step name */
+  margin-bottom: 100px; /* Space between steps */
+  padding: 20px; /* Add padding to increase the height of each step */
+  position: relative; /* Position relative for absolute positioning of line */
   background-color: transparent !important;
   position: relative;
   padding-left: 10px; /* Optional: Adjust padding if necessary */

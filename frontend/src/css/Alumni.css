@@ -7,7 +7,7 @@
   }
   
   /* Card styling */
-.card-admin {
+.card-alumni {
     flex: 0 0 calc(25% - 15px);
     width: 100%;
     box-sizing: border-box;
@@ -59,22 +59,22 @@
     }
   }
   
-  .admin-header {
+  .alumni-header {
     display: flex; /* ใช้ Flexbox */
     justify-content: flex-end; /* จัดให้เนื้อหาทั้งหมดอยู่ที่ขวา */
     /* align-items: center; จัดให้อยู่กลางแนวตั้ง */
     padding: 30px; /* เพิ่ม padding รอบๆ */
   }
 
-  .admin-container {
+  .alumni-container {
     margin: right;
   }
 
-  .admin-text {
+  .alumni-text {
     align-items: left;
   }
   
-  .admin-card-container {
+  .alumni-card-container {
     display: flex; /* ใช้ Flexbox */
     align-items: center; /* จัดให้อยู่กลางแนวตั้ง */
     padding: 30px; /* เพิ่ม padding รอบๆ */

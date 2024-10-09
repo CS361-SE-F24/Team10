@@ -12,6 +12,7 @@ import { Data } from "./Page/Data";
 import { ProgressBar } from "./Page/progressbar";
 import { Alladmin } from "./Page/Alladmin";
 import { AddCourse } from "./Page/Addcourse"; // Fixed import
+import { Alumni } from "./Page/Alumni";
 
 function App() {
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ function App() {
         <Route path="/progressbar" element={<ProgressBar />} />
         <Route path="/alladmin" element={<Alladmin />} />
         <Route path="/addcourse" element={<AddCourse />} /> {/* Fixed route */}
+        <Route path="/alumni" element={<Alumni />} />
       </Routes>
     </>
   );
