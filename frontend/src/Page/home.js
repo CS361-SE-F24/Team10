@@ -220,6 +220,40 @@ export const Home = (props) => {
 
   return (
   <div className="home-container">
+  
+    {/* Display helloworld for mobile screens */}
+    <div className="hidden-mobile"><h4>PhD Student</h4>
+      <div className="sidebar-mb">
+      
+      <div className="rec">
+        <div className="inside">
+          {formData.picture ? (
+            <img className="picture" src={formData.picture} alt="User" />
+          ) : (
+            <p>No Image Available</p>
+          )}
+          <p>{formData.name}</p>
+          <p>รหัสนักศึกษา {formData.stdID}</p>
+          <hr />
+          <p>{formData.degree}</p>
+        </div>
+      </div>
+      <br />
+      <div className="advisor">
+        Advisor: {formData.advisor || "Not available"}
+      </div>
+      <div className="email">
+        Email of Advisor: {formData.email_advisor || "Not available"}
+      </div>
+
+      {currentUser.isAdmin && show === "progress" && (
+        <div>
+          <button onClick={handleUpdate}>Update Progress</button>
+        </div>
+      )}
+    </div></div>
+    
+
     <div className="sidebar">
       <h4>PhD Student</h4>
       <div className="rec">

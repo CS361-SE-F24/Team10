@@ -257,3 +257,53 @@
 .popup-button:hover, .close-popup:hover {
   opacity: 0.9;
 }
+
+.hidden-mobile {
+  display: none; /* Hide this element on larger screens */
+}
+
+.sidebar-mb {
+  display: none;
+}
+
+
+@media (max-width: 480px) {
+  .hidden-mobile {
+    display: block; /* Show this element on mobile */
+  }
+  .sidebar {
+    display: none;
+    }
+  .sidebar-mb {
+    display: block;
+    width: 400px;
+    height: 170px; 
+    border-radius: 23px;
+    background-color: #D9E3FF;
+    margin-left: 15px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* จัดแนวแนวนอน */
+    padding: 20px 0; /* ปรับ padding */
+  }
+  .rec {
+    height: 170px;
+    width: 140px;
+    background-color: #ffffff;
+    margin-right: 230px;
+    border-radius: 0px;
+  }
+  .picture{
+    margin-left: 5px;
+  }
+  /* .home-container{
+    align-items: center;
+  } */
+
+  .progress-bar-container {
+    display: none;
+  }
+  
+}
+
