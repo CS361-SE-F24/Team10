@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -11,15 +12,30 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import IconButton from '@mui/material/IconButton';
-import "../css/Alladmin.css";
-import { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 export const Alladmin = () => {
   const navigate = useNavigate();
+  const [admins, setAdmins] = useState([]);  // State for storing all admins
   const [open, setOpen] = useState(false); // State for the dialog
   const [adminToDelete, setAdminToDelete] = useState(null); // State to track which admin to delete
+
+  useEffect(() => {
+    const fetchAdmins = async () => {
+      try {
+        const response = await axios.get("http://localhost:56733/alladmins");  // Adjust the API endpoint if necessary
+        console.log(response.data);
+        
+        setAdmins(response.data);  // Store the fetched admin data in state
+      } catch (err) {
+        console.error("Error fetching admins", err);
+      }
+    };
+
+    fetchAdmins();  // Fetch admins when component mounts
+  }, []);
 
   const handleClickOpen = (admin) => {
     setAdminToDelete(admin); // Set the admin to delete
@@ -27,11 +43,11 @@ export const Alladmin = () => {
   };
 
   const handleClose = () => {
-    setOpen(false); // Close dialog  
+    setOpen(false); // Close dialog
   };
 
   const handleDelete = () => {
-    alert("ลบเรียบร้อยแล้ว"); // Example delete operation
+    alert(`ลบเรียบร้อยแล้ว ${adminToDelete.name}`); // Example delete operation
     setOpen(false); // Close dialog after deletion
   };
 
@@ -47,7 +63,7 @@ export const Alladmin = () => {
     <>
       <Box className="admin-header">
         <Box className="admin-text">
-          <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left' }}>
+          <Typography variant="h8" ผผ>
             Add new admin <br />
           </Typography>
         </Box>
@@ -61,54 +77,63 @@ export const Alladmin = () => {
 
       <Box className="admin-card-container">
         <Grid container spacing={10}>
-          <Grid item xs={12} md={4} sm={6} lg={4}>
-            <Card className="card-admin" >
-              <CardMedia sx={{ height: 140 }} image="/static/images/cards/contemplative-reptile.jpg" title="green iguana" />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">Admin3</Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Data
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <IconButton
-                  size="small"
-                  sx={{
-                    color: 'indigo',
-                    '&:hover': {
-                      color: 'cyan',
-                    },
-                  }}
-                >
-                  <VisibilityIcon />
-                </IconButton>
+          {admins.map((admin, index) => (
+            <Grid item xs={12} md={4} sm={6} lg={4} key={index}>
+              <Card className="card-admin">
+                <CardMedia
+                  sx={{ height: 140 }}
+                  image={admin.picture ? `data:image/jpeg;base64,${admin.picture}` : "/static/images/cards/contemplative-reptile.jpg"}
+                  title={admin.name}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {admin.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    Email: {admin.email} <br />
+                    Tel: {admin.tel}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <IconButton
+                    size="small"
+                    sx={{
+                      color: 'indigo',
+                      '&:hover': {
+                        color: 'cyan',
+                      },
+                    }}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
 
-                <IconButton
-                  size="small"
-                  sx={{
-                    color: 'black',
-                    '&:hover': {
-                      color: 'yellow',
-                    },
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={() => handleClickOpen("Admin3")} // Pass the admin info to the delete handler
-                  sx={{
-                    color: 'red',
-                    '&:hover': {
-                      color: 'orange',
-                    },
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </CardActions>
-            </Card>
-          </Grid>
+                  <IconButton
+                    size="small"
+                    sx={{
+                      color: 'black',
+                      '&:hover': {
+                        color: 'yellow',
+                      },
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleClickOpen(admin)}  // Pass the admin info to the delete handler
+                    sx={{
+                      color: 'red',
+                      '&:hover': {
+                        color: 'orange',
+                      },
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </Box>
 
@@ -117,7 +142,7 @@ export const Alladmin = () => {
         <DialogTitle>ยืนยันการลบ</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            คุณแน่ใจหรือว่าต้องการลบ {adminToDelete}?
+            คุณแน่ใจหรือว่าต้องการลบ {adminToDelete?.name}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -131,4 +156,4 @@ export const Alladmin = () => {
       </Dialog>
     </>
   );
-}
+};

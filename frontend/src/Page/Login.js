@@ -6,120 +6,121 @@ import "../css/Login.css";
 
 // Login Component
 export const Login = ({ setCurrentUser }) => {
-  const navigate = useNavigate();
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // สถานะเพื่อแสดง/ซ่อนรหัสผ่าน
-  // console.log("asssssssssss");
+    const navigate = useNavigate();
+    const [message, setMessage] = useState(""); // State สำหรับข้อความแสดงผล
+    const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    // const isValidEmail = (email) => {
+    //     const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    //     return emailRegex.test(email);
+    // };
 
-    axios
-      .post("http://localhost:56733/login", data)
-      .then((response) => {
-        alert("Login successful");
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const data = Object.fromEntries(formData.entries());
 
-        // Set the currentUser with both ID and isAdmin status
-        setCurrentUser({
-          id: response.data.currentUser,
-          isAdmin: response.data.isAdmin,
-        });
+        // Reset message
+        setMessage("");
 
-        // Navigate based on user role
-        if (response.data.isAdmin) {
-          navigate("/admin");
-        } else {
-          navigate("/", { state: { stdID: response.data.stdID } });
-        }
-      })
-      .catch((error) => {
-        setError("Invalid login credentials");
-        console.error("There was an error sending the data!", error);
-      });
-  };
+        // Validate email and password
+        if (!data.email || !data.password) {
+            setMessage("Please enter username and password."); // Set validation message
+            return; // Stop execution
+        } //else if (!isValidEmail(data.email)) {
+        //     setMessage("Please enter a valid email."); // Invalid email message
+        //     return; // Stop execution
+        // }
 
-  // ฟังก์ชันสลับการแสดงรหัสผ่าน
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+        // Proceed with the login request if no errors
+        axios.post("http://localhost:56733/login", data)
+            .then((response) => {
+                alert("Login successful");
+                setCurrentUser({
+                    id: response.data.currentUser,
+                    isAdmin: response.data.isAdmin,
+                });
 
-  return (
+                if (response.data.isAdmin) {
+                    navigate("/admin");
+                } else {
+                    navigate("/", { state: { stdID: response.data.stdID } });
+                }
+            })
+            .catch(() => {
+                setMessage("Invalid login credentials"); // Set error message
+            });
+    };
 
-    <Grid2 size={{ xs: 4, md: 2 }}>
-      <div className="container">
-        <div className="item">
-          {/* Right Side */}
-          <div className="contact">
-            {/* Add more content as needed */}
-          </div>
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
-          {/* Left Side */}
-          <div className="submit-form">
-            <form onSubmit={handleSubmit}>
-              <div>
-                <p className="cs">cs cmu</p>
-                <p className="hello">
-                  Hello,
-                  <br />
-                  Welcome!
-                </p>
-                <br />
-                <div className="inputt">
-                  <label>Username</label>
-                  <br />
-                  <input
-                    type="email"
-                    className="username"
-                    placeholder="example@cmu.ac.th"
-                    name="email"
-                    required
-                  />
-                  <br />
-                  <label className="font-bold">Password</label>
-                  <br />
-                  <input
-                    type="password"
-                    className="password"
-                    placeholder="password"
-                    name="password"
-                    required
-                  />
-                  <br />
-                  <input type="checkbox" /> Remember Me
-                  <br />
-                  <br />
-                  <center>
-                    <button type="submit" className="submit">
-                      LOG IN
-                    </button>
-                  </center>
-                  <br />
-                  <br />
+    return (
+        <Grid2 size={{ xs: 4, md: 2 }}>
+            <div className="container">
+                <div className="item">
+                    <div className="contact">
+                        {/* Add more content as needed */}
+                    </div>
+
+                    <div className="submit-form">
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                <p className="cs">cs cmu</p>
+                                <p className="hello">
+                                    Hello,
+                                    <br />
+                                    Welcome!
+                                </p>
+                                <br />
+                                <div className="inputt">
+                                    <label>Username</label>
+                                    <br />
+                                    <input
+                                        type="email"
+                                        className="username"
+                                        placeholder="example@cmu.ac.th"
+                                        name="email"
+                                    />
+                                    <br />
+                                    <label className="font-bold">Password</label>
+                                    <br />
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        className="password"
+                                        placeholder="password"
+                                        name="password"
+                                    />
+                                    <br />
+                                    <input type="checkbox" onClick={togglePasswordVisibility} /> Remember Me
+                                    <br />
+                                    <br />
+                                    <center>
+                                        {message && <p className="validation-message">{message}</p>}
+                                        <button type="submit" className="submit">
+                                            LOG IN
+                                        </button>
+                                    </center>
+                                    <br />
+                                    <br />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-              </div>
-            </form>
-
-            {error && <p className="error-message">{error}</p>}
-          </div>
-        </div>
-      </div>
-    </Grid2>
-  );
+            </div>
+        </Grid2>
+    );
 };
 
 // Logout Component
 export const Logout = ({ setCurrentUser }) => {
-  const navigate = useNavigate();
-  const [error, setError] = useState("");
+    const navigate = useNavigate();
+    useEffect(() => {
+        setCurrentUser({ id: 0, isAdmin: false });
+        navigate("/login");
+    }, [setCurrentUser, navigate]);
 
-  useEffect(() => {
-    // Set the current user to an initial state
-    setCurrentUser({ id: 0, isAdmin: false });
-    // Navigate to login page after updating currentUser
-    navigate("/login");
-  }, [setCurrentUser, navigate]); // Dependency array to avoid infinite loop
-
-  return null; // No UI is needed, just a side effect
+    return null;
 };

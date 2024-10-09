@@ -1,3 +1,4 @@
+import binascii
 from flask import jsonify, request,send_file,abort
 from flask_cors import CORS
 from flask_login import login_user, login_required, logout_user, current_user
@@ -8,6 +9,7 @@ from app.models.study_plan import Study_plan
 from app.models.advisor import Advisor
 from app.models.upload import Publish
 from app.models.course import Course
+from app.models.regist import Regits
 import traceback
 import secrets
 import string
@@ -90,8 +92,7 @@ def addStudent():
 
             new_advisor = Advisor(
                 name=advisor_name,
-                email=advisor_email,  # Assuming there's a field for advisor email
-                tel="0999958855"  # Static tel for now, can be dynamic
+                email=advisor_email  # No tel field here
             )
             db.session.add(new_advisor)
             db.session.commit()
@@ -124,22 +125,19 @@ def addStudent():
 
         # Create a new study plan, ensuring all required parameters are included
         new_plan = Study_plan(
-            planName=data.get('degree'),  # You may want to adjust this depending on your logic
-            testEng=None,  # Set this to the correct value as needed
-            testEng_filename=None,  # Set this to the correct value as needed
-            study_planID=data.get('stdID'),  # Assuming this should match stdID
-            nPublish=0,  # Default or actual value from your logic
-            finished=False,  # Default value, adjust based on your requirements
-            comprehension=None,  # Set this to the correct value as needed
-            comprehension_filename=None,  # Set this to the correct value as needed
-            quality=None,  # Set this to the correct value as needed
-            quality_filename=None,  # Set this to the correct value as needed
-            core=0,  # Default or actual value from your logic
-            select=0,  # Default or actual value from your logic
-            free=0,  # Default or actual value from your logic
-            publishExam=None,  # Set this to the correct value as needed
-            publishExam_filename=None,  # Set this to the correct value as needed
-            complete_course = False
+        planName=data.get('degree'),  # Assuming this is the degree or name of the plan
+        testEng=None,  # Set this to the correct file data as needed
+        testEng_filename=None,  # Set this to the correct file name as needed
+        comprehension=None,  # Set this to the correct file data as needed
+        comprehension_filename=None,  # Set this to the correct file name as needed
+        quality=None,  # Set this to the correct file data as needed
+        quality_filename=None,  # Set this to the correct file name as needed
+        study_planID=data.get('stdID'),  # Assuming stdID is used as the unique study_planID
+        nPublish_journal=0,  # Default value, adjust based on your logic
+        nPublish_proceeding=0,  # Default value, adjust based on your logic
+        nPublish_conferrence=0,  # Default value, adjust based on your logic
+        credit=0,  # Default or actual value from your logic
+        complete_course=False  # Default value, adjust as needed
         )
 
         # Send email with generated password
@@ -205,6 +203,8 @@ def data():
         result.append({
             'no': no,
             'name': student.name,
+            'email': student.email,
+            'tel': student.tel,
             'stdID': student.stdID,
             'degree': study_plan.planName ,
             'advisor': advisor.name ,
@@ -241,44 +241,124 @@ def login():
 
 @app.route('/studentfix', methods=['POST'])
 def studentfix():
-    logout_user()
-    return jsonify({"message": "Logged out successfully"}), 200
+    try:
+        # Receive JSON data
+        data = request.json
+        # print("Received data:", data)  # Debugging: show received data
+
+        # Check required fields
+        required_fields = ['stdID', 'name', 'tel', 'email', 'degree', 'advisor', 'email_advisor']
+        for field in required_fields:
+            if field not in data or not data[field]:
+                return jsonify({"error": f"{field} is required and cannot be empty"}), 400
+
+        # Find existing student
+        student = Student.query.filter_by(stdID=data['stdID']).first()
+        if student is None:
+            return jsonify({"error": "Student not found"}), 404
+
+        # Update student information
+        student.name = data['name']
+        student.tel = data['tel']
+        student.email = data['email']
+
+        # Look for existing advisor
+        existing_advisor = Advisor.query.filter_by(name=data['advisor']).first()
+
+        if existing_advisor:
+            # If existing advisor's email matches the new email, just use them
+            if existing_advisor.email == data['email_advisor']:
+                print("Advisor data is the same, no changes made.")
+                student.advisorID = existing_advisor.id  # Use the old advisor
+            else:
+                # Check for an advisor with the new email
+                existing_email_advisor = Advisor.query.filter_by(email=data['email_advisor']).first()
+                if existing_email_advisor:
+                    # If the email exists, update student with this advisor
+                    student.advisorID = existing_email_advisor.id
+                    print("Advisor email exists, updating student with existing advisor.")
+                else:
+                    # If not, update the existing advisor's email
+                    existing_advisor.email = data['email_advisor']
+                    db.session.commit()  # Save the changes to the existing advisor
+                    student.advisorID = existing_advisor.id
+                    print("Updated existing advisor's email.")
+        else:
+            # Create a new advisor if none exists
+            new_advisor = Advisor(name=data['advisor'], email=data['email_advisor'])
+            db.session.add(new_advisor)
+            db.session.flush()  # Ensure the new advisor's ID is available
+            student.advisorID = new_advisor.id
+            print("New advisor created.")
+
+        # Handle image if provided
+        if 'image' in data and data['image']:
+            user = User.query.filter_by(email=student.email).first()
+            if user:
+                image_data = data['image']
+                if "," in image_data:
+                    _, image_data = image_data.split(",", 1)  # Remove header
+                try:
+                    decoded_image = base64.b64decode(image_data)
+                    user.picture = decoded_image
+                except binascii.Error:
+                    return jsonify({"error": "Invalid image data"}), 400
+
+        # Commit all changes to the database
+        db.session.commit()
+        print("Updated student data:", student)  # Debugging: show updated student data
+        return jsonify({"message": "Student information updated successfully"}), 200
+
+    except Exception as e:
+        db.session.rollback()  # Rollback on error
+        print("Error during studentfix:", str(e))  # Debugging: show error
+        return jsonify({"error": "An error occurred while updating student information.", "details": str(e)}), 500
+
 
 @app.route('/currentstudent', methods=['GET'])
 def currentstudent():
-    stdID = request.args.get('stdID')  # Get stdID from query parameters
-    
+    stdID = request.args.get('stdID')
+
+    # Check if stdID is provided
+    if not stdID:
+        return jsonify({"error": "stdID is required"}), 400
+
     # Fetch the student record
     student = Student.query.filter_by(stdID=stdID).first()
-    # advisor = Advisor.query.filter_by(id=student.advisorID).first()
-    # Handle case where student is not found
+
     if student is None:
         return jsonify({"error": "Student not found"}), 404
 
-    # Fetch the study plan associated with the student
-    plan = Study_plan.query.filter_by(study_planID=student.stdID).first()
+    # Fetch the advisor
     advisor = Advisor.query.filter_by(id=student.advisorID).first()
-    # If plan is not found, handle it if necessary
+
+    # Prepare the response data
+    advisor_name = advisor.name if advisor else "Unknown Advisor"
+    advisor_email = advisor.email if advisor else "Unknown Email"
+    if advisor is None:
+        print(f"Advisor not found for student: {stdID}")  # Log the missing advisor for debugging
+
+    # Fetch the study plan
+    plan = Study_plan.query.filter_by(study_planID=student.stdID).first()  # Assuming this is the correct key
     plan_name = plan.planName if plan else "No plan available"
+
+    # Fetch user details if exists
     user = User.query.filter_by(email=student.email).first()
+
     current_data = {
         'name': student.name,
         'tel': student.tel,
         'email': student.email,
         'plan': plan_name,
-        # Convert picture binary data to Base64 string if it exists
-        'picture': None, # Initialize as None
-        'advisor': advisor.name ,
-        'advisor_email': advisor.email ,
+        'picture': None,  # Initialize as None
+        'advisor': advisor_name,
+        'advisor_email': advisor_email,
     }
 
-    if user.picture:
+    if user and user.picture:
         current_data['picture'] = base64.b64encode(user.picture).decode('utf-8')
-    
-    return jsonify(current_data), 200  # Return the data with status 200
 
-###################################################
-
+    return jsonify(current_data), 200
 
 
 def get_file_data(file_binary, filename):
@@ -297,13 +377,38 @@ def currentstudentplan():
 
     if study_plan is None:
         return jsonify({"error": "Student not found"}), 404
-
-    current_data = {
-        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),  # Example filename
-        'nPublish': study_plan.nPublish,
+    if study_plan.planName == "Master_Degree (แผน ก แบบ ก 1)":
+        if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding == 1:
+            pass_published = True
+        else:
+            pass_published = False
+        current_data = {
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'ตีพิมพ์วิจัย': pass_published,
+        'เสนอหัวข้อ': True,
+        'complete_course': study_plan.complete_course
+        }
+    elif study_plan.planName == "Master_Degree (แผน ก แบบ ก 2)":
+        current_data = {
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'ตีพิมพ์วิจัย': True,
+        'เสนอหัวข้อ': True,
+        'complete_course': study_plan.complete_course
+        }
+    elif study_plan.planName == "Master_Degree3 (แผน ข)":
+        current_data = {
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
         'comprehension': get_file_data(study_plan.comprehension, 'comprehension.pdf'),
+        'ตีพิมพ์วิจัย': True,
+        'เสนอหัวข้อ': True,
+        'complete_course': study_plan.complete_course
+    }
+    elif study_plan.planName == "PhD":
+        current_data = {
+        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'ตีพิมพ์วิจัย': True,
+        'เสนอหัวข้อ': True,
         'quality': get_file_data(study_plan.quality, 'quality.pdf'),
-        'publishExam': get_file_data(study_plan.publishExam, 'publishExam.pdf'),
         'complete_course': study_plan.complete_course
     }
 
@@ -321,22 +426,40 @@ def upload_file():
 
     file = request.files['file']
     stdID = request.form.get('stdID')
-    types = request.form.get('types')
-
+    types = request.form.get('type')
+    print(stdID,types)
     if file.filename == '':
         return jsonify({'message': "No selected file"}), 400
 
-    # ตรวจสอบว่ามีไฟล์ของ stdID นี้ในฐานข้อมูลหรือไม่
+    # Check if a file with the same name already exists for this stdID
     existing_file = Publish.query.filter_by(stdID=stdID, filename=file.filename).first()
     if existing_file:
         return jsonify({'message': "This file already exists for the student"}), 400
 
-    # ถ้าไม่มี ให้ทำการบันทึก
-    upload = Publish(stdID=stdID, filename=file.filename, file=file.read(), types=types)
-    db.session.add(upload)
-    db.session.commit()
+    # Find the corresponding study plan for the given stdID
+    plan = Study_plan.query.filter_by(study_planID=stdID).first()
+    
+    # Update the correct publication count based on the types value
+    if plan:
+        if types == "journal":
+            plan.nPublish_journal += 1
+        elif types == "proceeding":
+            plan.nPublish_proceeding += 1
+        elif types == "conference":
+            plan.nPublish_conferrence += 1
+        else:
+            return jsonify({'message': "Invalid type"}), 400
+        
+        # Save the new file in the Publish table
+        upload = Publish(stdID=stdID, filename=file.filename, file=file.read(), types=types)
+        db.session.add(upload)
 
-    return jsonify({'message': "File uploaded successfully"}), 200
+        # Commit both the study plan update and the file upload to the database
+        db.session.commit()
+
+        return jsonify({'message': "File uploaded and study plan updated successfully"}), 200
+    else:
+        return jsonify({'message': "Study plan not found for this student ID"}), 404
 
 
 
@@ -349,6 +472,7 @@ def downloadplan(upload_id, type_exam):
     if type_exam == "testEng":
         file_data = study_plan.testEng
         filename = study_plan.testEng_filename
+        print(filename)
     elif type_exam == "comprehension":
         file_data = study_plan.comprehension
         filename = study_plan.comprehension_filename
@@ -395,15 +519,17 @@ def editprogress():
     try:
         # Extract form data and file uploads
         study_planID = request.form.get('stdID')
+        regits_courses = request.form.get('Regits_Course')  # Get the Regits_Course input
         testEng_file = request.files.get('testEng')
         comprehensive_file = request.files.get('comprehensiveExam')
         qualifying_file = request.files.get('QualifyingExam')
         nPublish = request.form.get('nPublish')
         set_complete = request.form.get('Complete_Course')  # New field for setting completion status
-        print(request.form.get('Complete_Course'))
+
         # Debug print to inspect form data and file uploads
         print({
             "study_planID": study_planID,
+            "regits_courses": regits_courses,  # Debugging Regits_Course
             "testEng_file": testEng_file,
             "comprehensive_file": comprehensive_file,
             "qualifying_file": qualifying_file,
@@ -413,16 +539,14 @@ def editprogress():
 
         # Find the study plan by student ID
         study_plan = Study_plan.query.filter_by(study_planID=study_planID).first()
-
         if not study_plan:
             return jsonify({"error": "Study plan not found"}), 404
 
-        # Update study plan fields if files are provided, skip if None
+        # Handle file uploads (same as your existing logic)
         if testEng_file is not None and testEng_file.filename != '':
             study_plan.testEng = testEng_file.read()
             study_plan.testEng_filename = testEng_file.filename
         elif testEng_file is not None and testEng_file.filename == '':
-            # If file is explicitly empty, reset the field
             study_plan.testEng = None
             study_plan.testEng_filename = None
 
@@ -430,7 +554,6 @@ def editprogress():
             study_plan.comprehension = comprehensive_file.read()
             study_plan.comprehension_filename = comprehensive_file.filename
         elif comprehensive_file is not None and comprehensive_file.filename == '':
-            # If file is explicitly empty, reset the field
             study_plan.comprehension = None
             study_plan.comprehension_filename = None
 
@@ -438,25 +561,44 @@ def editprogress():
             study_plan.quality = qualifying_file.read()
             study_plan.quality_filename = qualifying_file.filename
         elif qualifying_file is not None and qualifying_file.filename == '':
-            # If file is explicitly empty, reset the field
             study_plan.quality = None
             study_plan.quality_filename = None
 
         # Update nPublish if provided
-        if nPublish is not None:
+        if nPublish:
             study_plan.nPublish = int(nPublish)
 
         # Set study plan completion status if provided
-        if set_complete is not None:
-            # Assuming 'setComplete' is passed as 'true' or 'false'
-            study_plan.complete_course = set_complete.lower() == 'true'
+        if set_complete == "true":
+            study_plan.complete_course = True
+        else:
+            study_plan.complete_course = False
+
+        # Handle Regits_Course
+        
+        if regits_courses:
+            # Split the string by commas and create Regits entries
+            course_ids = regits_courses.split(",")
+            for course_id in course_ids:
+                course_id = course_id.strip()  # Trim any whitespace
+                if course_id:  # Check if the course_id is not empty
+                    # Check if the Regits entry already exists
+                    courses = Course.query.filter_by(courseID=course_id).first()
+                    existing_regit = Regits.query.filter_by(stdID=study_planID, courseID=course_id).first()
+                    if not existing_regit:  # Only create a new entry if it doesn't exist
+                        new_regit = Regits(stdID=study_planID, courseID=course_id)
+                        study_plan.credit += courses.credit
+                        db.session.add(new_regit)
 
         # Commit changes to the database
         db.session.commit()
         return jsonify({"message": "Progress updated successfully"}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print("Error:", e)  # Log the error for debugging
+        return jsonify({"error": str(e), "message": "An error occurred while updating progress."}), 500
+
+
 
 @app.route('/addcourse', methods=['POST'])
 def add_course():
@@ -520,8 +662,7 @@ def get_courses_by_stdID():
         "Master_Degree (แผน ก แบบ ก 1)": "M.",
         "Master_Degree (แผน ก แบบ ก 2)": "M.",
         "Master_Degree3 (แผน ข)": "M.",
-        "PhD1.1": "Ph.D.",
-        "PhD2.2": "Ph.D."
+        "PhD": "Ph.D.",
     }
 
     planName = planName_map.get(study_plan.planName, None)
@@ -531,18 +672,25 @@ def get_courses_by_stdID():
     # Fetch courses using the mapped plan name
     courses = Course.query.filter_by(planName=planName).all()
     if not courses:
-        return jsonify({'error': 'No courses found for this student'}), 404
+        return jsonify({'error': 'No courses found for this study plan'}), 404
 
+    # Fetch registered courses for the student
+    regist = Regits.query.filter_by(stdID=stdID).all()
+    registered_course_ids = {reg.courseID for reg in regist} if regist else set()
+
+    # Create course list with registration status
     course_list = [
         {
             'courseID': course.courseID,
             'credit': course.credit,
-            'planName': course.planName
+            'planName': course.planName,
+            'registered': course.courseID in registered_course_ids
         }
         for course in courses
     ]
-    
-    return jsonify({'courses': course_list}), 200
+
+    return jsonify({'courses': course_list, 'credit': study_plan.credit}), 200
+
 
 @app.route('/updatepercent', methods=['POST'])
 def updateper():
@@ -586,3 +734,51 @@ def delete_student(stdID):
         return jsonify({"message": "Student and associated records deleted successfully"}), 200
     else:
         return jsonify({"error": "Student not found"}), 404
+
+
+@app.route('/addadmin', methods=['POST'])
+def add_admin():
+    data = request.form  # Retrieve data from formData
+    file = request.files.get('picture')  # Retrieve image file
+
+    # Check if user with this email already exists
+    user = User.query.filter_by(email=data.get('email_admin')).first()
+    if user:
+        return jsonify({"error": "User with this email already exists"}), 409
+
+    # Hash the password before storing it
+    # hashed_password = generate_password_hash(data.get('pw_admin')).decode('utf-8')
+
+    # Process the profile picture
+    print((file != None ))
+    picture_data = file.read() if file else None
+
+    # Create the new admin user
+    new_admin = User(
+        email=data.get('email_admin'),
+        password=data.get('pw_admin'),  # Store hashed password
+        fname=data.get('name_admin').split(' ')[0],
+        lname=data.get('name_admin').split(' ')[1] if len(data.get('name_admin').split(' ')) > 1 else '',
+        isAdmin=True,
+        picture=picture_data
+    )
+
+    # Add the new admin to the database
+    db.session.add(new_admin)
+    db.session.commit()
+
+    return jsonify({"message": "Admin added successfully"}), 201
+
+@app.route('/alladmins', methods=['GET'])
+def get_all_admins():
+    admins = User.query.filter_by(isAdmin=True).all()
+    admin_list = []
+    for admin in admins:
+        admin_data = {
+            'name': f"{admin.fname} {admin.lname}",
+            'email': admin.email,
+            'tel': "0984892124",
+            'picture': base64.b64encode(admin.picture).decode('utf-8') if admin.picture else None
+        }
+        admin_list.append(admin_data)
+    return jsonify(admin_list), 200

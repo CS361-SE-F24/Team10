@@ -42,7 +42,7 @@
 }
 
 
-button:hover {
+.button_add:hover {
   background-color: #0056b3;
 }
 
@@ -133,3 +133,17 @@ button:hover {
   100% { inset: 0; }
 }
 
+.is-invalid {
+  border-color: red;
+}
+
+.response-message {
+  color: green; /* Adjust color based on success or error */
+}
+
+.error-message {
+  color: red;      /* เปลี่ยนเป็นสีแดง */
+  font-size: 0.7rem; /* ขนาดฟอนต์เล็กลง */
+  margin-top: 5px; /* ระยะห่างด้านบน */
+  margin-bottom: 10px; /* ระยะห่างด้านล่าง */
+}
