@@ -48,14 +48,12 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
         );
         const data_get = response.data;
 
-        // Extract keys and build steps and stepNames
         const newSteps = Object.keys(data_get);
         const newStepNames = newSteps.map(getStepName);
 
-        // Collect completed steps
         const fetchedCompletedSteps = newSteps.reduce((acc, key) => {
           if (data_get[key]) {
-            acc.push(key); // Store the actual step name (e.g., 'testEng')
+            acc.push(key);
           }
           return acc;
         }, []);
@@ -73,7 +71,6 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
           (fetchedCompletedSteps.length / newSteps.length) * 100
         );
 
-        // Post progress percentage to the backend
         await axios.post("http://localhost:56733/updatepercent", {
           stdID,
           progressPercentage,
@@ -86,7 +83,7 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
     };
 
     fetchStudentPlan();
-    fetchUploadedFiles(); // Fetch files when component loads
+    fetchUploadedFiles();
   }, [stdID, onProgressUpdate]);
 
   return (
@@ -103,7 +100,6 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
           <div className="step-name">
             {stepNames[index]}
 
-            {/* Conditional download links based on completed steps */}
             {step === "testEng" && completedSteps.includes("testEng") && (
               <div>
                 <a
@@ -138,17 +134,24 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
               </div>
             )}
 
-            {/* Show file list when step is ตีพิมพ์วิจัย */}
             {stepNames[index] === "ตีพิมพ์วิจัย" && (
-              files.map((file) => (
-                <div>
-                <a key={file.id} href={`http://localhost:56733/download/${file.id}`} download>
-                  {file.filename}
-                </a>
-                </div>
-              ))
+              <>
+                {files.map((file) => (
+                  <div className="num-of-file" key={file.id}>
+                    <a href={`http://localhost:56733/download/${file.id}`} download>
+                      {file.filename}
+                    </a>
+                  </div>
+                ))}
+                {/* Add a line that adjusts its height based on the number of files */}
+                <div
+                  className="line"
+                  style={{
+                    height: `${files.length * 20}px`, // Example: 20px per file
+                  }}
+                ></div>
+              </>
             )}
-
           </div>
 
           {index < steps.length - 1 && <div className="line"></div>}

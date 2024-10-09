@@ -357,7 +357,7 @@
 
 .upload-section {
   flex: 1; /* กำหนดให้ฟอร์มการอัปโหลดไฟล์ขยายเต็มที่ */
-  margin-top: 20px;
+  margin-top: 0;
   width: 100%; /* กำหนดให้เนื้อหาเต็มกล่อง */
 }
 
@@ -392,19 +392,19 @@
 }
 
 .confirm {
-  /* position: ; */
-  bottom: 10px; /* ระยะห่างจากขอบล่าง */
-  right: 20px;  /* ระยะห่างจากขอบขวา */
+  position: absolute; /* Change to absolute for better control */
+  bottom: -140px; /* Set to 0 to be flush with the bottom */
+  height: 50px; /* Set the height of the button */
   padding: 10px 20px;
-  background-color: #D9D9D9; /* สีของปุ่ม */
-  border-color: black;
+  background-color: #11009E; /* Button color */
+  border: none;
   border-radius: 5px;
   cursor: pointer;
-  color: black;
+  color: white;
 }
 
 .confirm:hover {
-  background-color: #8b8b8b;
+  background-color: #4434d5;
 }
 
 .box-edit{
@@ -440,4 +440,87 @@
   top: -5px; /* ย้ายขึ้น */
 }
 
+.course-id{
+  padding: 5px;
+  margin: 2px;
+}
 
+.box-research {
+  border: 2px solid #ccc; /* Border with a solid line and light gray color */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px; /* Reduced padding */
+  background-color: #f9f9f9;
+  width: fit-content;
+}
+
+.choosefile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  border-radius: 15px;
+  width: 250px;
+  height: 65px;
+  cursor: pointer;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+  /* margin-bottom: 10px; */
+}
+
+.file-upload-container:hover {
+  border-color: #007bff;
+}
+
+.file-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #007bff;
+  font-size: 14px; /* Slightly smaller font */
+  cursor: pointer;
+}
+
+.file-upload-icon {
+  font-size: 18px; /* Slightly smaller icon */
+  background-color: #007bff;
+  color: white;
+  width: 22px; /* Reduced width */
+  height: 22px; /* Reduced height */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input[type="file"] {
+  display: none; /* Hide the actual file input */
+}
+
+.button-save {
+  background-color: #999;
+  color: white;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  /* margin-top: 10px; */
+}
+
+.dropdown {
+  width: 250px; /* Same width as .file-upload-container */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* .button-save:hover {
+  background-color: #4434d5;
+} */
