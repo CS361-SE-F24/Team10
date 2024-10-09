@@ -1,7 +1,6 @@
 .home-container {
   display: flex; /* ใช้ Flexbox เพื่อจัดเรียง */
   height: 100vh; /* กำหนดความสูงให้เต็มหน้าจอ */
-  margin: 0; /* ลบ margin เพื่อไม่ให้มีระยะห่าง */
 }
 
   
@@ -14,6 +13,7 @@
   flex-direction: column;
   align-items: center; /* จัดแนวแนวนอน */
   padding: 20px 0; /* ปรับ padding */
+  margin: 0;
 }
 
 
@@ -163,8 +163,8 @@
 }
 
 .popup-button {
-  margin-top: 20px;
-  padding: 5px 10px; /* Smaller padding for a smaller button */
+  margin-top: 10px;
+  padding: 5px 5px; /* Smaller padding for a smaller button */
   background-color: #007bff;
   color: white;
   border: none;
@@ -178,13 +178,15 @@
   max-width: 300px;
   position: absolute; /* ตั้งตำแหน่งแบบ absolute */
   top: 175px; /* ระยะห่างจากด้านบน */
-  right: 10px; /* ระยะห่างจากด้านขวา */
+  right: 5px; /* ระยะห่างจากด้านขวา */
+  height: 100vh;
 }
 
 .items-progress{
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-items: center;
+  height: 100vh;
 }
 
 .progress-bar-container {
@@ -193,6 +195,7 @@
   background-color: transparent !important;
   display: grid; /* Use grid for the entire progress bar container */
   /* row-gap: 50px;  */
+  height: 100vh;
 }
 
 
@@ -221,7 +224,7 @@
   height: 60vh;
   overflow-y: auto;
 }
-.popup-button {
+.popup-button{
   margin-top: 20px;
   padding: 5px 10px; /* Smaller padding for a smaller button */
   background-color: #11009E;
@@ -268,7 +271,7 @@
   background-color: #dc3545;
 }
 
-.popup-button:hover, .close-popup:hover {
+.popup-button:hover, .close-popup:hover{
   opacity: 0.9;
 }
 
@@ -330,9 +333,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   padding: 10px;
   position: relative;
   left: -20px; /* ปรับระยะขยับไปทางซ้าย */
+  border-radius: 12px;
+  margin-bottom: 10px;
 }
 
 .editpro{
@@ -344,8 +350,8 @@
 
 .editprogress-container {
   display: flex;
-  justify-content: space-between; /* จัดเรียงสองส่วนให้ห่างกัน */
-  gap: 50px; /* ระยะห่างระหว่างสองส่วน */
+  justify-content: space-between;
+  gap: 50px;
   width: 100%;
   /* margin-left: 100px; */
   
@@ -353,6 +359,7 @@
 
 .editprogress {
   flex: 1; /* กำหนดให้ฟอร์มแก้ไข progress ขยายเต็มที่ */
+
 }
 
 .upload-section {
@@ -393,7 +400,8 @@
 
 .confirm {
   position: absolute; /* Change to absolute for better control */
-  bottom: -140px; /* Set to 0 to be flush with the bottom */
+  bottom: -140px;
+  right: 100px;
   height: 50px; /* Set the height of the button */
   padding: 10px 20px;
   background-color: #11009E; /* Button color */
@@ -409,26 +417,28 @@
 
 .box-edit{
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* justify-content: center; */
+  flex-direction: column; /* Keep elements stacked vertically */
   margin: 0 auto;
   width: 80%;
   max-width: 800px;
-  padding: 50px; /* เพิ่ม padding */
-  min-height: 200px; /* เพิ่มความสูงขั้นต่ำ */
+  padding: 50px; /* Padding around the box */
+  min-height: 200px; /* Minimum height */
   border-radius: 8px;
-  /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); */
+  gap: 20px; /* Equal spacing between all child elements */
 }
 
 .file {
   border: 1px solid #ccc; /* กำหนดกรอบ */
-  padding: 2px; /* ระยะห่างภายในกรอบ */
+  padding: 8px; /* ระยะห่างภายในกรอบ */
   border-radius: 5px; /* มุมกรอบมน */
   margin-top: 5px; /* ระยะห่างด้านบน */
   background-color: #f9f9f9; /* สีพื้นหลัง */
   text-decoration: none;
   width: 210px;
+  position: relative; /* ตั้งค่าเพื่อให้ไอคอนใช้ตำแหน่งสัมพันธ์ */
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* เพิ่มระยะห่างระหว่างไฟล์ */
 }
 
 .file a {
@@ -438,6 +448,19 @@
   padding-top: 2px; /* เพิ่มพื้นที่ด้านบน */
   position: relative; /* ใช้ร่วมกับ top */
   top: -5px; /* ย้ายขึ้น */
+  flex-grow: 1; /* ขยาย link ให้เต็มที่ */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 10px;
+}
+
+.delete-icon {
+  position: absolute;
+  right: 0px; /* ระยะห่างจากขอบขวาของกรอบ */
+  cursor: pointer;
+  color: red;
+  font-size: 30px;
 }
 
 .course-id{
@@ -524,3 +547,26 @@
 /* .button-save:hover {
   background-color: #4434d5;
 } */
+
+.grad-button{
+  margin-top: 20px;
+  padding: 20px 30px; /* Smaller padding for a smaller button */
+  background-color: #11009E;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 18px; /* Smaller font size */
+}
+
+.editprogress,
+.upload-section,
+.confirm {
+
+  margin: 0; /* Remove any additional margins */
+}
+
+.box p,.box2 p {
+  margin: 0; /* ลบระยะห่างตามค่าเริ่มต้น */
+  margin-right: 10px; /* เพิ่มระยะห่างระหว่างข้อความกับปุ่ม */
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../css/progressbar.css";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 export const ProgressBar = ({ stdID, onProgressUpdate }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -96,40 +97,43 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
           } ${currentStep === index + 1 ? "active" : ""}`}
           style={{ cursor: "pointer" }}
         >
-          <div className="circle">{index + 1}</div>
+          <div className="circle"></div>
           <div className="step-name">
             {stepNames[index]}
 
             {step === "testEng" && completedSteps.includes("testEng") && (
-              <div>
+              <div className="file">
+                <InsertDriveFileIcon style={{ marginRight: '8px' }} />
                 <a
                   href={`http://localhost:56733/downloadplan/${stdID}/testEng`}
                   download
                 >
-                  Download TestEnglish_{stdID}
+                  TestEnglish_{stdID}
                 </a>
               </div>
             )}
 
             {step === "comprehension" &&
               completedSteps.includes("comprehension") && (
-                <div>
+                <div className="file">
+                  <InsertDriveFileIcon style={{ marginRight: '8px' }} />
                   <a
                     href={`http://localhost:56733/downloadplan/${stdID}/comprehension`}
                     download
                   >
-                    Download Comprehension_{stdID}
+                    Comprehension_{stdID}
                   </a>
                 </div>
               )}
 
             {step === "quality" && completedSteps.includes("quality") && (
-              <div>
+              <div className="file">
+                <InsertDriveFileIcon style={{ marginRight: '8px' }} />
                 <a
                   href={`http://localhost:56733/downloadplan/${stdID}/quality`}
                   download
                 >
-                  Download Quality_{stdID}
+                  Quality_{stdID}
                 </a>
               </div>
             )}
@@ -137,7 +141,8 @@ export const ProgressBar = ({ stdID, onProgressUpdate }) => {
             {stepNames[index] === "ตีพิมพ์วิจัย" && (
               <>
                 {files.map((file) => (
-                  <div className="num-of-file" key={file.id}>
+                  <div className="file" key={file.id}>
+                    <InsertDriveFileIcon style={{ marginRight: '8px' }} />
                     <a href={`http://localhost:56733/download/${file.id}`} download>
                       {file.filename}
                     </a>

@@ -5,6 +5,8 @@ import axios from "axios";
 import { ProgressBar } from "../Page/progressbar.js";
 import DonutChart from "../Page/DonutChart.js";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import SchoolIcon from '@mui/icons-material/School';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export const Home = (props) => {
   const location = useLocation();
@@ -13,9 +15,9 @@ export const Home = (props) => {
 
   const currentUser = props.currentUser ||
     JSON.parse(localStorage.getItem("currentUser")) || {
-      id: 0,
-      isAdmin: false,
-    };
+    id: 0,
+    isAdmin: false,
+  };
   const navigate = useNavigate();
   const [show, setShow] = useState("progress");
   const [loading, setLoading] = useState(true);
@@ -272,7 +274,7 @@ export const Home = (props) => {
       console.error("Error uploading the file:", error);
       alert(
         "File upload failed: " +
-          (error.response?.data?.message || "Unknown error")
+        (error.response?.data?.message || "Unknown error")
       ); // Alert the user in case of error
     }
   };
@@ -340,7 +342,7 @@ export const Home = (props) => {
               {formData.picture ? (
                 <img className="picture" src={formData.picture} alt="User" />
               ) : (
-                <p>No Image Available</p>
+                <img className="picture" src="pic.png" alt="User" />
               )}
               <p>{formData.name}</p>
               <p>รหัสนักศึกษา {formData.stdID}</p>
@@ -371,7 +373,7 @@ export const Home = (props) => {
             {formData.picture ? (
               <img className="picture" src={formData.picture} alt="User" />
             ) : (
-              <p>No Image Available</p>
+              <img className="picture" src="pic.png" alt="User" />
             )}
             <p>{formData.name}</p>
             <p>รหัสนักศึกษา {formData.stdID}</p>
@@ -420,14 +422,15 @@ export const Home = (props) => {
               <br />
               <br />
               <div className="box">
+                <br />
                 <p>หน่วยกิตที่ได้รับ {credit}</p>
                 <button onClick={togglePopup} className="popup-button">
                   หน่วยกิตที่ได้รับ
-                </button>
+                </button><br /><br />
               </div>
               <br />
               <div className="box2">
-                <h2>Meetings</h2>
+                <p>Meetings</p><br />
                 {meeting.length > 0 ? (
                   <ul>
                     {meeting.map((meetDate, index) => (
@@ -453,7 +456,7 @@ export const Home = (props) => {
                             }
                           >
                             {course.courseID} - {course.planName} (
-                            {course.credit} credits{})
+                            {course.credit} credits{ })
                           </li>
                         ))}
                       </ul>
@@ -466,9 +469,22 @@ export const Home = (props) => {
                   </div>
                 </div>
               )}
+              {currentUser.isAdmin && show === "progress" && progressPercentage === 100 && (
+                <div>
+                  <button onClick={uptoAlumni} className="grad-button">
+                    <SchoolIcon style={{ fontSize: 20, color: 'white', marginRight: '8px' }} /> {/* Adjust size and color */}
+                    Graduated
+                  </button>
+                </div>
+
+              )}
+
             </div>
+
           </div>
+
         </div>
+
       ) : (
         <div className="box-edit">
           <div className="editprogress-container">
@@ -509,6 +525,7 @@ export const Home = (props) => {
                         >
                           TestEnglish_{stdID}
                         </a>
+                        {/* <DeleteForeverIcon style={{ color: 'red', cursor: 'pointer' }} /> */}
                       </div>
                     </div>
                   )}
@@ -585,7 +602,7 @@ export const Home = (props) => {
                         ผ่าน
                       </label>
                       <div className="file">
-                        <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                        {/* <InsertDriveFileIcon style={{ marginRight: "8px" }} /> */}
                         {/* <p>Uploaded File:</p> */}
                         <a
                           href={`http://localhost:56733/downloadplan/${stdID}/quality`}
@@ -645,6 +662,32 @@ export const Home = (props) => {
                   Save Progress
                 </button>
               </form>
+              <button onClick={togglePopup} className="popup-button">
+                หน่วยกิตที่ได้รับ
+              </button>
+              {showPopup && (
+                <div className="popup-modal">
+                  <div className="popup-content">
+                    <h2>Courses</h2>
+                    {/* <h2>{credit}</h2> */}
+                    {courses.length > 0 ? (
+                      <ul>
+                        {courses.map((course, index) => (
+                          <li key={index} className={course.registered ? ("registered") : ("notregis")}>
+                            {course.courseID} - {course.planName} (
+                            {course.credit} credits{ })
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No courses found for this student.</p>
+                    )}
+                    <button onClick={togglePopup} className="close-popup">
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* ส่วนการอัปโหลดไฟล์ */}
@@ -679,7 +722,6 @@ export const Home = (props) => {
               </div>
 
               <p>วิจัยทั้งหมด</p>
-
               {files.map((file) => (
                 <div className="file">
                   <InsertDriveFileIcon style={{ marginRight: "8px" }} />
@@ -689,74 +731,73 @@ export const Home = (props) => {
                   >
                     {file.filename}
                   </a>
+                  <DeleteForeverIcon
+                    style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
+                  />
                 </div>
               ))}
-              {/* <div>
-                <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
-                  <label>sdsadasdas</label>
-                  <input type="file" name="file" />
-                  <br />
-                  <br />
 
-                  <input type="hidden" name="stdID" value={stdID} />
-                  <button type="submit">Upload File</button>
-                </form>
-              <h3>Uploaded Files:</h3>
-              <ul>
-                {topic.map((file) => (
-                  <li key={file.id}>
-                    <a
-                      href={`http://localhost:56733/downloadtopic/${file.id}`}
-                      download
-                    >
-                      {file.filename}
-                    </a>
-                  </li>
-                ))}
-              </ul></div> */}
-              <div>
-                <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
-                    <label>Upload Topic</label>
-                    <div className="file-upload-container">
-                        <input type="file" id="topic-file-upload" name="file" hidden />
-                        <label htmlFor="topic-file-upload" className="file-upload-label">
-                            <div className="file-upload-icon">+</div>
-                            Add Topic File
-                        </label>
-                    </div>
-                    <br />
+              <br />
 
-                    <input type="hidden" name="stdID" value={stdID} />
-                    <button type="submit">Upload File</button>
-                </form>
-                <h3>Uploaded Files:</h3>
-                <ul>
-                    {topic.map((file) => (
-                        <li key={file.id}>
-                            <a href={`http://localhost:56733/downloadtopic/${file.id}`} download>
-                                {file.filename}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-              </div>
-
-              
-
+              <div className="meet">
               <form onSubmit={addMeeting}>
                 <label>เข้าร่วมประชุม</label>
-                <br />
-                <input type="date" name="date-meeting" />
+                <br /><br/>
+                <input type="date" name="date-meeting" max={new Date().toISOString().split("T")[0]} />
                 <br />
                 <br />
                 <input type="hidden" name="stdID" value={stdID} />
-                <button type="submit">Add meeting</button>
+                <button type="submit" className="button-save">Add meeting</button>
               </form>
+                <br />
+
+              </div>
+
+
+
+            </div>
+            <div className="upload-topic">
+              <p>เสนอหัวข้อวิจัย</p>
+              <div className="box-research">
+                <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
+                  <div className="file-upload-container">
+                    <input type="file" id="topic-file-upload" name="file" hidden />
+                    <label htmlFor="topic-file-upload" className="file-upload-label">
+                      <div className="file-upload-icon">+</div>
+                      Add Topic File
+                    </label>
+                  </div>
+                  <br />
+
+                  <input type="hidden" name="stdID" value={stdID} />
+                  <button type="submit" className="button-save">Upload File</button>
+                </form>
+              </div>
+
+              <p>หัวข้อที่ถูกนำเสนอ</p>
+              {topic.map((file) => (
+                <div className="file">
+                  <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                  <a href={`http://localhost:56733/downloadtopic/${file.id}`} download>
+                    {file.filename}
+                  </a>
+                  <DeleteForeverIcon
+                    style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
+                  />
+                </div>
+              ))}
+              <br />
+
+              
+
 
               <button onClick={handleUpdate} className="confirm">
                 ยืนยันการแก้ไข
               </button>
+
+
             </div>
+
           </div>
         </div>
       )}

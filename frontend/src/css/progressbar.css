@@ -121,3 +121,22 @@
   width: 75%;
   max-width: 400px;
 } */
+
+.file {
+  border: 1px solid #ccc; /* กำหนดกรอบ */
+  padding: 2px; /* ระยะห่างภายในกรอบ */
+  border-radius: 5px; /* มุมกรอบมน */
+  margin-top: 5px; /* ระยะห่างด้านบน */
+  background-color: #f9f9f9; /* สีพื้นหลัง */
+  text-decoration: none;
+  width: 250px;
+}
+
+.file a {
+  text-decoration: none;
+  color: black; /* เปลี่ยนสีข้อความถ้าต้องการ */
+  font-size: 12px;
+  padding-top: 2px; /* เพิ่มพื้นที่ด้านบน */
+  position: relative; /* ใช้ร่วมกับ top */
+  top: -5px; /* ย้ายขึ้น */
+}
