@@ -781,14 +781,14 @@ export const Home = (props) => {
               
 
               <form onSubmit={addMeeting}>
-                <label>เข้าร่วมประชุม</label>
-                <br />
-                <input type="date" name="date-meeting" />
-                <br />
-                <br />
-                <input type="hidden" name="stdID" value={stdID} />
-                <button type="submit">Add meeting</button>
-              </form>
+            <label>เข้าร่วมประชุม</label>
+            <br />
+            <input type="date" name="date-meeting" max={new Date().toISOString().split("T")[0]} />
+            <br />
+            <br />
+            <input type="hidden" name="stdID" value={stdID} />
+            <button type="submit">Add meeting</button>
+          </form>
 
               <button onClick={handleUpdate} className="confirm">
                 ยืนยันการแก้ไข
