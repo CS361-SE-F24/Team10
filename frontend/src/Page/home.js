@@ -5,6 +5,7 @@ import axios from "axios";
 import { ProgressBar } from "../Page/progressbar.js";
 import DonutChart from "../Page/DonutChart.js";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import SchoolIcon from '@mui/icons-material/School';
 
 export const Home = (props) => {
   const location = useLocation();
@@ -334,11 +335,7 @@ export const Home = (props) => {
                 stdID={stdID}
                 onProgressUpdate={setProgressPercentage}
               />
-              {currentUser.isAdmin && show === "progress" && progressPercentage === 100 &&(
-                <div>
-                  <button onClick={uptoAlumni}>Graduated</button>
-                </div>
-              )}
+              
             </div>
             <div className="DonutChart">
               <DonutChart progress={progressPercentage} />
@@ -375,6 +372,15 @@ export const Home = (props) => {
                 </div>
               </div>
             )}
+            {currentUser.isAdmin && show === "progress" && progressPercentage === 100 &&(
+                <div>
+                <button onClick={uptoAlumni} className="grad-button">
+                  <SchoolIcon style={{ fontSize: 20, color: 'white', marginRight: '8px' }} /> {/* Adjust size and color */}
+                  Graduated
+                </button>
+              </div>
+              
+              )}
           </div>
         </div>
       </div>

@@ -40,7 +40,7 @@ export const DonutChart = ({ progress }) => {
   };
 
   return (
-    <div style={{ textAlign: 'center', position: 'relative', width: '200px', height: '200px' }}>
+    <div style={{ textAlign: 'center', position: 'relative', width: '170px', height: '200px' }}>
       <Doughnut data={data} options={options} />
       <div style={{
         position: 'absolute',
