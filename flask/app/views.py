@@ -652,3 +652,51 @@ def delete_student(stdID):
         return jsonify({"message": "Student and associated records deleted successfully"}), 200
     else:
         return jsonify({"error": "Student not found"}), 404
+
+
+@app.route('/addadmin', methods=['POST'])
+def add_admin():
+    data = request.form  # Retrieve data from formData
+    file = request.files.get('picture')  # Retrieve image file
+
+    # Check if user with this email already exists
+    user = User.query.filter_by(email=data.get('email_admin')).first()
+    if user:
+        return jsonify({"error": "User with this email already exists"}), 409
+
+    # Hash the password before storing it
+    # hashed_password = generate_password_hash(data.get('pw_admin')).decode('utf-8')
+
+    # Process the profile picture
+    print((file != None ))
+    picture_data = file.read() if file else None
+
+    # Create the new admin user
+    new_admin = User(
+        email=data.get('email_admin'),
+        password=data.get('pw_admin'),  # Store hashed password
+        fname=data.get('name_admin').split(' ')[0],
+        lname=data.get('name_admin').split(' ')[1] if len(data.get('name_admin').split(' ')) > 1 else '',
+        isAdmin=True,
+        picture=picture_data
+    )
+
+    # Add the new admin to the database
+    db.session.add(new_admin)
+    db.session.commit()
+
+    return jsonify({"message": "Admin added successfully"}), 201
+
+@app.route('/alladmins', methods=['GET'])
+def get_all_admins():
+    admins = User.query.filter_by(isAdmin=True).all()
+    admin_list = []
+    for admin in admins:
+        admin_data = {
+            'name': f"{admin.fname} {admin.lname}",
+            'email': admin.email,
+            'tel': "0984892124",
+            'picture': base64.b64encode(admin.picture).decode('utf-8') if admin.picture else None
+        }
+        admin_list.append(admin_data)
+    return jsonify(admin_list), 200
