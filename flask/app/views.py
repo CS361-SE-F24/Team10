@@ -10,6 +10,8 @@ from app.models.advisor import Advisor
 from app.models.upload import Publish
 from app.models.course import Course
 from app.models.regist import Regits
+from app.models.meeting import Meeting
+from app.models.pretopic import Pretopic
 import traceback
 import secrets
 import string
@@ -17,6 +19,7 @@ from flask_mail import Mail,Message
 from io import BytesIO
 import base64
 import mimetypes
+from datetime import datetime
 # Configure the mail server
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Replace with your mail server
 app.config['MAIL_PORT'] = 587  # Usually 465 for SSL, 587 for TLS
@@ -386,37 +389,66 @@ def currentstudentplan():
 
     if study_plan is None:
         return jsonify({"error": "Student not found"}), 404
+    count_topic = Pretopic.query.filter_by(stdID=stdID).count()
     if study_plan.planName == "Master_Degree (แผน ก แบบ ก 1)":
-        if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding == 1:
+        if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding >= 1:
             pass_published = True
         else:
             pass_published = False
+        if count_topic >= 2:
+            pass_pretopic = True
+        else:
+            pass_pretopic = False
         current_data = {
         'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
         'ตีพิมพ์วิจัย': pass_published,
-        'เสนอหัวข้อ': True,
+        'เสนอหัวข้อ': pass_pretopic,
         'complete_course': study_plan.complete_course
         }
     elif study_plan.planName == "Master_Degree (แผน ก แบบ ก 2)":
+        if study_plan.nPublish_journal >= 1 or study_plan.nPublish_proceeding >= 1:
+            pass_published = True
+        else:
+            pass_published = False
+        if count_topic >= 1:
+            pass_pretopic = True
+        else:
+            pass_pretopic = False
         current_data = {
         'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
-        'ตีพิมพ์วิจัย': True,
-        'เสนอหัวข้อ': True,
+        'ตีพิมพ์วิจัย': pass_published,
+        'เสนอหัวข้อ': pass_pretopic,
         'complete_course': study_plan.complete_course
         }
     elif study_plan.planName == "Master_Degree3 (แผน ข)":
+        if study_plan.nPublish_conferrence >= 1:
+            pass_published = True
+        else:
+            pass_published = False
+        if count_topic >= 1:
+            pass_pretopic = True
+        else:
+            pass_pretopic = False
         current_data = {
         'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
         'comprehension': get_file_data(study_plan.comprehension, 'comprehension.pdf'),
-        'ตีพิมพ์วิจัย': True,
-        'เสนอหัวข้อ': True,
+        'ตีพิมพ์วิจัย': pass_published,
+        'เสนอหัวข้อ': pass_pretopic,
         'complete_course': study_plan.complete_course
     }
     elif study_plan.planName == "PhD":
+        if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding >= 2:
+            pass_published = True
+        else:
+            pass_published = False
+        if count_topic >= 3:
+            pass_pretopic = True
+        else:
+            pass_pretopic = False
         current_data = {
         'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
-        'ตีพิมพ์วิจัย': True,
-        'เสนอหัวข้อ': True,
+        'ตีพิมพ์วิจัย': pass_published,
+        'เสนอหัวข้อ': pass_pretopic,
         'quality': get_file_data(study_plan.quality, 'quality.pdf'),
         'complete_course': study_plan.complete_course
     }
@@ -687,6 +719,9 @@ def get_courses_by_stdID():
     regist = Regits.query.filter_by(stdID=stdID).all()
     registered_course_ids = {reg.courseID for reg in regist} if regist else set()
 
+    # Fetch meeting information for the student
+    meeting = Meeting.query.filter_by(stdID=stdID).all()
+
     # Create course list with registration status
     course_list = [
         {
@@ -698,7 +733,12 @@ def get_courses_by_stdID():
         for course in courses
     ]
 
-    return jsonify({'courses': course_list, 'credit': study_plan.credit}), 200
+    return jsonify({
+        'courses': course_list, 
+        'credit': study_plan.credit,
+        'meeting': [meet.date.strftime('%Y-%m-%d') for meet in meeting]  # Convert meeting dates to string
+    }), 200
+
 
 
 @app.route('/updatepercent', methods=['POST'])
@@ -832,3 +872,76 @@ def getalumni():
         return jsonify(alumni_data), 200
     else:
         return jsonify({"message": "No alumni found"}), 404
+    
+
+@app.route('/addmeeting', methods=['POST'])
+def addmeeting():
+    try:
+        # Get data from the request
+        data = request.get_json()
+        stdID = data.get('stdID')
+        date = data.get('date')
+
+        # Convert date string to datetime object
+        meeting_date = datetime.strptime(date, '%Y-%m-%d')
+
+        # Create new meeting object
+        new_meeting = Meeting(stdID=stdID, date=meeting_date)
+
+        # Add to database
+        db.session.add(new_meeting)
+        db.session.commit()
+
+        return jsonify({"message": "Meeting added successfully"}), 200
+
+    except Exception as e:
+        print("Error adding meeting:", e)
+        return jsonify({"message": "Failed to add meeting"}), 500
+    
+
+@app.route('/uploadtopic', methods=['POST'])
+def uploadtopic():
+    # Check if a file part is present in the request
+    if 'file' not in request.files:
+        return jsonify({'message': "No file part in the request"}), 400
+
+    file = request.files['file']
+    stdID = request.form.get('stdID')
+
+    # Check if the filename is empty
+    if file.filename == '':
+        return jsonify({'message': "No selected file"}), 400
+    
+    # Check if the file already exists for the given stdID
+    existing_file = Pretopic.query.filter_by(stdID=stdID, filename=file.filename).first()
+    if existing_file:
+        return jsonify({'message': "This file already exists for the student"}), 400
+
+    # Save the new file in the Pretopic table
+    upload = Pretopic(stdID=stdID, filename=file.filename, file=file.read())
+    db.session.add(upload)
+
+    # Commit the file upload to the database
+    db.session.commit()
+
+    return jsonify({'message': "File uploaded successfully"}), 200  # Return success message
+
+
+@app.route('/loadstopic', methods=['GET'])
+def get_uploaded_Topic():
+    stdID = request.args.get('stdID')  # Get stdID from the request parameters
+    if not stdID:
+        return jsonify({"message": "stdID is required"}), 400
+    try:
+        uploads = Pretopic.query.filter_by(stdID=stdID).all()  # Get all uploads for the given stdID
+        files = [{'id': upload.id, 'filename': upload.filename} for upload in uploads]
+        return jsonify({'files': files}), 200
+    except Exception as e:
+        print("An error occurred:", e)
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
+    
+@app.route('/downloadtopic/<upload_id>')
+def downloadtopic(upload_id):
+    upload = Pretopic.query.filter_by(id=upload_id).first()
+    return send_file(BytesIO(upload.file), download_name=upload.filename, as_attachment=True)
