@@ -8,6 +8,8 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import SchoolIcon from '@mui/icons-material/School';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
 export const Admin = () => {
   const [students, setStudents] = useState([]);
@@ -65,10 +67,13 @@ export const Admin = () => {
       <Grid container spacing={2} sx={{ px: 1 }}>
         <Grid item xs={6} md={6} >
           <Box className="admin-page-header">
-            <Box className="right-container">
+            <Box className="left-container">
               <FormGroup>
                 <FormControlLabel control={<Checkbox defaultChecked />} label="Master Degree" />
                 <FormControlLabel control={<Checkbox defaultChecked />} label="PHD Degree" />
+                <Button container spacing={10} variant="contained" onClick={() => navigate("/alumni")} startIcon={<SchoolIcon />}>
+                  alumni
+                </Button>
               </FormGroup>
             </Box>
           </Box>
@@ -84,9 +89,10 @@ export const Admin = () => {
             <Button container spacing={10} variant="contained" onClick={() => navigate("/addstudent")} startIcon={<AddIcon />}>
               เพิ่มนักศึกษา
             </Button>
-            <Button container spacing={10} variant="contained" onClick={() => navigate("/alladmin")} startIcon={<AddIcon />}>
+            <Button container spacing={10} variant="contained" onClick={() => navigate("/alladmin")} startIcon={<SupervisorAccountIcon />}>
               รวม admin
             </Button>
+            
           </Box>
         </Grid>
       </Grid>

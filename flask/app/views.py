@@ -244,7 +244,7 @@ def studentfix():
     try:
         # Receive JSON data
         data = request.json
-        print("Received data:", data)  # Debugging: show received data
+        # print("Received data:", data)  # Debugging: show received data
 
         # Check required fields
         required_fields = ['stdID', 'name', 'tel', 'email', 'degree', 'advisor', 'email_advisor']
