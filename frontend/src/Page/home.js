@@ -513,6 +513,7 @@ export const Home = (props) => {
             {/* Complete all required courses */}
             <div>
               <p>Complete Course</p>
+              {/* <pre>หากนักศึกษาเรียนครบกระบวนวิชาตามแผนการเรียนเรียบร้อยแล้วให้กดยืนยัน</pre> */}
               {plan.Complete_Course === false ? (
                 <>
                   <label
@@ -550,6 +551,32 @@ export const Home = (props) => {
             <br/><br />
             <button className="button-save" type="submit">Save Progress</button>
           </form>
+            <button onClick={togglePopup} className="popup-button">
+                หน่วยกิตที่ได้รับ
+            </button>
+            {showPopup && (
+              <div className="popup-modal">
+                <div className="popup-content">
+                  <h2>Courses</h2>
+                  {/* <h2>{credit}</h2> */}
+                  {courses.length > 0 ? (
+                    <ul>
+                      {courses.map((course, index) => (
+                        <li key={index} className={course.registered ? ("registered"):("notregis")}>
+                          {course.courseID} - {course.planName} (
+                          {course.credit} credits{})
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No courses found for this student.</p>
+                  )}
+                  <button onClick={togglePopup} className="close-popup">
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
         </div>
       
         {/* ส่วนการอัปโหลดไฟล์ */}
@@ -586,6 +613,8 @@ export const Home = (props) => {
                 </a>
               </div>
             ))}
+
+            
          
      
           
