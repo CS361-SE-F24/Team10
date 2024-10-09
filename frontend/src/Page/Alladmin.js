@@ -27,7 +27,6 @@ export const Alladmin = () => {
       try {
         const response = await axios.get("http://localhost:56733/alladmins");  // Adjust the API endpoint if necessary
         console.log(response.data);
-        
         setAdmins(response.data);  // Store the fetched admin data in state
       } catch (err) {
         console.error("Error fetching admins", err);
@@ -63,7 +62,7 @@ export const Alladmin = () => {
     <>
       <Box className="admin-header">
         <Box className="admin-text">
-          <Typography variant="h8" ผผ>
+          <Typography variant="h8" sx={{ flexGrow: 1, textAlign: 'left' }}>
             Add new admin <br />
           </Typography>
         </Box>
@@ -78,7 +77,7 @@ export const Alladmin = () => {
       <Box className="admin-card-container">
         <Grid container spacing={10}>
           {admins.map((admin, index) => (
-            <Grid item xs={12} md={4} sm={6} lg={4} key={index}>
+            <Grid item xs={12} md={4} sm={6} lg={3} key={index}>
               <Card className="card-admin">
                 <CardMedia
                   sx={{ height: 140 }}
