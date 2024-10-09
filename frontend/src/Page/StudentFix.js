@@ -192,7 +192,7 @@ export const StudentFixinformation = (props) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            required
+            readOnly
             className="input_select_text"
           />
         </div>
