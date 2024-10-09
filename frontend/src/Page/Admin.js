@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Box, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button, Select, MenuItem, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import SchoolIcon from '@mui/icons-material/School';
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -67,13 +65,10 @@ export const Admin = () => {
       <Grid container spacing={2} sx={{ px: 1 }}>
         <Grid item xs={6} md={6} >
           <Box className="admin-page-header">
-            <Box className="left-container">
+            <Box className="right-container">
               <FormGroup>
                 <FormControlLabel control={<Checkbox defaultChecked />} label="Master Degree" />
                 <FormControlLabel control={<Checkbox defaultChecked />} label="PHD Degree" />
-                <Button container spacing={10} variant="contained" onClick={() => navigate("/alumni")} startIcon={<SchoolIcon />}>
-                  alumni
-                </Button>
               </FormGroup>
             </Box>
           </Box>
@@ -89,7 +84,7 @@ export const Admin = () => {
             <Button container spacing={10} variant="contained" onClick={() => navigate("/addstudent")} startIcon={<AddIcon />}>
               เพิ่มนักศึกษา
             </Button>
-            <Button container spacing={10} variant="contained" onClick={() => navigate("/alladmin")} startIcon={<SupervisorAccountIcon />}>
+            <Button container spacing={10} variant="contained" onClick={() => navigate("/alladmin")} startIcon={<AddIcon />}>
               รวม admin
             </Button>
           </Box>
@@ -144,7 +139,7 @@ export const Admin = () => {
                     textAlign: 'center',
                   }}
                 >
-                  Phonenumber
+                  Tel
                 </TableCell>
                 <TableCell
                   sx={{
