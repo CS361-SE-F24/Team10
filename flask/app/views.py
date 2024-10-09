@@ -46,7 +46,7 @@ def post_data():
         if not data or 'Fname' not in data or 'Lname' not in data:
             return jsonify({"message": "Invalid data"}), 400
 
-        print(data)
+        # print(data)
         new_user = User(fname=data['Fname'], lname=data['Lname'])
         db.session.add(new_user)
         db.session.commit()
