@@ -1,16 +1,15 @@
-/* .progress-bar-container {
+.progress-bar-container {
   display: flex;
   flex-direction: column;
   background-color: transparent !important;
-  display: grid; 
-  row-gap: 50px;
-} */
+  /* display: grid; */
+}
 
 .step {
   
   display: flex;
   flex-direction: column;
-  display: grid; /* Set grid layout */
+  display: grid; 
   grid-template-columns: 1fr 1fr; /* Define two columns: one for the circle, and one for the step name */
   align-items: center; /* Vertically align content in both columns */
   column-gap: 15px; /* Adjust spacing between the circle and step name */
@@ -41,11 +40,12 @@
 
 .line {
   width: 7px;
-  height: 190px; /* Height of the line */
+  height: 100%; /* Height of the line */
   background-color: #e0e0e0;
   position: absolute; /* Change to absolute for better control */
   top: 30px; /* Adjust this to position the line below the circle */
   left: 72px; /* Center align the line with the circle */
+  
 }
 
 .completed .line {
@@ -59,8 +59,7 @@
 }
 
 .step-name {
-  text-align: center; /* Center the step names */
-  margin-top: 5px; /* Add space between the number and the name */
+  text-align:left; /* Center the step names */
   margin-top: 5px;
   color: black;
 }

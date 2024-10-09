@@ -10,11 +10,13 @@ export const Home = (props) => {
   const location = useLocation();
   const stdID =
     location.state?.stdID || props.stdID || localStorage.getItem("stdID") || "";
-  const currentUser = props.currentUser ||
-    JSON.parse(localStorage.getItem("currentUser")) || {
+  
+  const currentUser =
+    props.currentUser || JSON.parse(localStorage.getItem("currentUser")) || {
       id: 0,
       isAdmin: false,
     };
+
   const [show, setShow] = useState("progress");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,6 +24,7 @@ export const Home = (props) => {
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
   const [courses, setCourses] = useState([]);
+  const [credit, setCredit] = useState(0);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -31,8 +34,8 @@ export const Home = (props) => {
     degree: "",
     advisor: "",
     email_advisor: "",
-    image: null,
-    picture: null, // Add this field to store the image
+    // image: null, // For uploading new image
+    picture: null, // Displaying the current image fetched from API
   });
 
   const [plan, setFormplan] = useState({
@@ -43,23 +46,26 @@ export const Home = (props) => {
     comprehensiveExam: null,
     QualifyingExam: null,
     credit: 0,
-    Complete_Course:false
+    Complete_Course: false,
   });
 
   const [selectedCourses, setSelectedCourses] = useState("");
-const [courseArray, setCourseArray] = useState([]);
+  const [courseArray, setCourseArray] = useState([]);
 
-const handleInputChange = (event) => {
-  const inputValue = event.target.value;
-  setSelectedCourses(inputValue);
+  const handleInputChange = (event) => {
+    const inputValue = event.target.value;
+    setSelectedCourses(inputValue);
 
-  // Split the input string by commas, filter out empty strings, and set the resulting array
-  const courses = inputValue.split(",").filter(course => course.trim() !== "");
-  setCourseArray(courses);
-  //(courses); // Log the newly created array
-};
+    // Split the input string by commas, filter out empty strings, and set the resulting array
+    const courses = inputValue
+      .split(",")
+      .filter((course) => course.trim() !== "");
+    setCourseArray(courses);
+    //(courses); // Log the newly created array
+  };
 
   useEffect(() => {
+    // Save stdID to localStorage if not already saved
     if (stdID && !localStorage.getItem("stdID")) {
       localStorage.setItem("stdID", stdID);
     }
@@ -76,7 +82,9 @@ const handleInputChange = (event) => {
           ? `data:image/jpeg;base64,${studentData.picture}`
           : null;
 
-        setFormData({
+        // Update formData with student data and the picture (if available)
+        setFormData((prevData) => ({
+          ...prevData,
           name: studentData.name || "",
           stdID: stdID,
           tel: studentData.tel || "",
@@ -86,7 +94,7 @@ const handleInputChange = (event) => {
           email_advisor: studentData.advisor_email || "",
           image: null,
           picture: picture,
-        });
+        }));
 
         //(formData);
 
@@ -144,7 +152,8 @@ const handleInputChange = (event) => {
         QualifyingExam:
           convertFile(studentData.quality) || prevPlan.QualifyingExam,
         nPublish: studentData.nPublish,
-        Complete_Course: studentData.complete_course || prevPlan.Complete_Course
+        Complete_Course:
+          studentData.complete_course || prevPlan.Complete_Course,
       }));
 
       setLoading(false);
@@ -166,6 +175,8 @@ const handleInputChange = (event) => {
   const uploadFile = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+    console.log(data);
 
     try {
       const response = await axios.post(
@@ -189,40 +200,39 @@ const handleInputChange = (event) => {
     const formData = new FormData(event.currentTarget); // Create a FormData object
     //(courseArray);
     // Append Complete_Course from the plan object
-    formData.append('Complete_Course', plan.Complete_Course); // Append the Complete_Course value
-    formData.append('Regits_Course', courseArray);
+    formData.append("Complete_Course", plan.Complete_Course); // Append the Complete_Course value
+    formData.append("Regits_Course", courseArray);
     // Log the form data for debugging
     const data = Object.fromEntries(formData.entries());
-    //("Form Data:", data); 
+    //("Form Data:", data);
 
     try {
-        const response = await axios.post(
-            "http://localhost:56733/editprogress",
-            formData,
-            {
-                headers: { "Content-Type": "multipart/form-data" }, // Ensure it's multipart for file upload
-            }
-        );
-        alert("Progress updated successfully");
-        fetchPlan(); // Refresh the study plan after the update
+      const response = await axios.post(
+        "http://localhost:56733/editprogress",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" }, // Ensure it's multipart for file upload
+        }
+      );
+      alert("Progress updated successfully");
+      fetchPlan(); // Refresh the study plan after the update
     } catch (error) {
-        setError("Progress update failed");
-        console.error("Error updating progress:", error);
+      setError("Progress update failed");
+      console.error("Error updating progress:", error);
     }
-};
-
+  };
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get(`http://localhost:56733/getcourses?stdID=${stdID}`);
+      const response = await axios.get(
+        `http://localhost:56733/getcourses?stdID=${stdID}`
+      );
       setCourses(response.data.courses);
-      //(response.data);
-      
+      setCredit(response.data.credit);
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
   };
-  
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -230,14 +240,47 @@ const handleInputChange = (event) => {
       fetchCourses();
     }
   };
-  
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   //(progressPercentage);
-  
+
   return (
   <div className="home-container">
+  
+    {/* Display helloworld for mobile screens */}
+    <div className="hidden-mobile"><h4>PhD Student</h4>
+      <div className="sidebar-mb">
+      
+      <div className="rec">
+        <div className="inside">
+          {formData.picture ? (
+            <img className="picture" src={formData.picture} alt="User" />
+          ) : (
+            <p>No Image Available</p>
+          )}
+          <p>{formData.name}</p>
+          <p>รหัสนักศึกษา {formData.stdID}</p>
+          <hr />
+          <p>{formData.degree}</p>
+        </div>
+      </div>
+      <br />
+      <div className="advisor">
+        Advisor: {formData.advisor || "Not available"}
+      </div>
+      <div className="email">
+        Email of Advisor: {formData.email_advisor || "Not available"}
+      </div>
+
+      {currentUser.isAdmin && show === "progress" && (
+        <div>
+          <button onClick={handleUpdate}>Update Progress</button>
+        </div>
+      )}
+    </div></div>
+    
+
     <div className="sidebar">
       <h4>PhD Student</h4>
       <div className="rec">
@@ -268,18 +311,18 @@ const handleInputChange = (event) => {
       )}
     </div>
 
-    {show === "progress" ? (
-      <div className="progress-bar-container">
-        <div className="items-progress">
-          <div className="progressbar">
-            <ProgressBar
-              stdID={stdID}
-              onProgressUpdate={setProgressPercentage}
-            />
-          </div>
-          <div className="DonutChart">
-            <DonutChart progress={progressPercentage} />
-            <div className="course"></div><br /><br /><br />
+      {show === "progress" ? (
+        <div className="progress-bar-container">
+          <div className="items-progress">
+            <div className="progressbar">
+              <ProgressBar
+                stdID={stdID}
+                onProgressUpdate={setProgressPercentage}
+              />
+            </div>
+            <div className="DonutChart">
+              <DonutChart progress={progressPercentage} />
+              <div className="course"></div><br /><br /><br />
             <div className="box">
               <p>เรียนให้ครบหน่วยกิต</p>
               <button onClick={togglePopup} className="popup-button">
@@ -293,6 +336,7 @@ const handleInputChange = (event) => {
               <div className="popup-modal">
                 <div className="popup-content">
                   <h2>Courses</h2>
+                  <h2>{credit}</h2>
                   {courses.length > 0 ? (
                     <ul>
                       {courses.map((course, index) => (

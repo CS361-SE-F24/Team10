@@ -1,3 +1,4 @@
+import binascii
 from flask import jsonify, request,send_file,abort
 from flask_cors import CORS
 from flask_login import login_user, login_required, logout_user, current_user
@@ -45,7 +46,7 @@ def post_data():
         if not data or 'Fname' not in data or 'Lname' not in data:
             return jsonify({"message": "Invalid data"}), 400
 
-        print(data)
+        # print(data)
         new_user = User(fname=data['Fname'], lname=data['Lname'])
         db.session.add(new_user)
         db.session.commit()
@@ -91,8 +92,7 @@ def addStudent():
 
             new_advisor = Advisor(
                 name=advisor_name,
-                email=advisor_email,  # Assuming there's a field for advisor email
-                tel="0999958855"  # Static tel for now, can be dynamic
+                email=advisor_email  # No tel field here
             )
             db.session.add(new_advisor)
             db.session.commit()
@@ -203,6 +203,8 @@ def data():
         result.append({
             'no': no,
             'name': student.name,
+            'email': student.email,
+            'tel': student.tel,
             'stdID': student.stdID,
             'degree': study_plan.planName ,
             'advisor': advisor.name ,
@@ -239,44 +241,124 @@ def login():
 
 @app.route('/studentfix', methods=['POST'])
 def studentfix():
-    logout_user()
-    return jsonify({"message": "Logged out successfully"}), 200
+    try:
+        # Receive JSON data
+        data = request.json
+        # print("Received data:", data)  # Debugging: show received data
+
+        # Check required fields
+        required_fields = ['stdID', 'name', 'tel', 'email', 'degree', 'advisor', 'email_advisor']
+        for field in required_fields:
+            if field not in data or not data[field]:
+                return jsonify({"error": f"{field} is required and cannot be empty"}), 400
+
+        # Find existing student
+        student = Student.query.filter_by(stdID=data['stdID']).first()
+        if student is None:
+            return jsonify({"error": "Student not found"}), 404
+
+        # Update student information
+        student.name = data['name']
+        student.tel = data['tel']
+        student.email = data['email']
+
+        # Look for existing advisor
+        existing_advisor = Advisor.query.filter_by(name=data['advisor']).first()
+
+        if existing_advisor:
+            # If existing advisor's email matches the new email, just use them
+            if existing_advisor.email == data['email_advisor']:
+                print("Advisor data is the same, no changes made.")
+                student.advisorID = existing_advisor.id  # Use the old advisor
+            else:
+                # Check for an advisor with the new email
+                existing_email_advisor = Advisor.query.filter_by(email=data['email_advisor']).first()
+                if existing_email_advisor:
+                    # If the email exists, update student with this advisor
+                    student.advisorID = existing_email_advisor.id
+                    print("Advisor email exists, updating student with existing advisor.")
+                else:
+                    # If not, update the existing advisor's email
+                    existing_advisor.email = data['email_advisor']
+                    db.session.commit()  # Save the changes to the existing advisor
+                    student.advisorID = existing_advisor.id
+                    print("Updated existing advisor's email.")
+        else:
+            # Create a new advisor if none exists
+            new_advisor = Advisor(name=data['advisor'], email=data['email_advisor'])
+            db.session.add(new_advisor)
+            db.session.flush()  # Ensure the new advisor's ID is available
+            student.advisorID = new_advisor.id
+            print("New advisor created.")
+
+        # Handle image if provided
+        if 'image' in data and data['image']:
+            user = User.query.filter_by(email=student.email).first()
+            if user:
+                image_data = data['image']
+                if "," in image_data:
+                    _, image_data = image_data.split(",", 1)  # Remove header
+                try:
+                    decoded_image = base64.b64decode(image_data)
+                    user.picture = decoded_image
+                except binascii.Error:
+                    return jsonify({"error": "Invalid image data"}), 400
+
+        # Commit all changes to the database
+        db.session.commit()
+        print("Updated student data:", student)  # Debugging: show updated student data
+        return jsonify({"message": "Student information updated successfully"}), 200
+
+    except Exception as e:
+        db.session.rollback()  # Rollback on error
+        print("Error during studentfix:", str(e))  # Debugging: show error
+        return jsonify({"error": "An error occurred while updating student information.", "details": str(e)}), 500
+
 
 @app.route('/currentstudent', methods=['GET'])
 def currentstudent():
-    stdID = request.args.get('stdID')  # Get stdID from query parameters
-    
+    stdID = request.args.get('stdID')
+
+    # Check if stdID is provided
+    if not stdID:
+        return jsonify({"error": "stdID is required"}), 400
+
     # Fetch the student record
     student = Student.query.filter_by(stdID=stdID).first()
-    # advisor = Advisor.query.filter_by(id=student.advisorID).first()
-    # Handle case where student is not found
+
     if student is None:
         return jsonify({"error": "Student not found"}), 404
 
-    # Fetch the study plan associated with the student
-    plan = Study_plan.query.filter_by(study_planID=student.stdID).first()
+    # Fetch the advisor
     advisor = Advisor.query.filter_by(id=student.advisorID).first()
-    # If plan is not found, handle it if necessary
+
+    # Prepare the response data
+    advisor_name = advisor.name if advisor else "Unknown Advisor"
+    advisor_email = advisor.email if advisor else "Unknown Email"
+    if advisor is None:
+        print(f"Advisor not found for student: {stdID}")  # Log the missing advisor for debugging
+
+    # Fetch the study plan
+    plan = Study_plan.query.filter_by(study_planID=student.stdID).first()  # Assuming this is the correct key
     plan_name = plan.planName if plan else "No plan available"
+
+    # Fetch user details if exists
     user = User.query.filter_by(email=student.email).first()
+
     current_data = {
         'name': student.name,
         'tel': student.tel,
         'email': student.email,
         'plan': plan_name,
-        # Convert picture binary data to Base64 string if it exists
-        'picture': None, # Initialize as None
-        'advisor': advisor.name ,
-        'advisor_email': advisor.email ,
+        'picture': None,  # Initialize as None
+        'advisor': advisor_name,
+        'advisor_email': advisor_email,
     }
 
-    if user.picture:
+    if user and user.picture:
         current_data['picture'] = base64.b64encode(user.picture).decode('utf-8')
-    
-    return jsonify(current_data), 200  # Return the data with status 200
 
-###################################################
-
+    return jsonify(current_data), 200
 
 
 def get_file_data(file_binary, filename):
@@ -292,13 +374,17 @@ def get_file_data(file_binary, filename):
 def currentstudentplan():
     stdID = request.args.get('stdID')
     study_plan = Study_plan.query.filter_by(study_planID=stdID).first()
-    
+
     if study_plan is None:
         return jsonify({"error": "Student not found"}), 404
     if study_plan.planName == "Master_Degree (แผน ก แบบ ก 1)":
+        if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding == 1:
+            pass_published = True
+        else:
+            pass_published = False
         current_data = {
         'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
-        'ตีพิมพ์วิจัย': True,
+        'ตีพิมพ์วิจัย': pass_published,
         'เสนอหัวข้อ': True,
         'complete_course': study_plan.complete_course
         }
@@ -340,8 +426,8 @@ def upload_file():
 
     file = request.files['file']
     stdID = request.form.get('stdID')
-    types = request.form.get('types')
-
+    types = request.form.get('type')
+    print(stdID,types)
     if file.filename == '':
         return jsonify({'message': "No selected file"}), 400
 
@@ -386,6 +472,7 @@ def downloadplan(upload_id, type_exam):
     if type_exam == "testEng":
         file_data = study_plan.testEng
         filename = study_plan.testEng_filename
+        print(filename)
     elif type_exam == "comprehension":
         file_data = study_plan.comprehension
         filename = study_plan.comprehension_filename
@@ -488,6 +575,7 @@ def editprogress():
             study_plan.complete_course = False
 
         # Handle Regits_Course
+        
         if regits_courses:
             # Split the string by commas and create Regits entries
             course_ids = regits_courses.split(",")
@@ -495,9 +583,11 @@ def editprogress():
                 course_id = course_id.strip()  # Trim any whitespace
                 if course_id:  # Check if the course_id is not empty
                     # Check if the Regits entry already exists
+                    courses = Course.query.filter_by(courseID=course_id).first()
                     existing_regit = Regits.query.filter_by(stdID=study_planID, courseID=course_id).first()
                     if not existing_regit:  # Only create a new entry if it doesn't exist
                         new_regit = Regits(stdID=study_planID, courseID=course_id)
+                        study_plan.credit += courses.credit
                         db.session.add(new_regit)
 
         # Commit changes to the database
@@ -573,7 +663,6 @@ def get_courses_by_stdID():
         "Master_Degree (แผน ก แบบ ก 2)": "M.",
         "Master_Degree3 (แผน ข)": "M.",
         "PhD": "Ph.D.",
-        # "PhD2.2": "Ph.D."
     }
 
     planName = planName_map.get(study_plan.planName, None)
@@ -582,24 +671,26 @@ def get_courses_by_stdID():
 
     # Fetch courses using the mapped plan name
     courses = Course.query.filter_by(planName=planName).all()
-    regist = Regits.query.filter_by(stdID=stdID).all()
     if not courses:
-        return jsonify({'error': 'No courses found for this student'}), 404
+        return jsonify({'error': 'No courses found for this study plan'}), 404
 
-# Create a set of course IDs that the student is registered for
-    registered_course_ids = {reg.courseID for reg in regist}
+    # Fetch registered courses for the student
+    regist = Regits.query.filter_by(stdID=stdID).all()
+    registered_course_ids = {reg.courseID for reg in regist} if regist else set()
 
+    # Create course list with registration status
     course_list = [
         {
             'courseID': course.courseID,
             'credit': course.credit,
             'planName': course.planName,
-            'registered': course.courseID in registered_course_ids  # Check if course is registered
+            'registered': course.courseID in registered_course_ids
         }
         for course in courses
     ]
-    
-    return jsonify({'courses': course_list}), 200
+
+    return jsonify({'courses': course_list, 'credit': study_plan.credit}), 200
+
 
 @app.route('/updatepercent', methods=['POST'])
 def updateper():
@@ -643,3 +734,51 @@ def delete_student(stdID):
         return jsonify({"message": "Student and associated records deleted successfully"}), 200
     else:
         return jsonify({"error": "Student not found"}), 404
+
+
+@app.route('/addadmin', methods=['POST'])
+def add_admin():
+    data = request.form  # Retrieve data from formData
+    file = request.files.get('picture')  # Retrieve image file
+
+    # Check if user with this email already exists
+    user = User.query.filter_by(email=data.get('email_admin')).first()
+    if user:
+        return jsonify({"error": "User with this email already exists"}), 409
+
+    # Hash the password before storing it
+    # hashed_password = generate_password_hash(data.get('pw_admin')).decode('utf-8')
+
+    # Process the profile picture
+    print((file != None ))
+    picture_data = file.read() if file else None
+
+    # Create the new admin user
+    new_admin = User(
+        email=data.get('email_admin'),
+        password=data.get('pw_admin'),  # Store hashed password
+        fname=data.get('name_admin').split(' ')[0],
+        lname=data.get('name_admin').split(' ')[1] if len(data.get('name_admin').split(' ')) > 1 else '',
+        isAdmin=True,
+        picture=picture_data
+    )
+
+    # Add the new admin to the database
+    db.session.add(new_admin)
+    db.session.commit()
+
+    return jsonify({"message": "Admin added successfully"}), 201
+
+@app.route('/alladmins', methods=['GET'])
+def get_all_admins():
+    admins = User.query.filter_by(isAdmin=True).all()
+    admin_list = []
+    for admin in admins:
+        admin_data = {
+            'name': f"{admin.fname} {admin.lname}",
+            'email': admin.email,
+            'tel': "0984892124",
+            'picture': base64.b64encode(admin.picture).decode('utf-8') if admin.picture else None
+        }
+        admin_list.append(admin_data)
+    return jsonify(admin_list), 200

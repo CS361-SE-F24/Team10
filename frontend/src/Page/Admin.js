@@ -8,6 +8,8 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import SchoolIcon from '@mui/icons-material/School';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
 export const Admin = () => {
   const [students, setStudents] = useState([]);
@@ -63,22 +65,34 @@ export const Admin = () => {
   return (
     <>
       <Grid container spacing={2} sx={{ px: 1 }}>
-        <Grid item xs={12} md={4}>
-          <Box className="admin-header">
-            <FormGroup>
-              <FormControlLabel control={<Checkbox defaultChecked />} label="ปริญญาโท" />
-              <FormControlLabel control={<Checkbox defaultChecked />} label="ปริญญาเอก" />
-            </FormGroup>
+        <Grid item xs={6} md={6} >
+          <Box className="admin-page-header">
+            <Box className="left-container">
+              <FormGroup>
+                <FormControlLabel control={<Checkbox defaultChecked />} label="Master Degree" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="PHD Degree" />
+                <Button container spacing={10} variant="contained" onClick={() => navigate("/alumni")} startIcon={<SchoolIcon />}>
+                  alumni
+                </Button>
+              </FormGroup>
+            </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Box className="right-container">
-            <Button variant="contained" onClick={() => navigate("/addstudent")} startIcon={<AddIcon />}>
+        <Grid item xs={6} md={6}>
+          <Box className="right-container "
+            sx={{
+              display: 'flex',
+              flexDirection: 'column', // Stack buttons vertically
+              gap: '10px', // Add space between the buttons
+              alignItems: 'center', // Center the buttons
+            }}>
+            <Button container spacing={10} variant="contained" onClick={() => navigate("/addstudent")} startIcon={<AddIcon />}>
               เพิ่มนักศึกษา
             </Button>
-            <Button variant="contained" onClick={() => navigate("/alladmin")} startIcon={<AddIcon />}>
+            <Button container spacing={10} variant="contained" onClick={() => navigate("/alladmin")} startIcon={<SupervisorAccountIcon />}>
               รวม admin
             </Button>
+            
           </Box>
         </Grid>
       </Grid>
@@ -131,6 +145,15 @@ export const Admin = () => {
                     textAlign: 'center',
                   }}
                 >
+                  Tel
+                </TableCell>
+                <TableCell
+                  sx={{
+                    backgroundColor: '#11009E',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                >
                   Progress
                 </TableCell>
                 <TableCell
@@ -151,6 +174,7 @@ export const Admin = () => {
                   <TableCell>{student.name}</TableCell>
                   <TableCell>{student.stdID}</TableCell>
                   <TableCell>{student.degree}</TableCell>
+                  <TableCell>{student.tel}</TableCell>
                   <TableCell>{student.progress}</TableCell>
                   <TableCell>
                     <div>
