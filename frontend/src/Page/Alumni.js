@@ -66,7 +66,6 @@ export const Alumni = () => {
             Alumni Board<br />
           </Typography>
         </Box>
-
       </Box>
 
       <Box className="alumni-card-container">

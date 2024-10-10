@@ -7,6 +7,14 @@ import DonutChart from "../Page/DonutChart.js";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import SchoolIcon from '@mui/icons-material/School';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Button from "@mui/material/Button";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 export const Home = (props) => {
   const location = useLocation();
@@ -29,6 +37,11 @@ export const Home = (props) => {
   const [credit, setCredit] = useState(0);
   const [meeting, setMeeting] = useState([]);
   const [topic, setTopic] = useState([]);
+  const [publishToDelete, setPublishToDelete] = useState(null);  // เก็บ ID ของไฟล์ที่เลือกจะลบ
+  const [open, setOpen] = useState(false);  // เก็บสถานะเปิด-ปิดของ Dialog
+
+  const [topicToDelete, setTopicToDelete] = useState(null);  // เก็บ ID ของไฟล์ที่จะลบ
+  const [openT, setOpenT] = useState(false);  // สถานะเปิด-ปิดของ Dialog
 
   const [formData, setFormData] = useState({
     name: "",
@@ -55,6 +68,16 @@ export const Home = (props) => {
 
   const [selectedCourses, setSelectedCourses] = useState("");
   const [courseArray, setCourseArray] = useState([]);
+
+  const handleClickOpen = (publish) => {
+    setPublishToDelete(publish);  // เก็บ publish ที่จะถูกลบ
+    setOpen(true);  // เปิด Dialog
+  };
+
+  const handleClickOpenT = (topic) => {
+    setTopicToDelete(topic);  // เก็บ topic ที่จะลบ
+    setOpenT(true);  // เปิด Dialog
+  };
 
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
@@ -218,6 +241,14 @@ export const Home = (props) => {
     fetchCourses();
   };
 
+  const handleClose = () => {
+    setOpen(false);  // ปิด Dialog
+  };
+
+  const handleCloseT = () => {
+    setOpenT(false);  // ปิด Dialog
+  };
+
   const uptoAlumni = async () => {
     try {
       const response = await axios.post(
@@ -324,6 +355,28 @@ export const Home = (props) => {
     setShowPopup(!showPopup);
     if (!showPopup) {
       fetchCourses();
+    }
+  };
+
+  const handleDeleteP = async (ID) => {
+    try {
+      await axios.delete(`http://localhost:56733/deletepublish/${ID}`);
+      setOpen(false);  // ปิด Dialog หลังจากลบเสร็จ
+      fetchUploadedFiles();  // โหลดไฟล์ใหม่หลังจากลบเสร็จ
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      alert("An error occurred while trying to delete the file.");
+    }
+  };
+
+  const handleDeleteT = async (ID) => {
+    try {
+      await axios.delete(`http://localhost:56733/deletetopic/${ID}`);  // ลบไฟล์ที่เลือก
+      setOpenT(false);  // ปิด Dialog หลังจากลบเสร็จ
+      fetchUploadedTopic();  // โหลดไฟล์ใหม่หลังจากลบเสร็จ
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      alert("An error occurred while trying to delete the file.");
     }
   };
 
@@ -731,11 +784,31 @@ export const Home = (props) => {
                   >
                     {file.filename}
                   </a>
-                  <DeleteForeverIcon
+                  {/* <DeleteForeverIcon onClick={() => handleDeleteP(file.id)}
+                    style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
+                  /> */}
+                  <DeleteForeverIcon onClick={() => handleClickOpen(file.id)}
                     style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
                   />
                 </div>
               ))}
+              {console.log(open)}
+              <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>ยืนยันการลบ</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    คุณแน่ใจหรือว่าต้องการลบวิจัยเล่มนี้?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    ไม่
+                  </Button>
+                  <Button onClick={() => handleDeleteP(publishToDelete)} color="error">
+                    ใช่
+                  </Button>
+                </DialogActions>
+              </Dialog>
 
               <br />
 
@@ -781,11 +854,27 @@ export const Home = (props) => {
                   <a href={`http://localhost:56733/downloadtopic/${file.id}`} download>
                     {file.filename}
                   </a>
-                  <DeleteForeverIcon
+                  <DeleteForeverIcon onClick={() => handleClickOpenT(file.id)}
                     style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
                   />
                 </div>
               ))}
+              <Dialog open={openT} onClose={handleCloseT}>
+                <DialogTitle>ยืนยันการลบ</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    คุณแน่ใจหรือว่าต้องการลบหัวข้อนี้?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseT} color="primary">
+                    ไม่
+                  </Button>
+                  <Button onClick={() => handleDeleteT(topicToDelete)} color="error">
+                    ใช่
+                  </Button>
+                </DialogActions>
+              </Dialog>
               <br />
 
               

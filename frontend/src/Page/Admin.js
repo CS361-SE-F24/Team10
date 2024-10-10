@@ -85,7 +85,7 @@ export const Admin = () => {
         <Grid item xs={6} md={6}>
           <Box className="admin-page-header">
             <Box className="left-container">
-              <FormGroup>
+              {/* <FormGroup> */}
                 
                 <Button
                   variant="contained"
@@ -110,7 +110,7 @@ export const Admin = () => {
                 >
                   Alumni
                 </Button>
-                <FormControlLabel
+                {/* <FormControlLabel
                   control={<Checkbox checked={masterChecked} onChange={() => setMasterChecked(!masterChecked)} />}
                   label="Master Degree"
                 />
@@ -118,7 +118,7 @@ export const Admin = () => {
                   control={<Checkbox checked={phdChecked} onChange={() => setPhdChecked(!phdChecked)} />}
                   label="PhD"
                 />
-              </FormGroup>
+              </FormGroup> */}
             </Box>
           </Box>
         </Grid>
@@ -256,9 +256,11 @@ export const Admin = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredStudents.map((student) => (
+              {students.map((student) => (
                 <TableRow key={student.stdID}>
                   <TableCell>{student.no}</TableCell>
+                  {console.log(student.no)
+                  }
                   <TableCell>{student.name}</TableCell>
                   <TableCell>{student.stdID}</TableCell>
                   <TableCell>{student.degree}</TableCell>

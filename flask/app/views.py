@@ -824,6 +824,7 @@ def get_all_admins():
     admin_list = []
     for admin in admins:
         admin_data = {
+            'id' :admin.id,
             'name': f"{admin.fname} {admin.lname}",
             'email': admin.email,
             'tel': "0984892124",
@@ -945,3 +946,48 @@ def get_uploaded_Topic():
 def downloadtopic(upload_id):
     upload = Pretopic.query.filter_by(id=upload_id).first()
     return send_file(BytesIO(upload.file), download_name=upload.filename, as_attachment=True)
+
+
+@app.route('/deleteAdmin/<stdID>', methods=['DELETE'])
+def delete_admin(stdID):
+    # Find the student
+    # student = Student.query.filter_by(stdID=stdID).first()
+    user = User.query.filter_by(id=stdID).first()
+    
+    if user:
+        # Delete associated study plans
+        db.session.delete(user)
+        db.session.commit()  # Commit all deletions to the database
+        
+        return jsonify({"message": "Student and associated records deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Student not found"}), 404
+    
+@app.route('/deletepublish/<stdID>', methods=['DELETE'])
+def delete_publish(stdID):
+    # Find the publish record by ID
+    publish = Publish.query.filter_by(id=stdID).first()
+    
+    if publish:
+        # Delete the publish record
+        db.session.delete(publish)
+        db.session.commit()  # Commit the deletion to the database
+        
+        return jsonify({"message": "Publish record deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Publish record not found"}), 404
+
+
+@app.route('/deletetopic/<stdID>', methods=['DELETE'])
+def delete_topic(stdID):
+    # Find the publish record by ID
+    topic = Pretopic.query.filter_by(id=stdID).first()
+    
+    if topic:
+        # Delete the publish record
+        db.session.delete(topic)
+        db.session.commit()  # Commit the deletion to the database
+        
+        return jsonify({"message": "Publish record deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Publish record not found"}), 404
