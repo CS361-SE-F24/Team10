@@ -186,8 +186,8 @@ export const Admin = () => {
       </Grid>
 
       <div className="admin-table-container" style={{ marginTop: '20px' }}>
-        <TableContainer component={Paper} sx={{ maxHeight: 440, overflow: 'auto', }}>
-          <Table stickyHeader>
+        <TableContainer component={Paper} sx={{ maxHeight: 440, width: '100%', margin: 'auto', overflowX: 'hidden' }}>
+          <Table stickyHeader sx={{ minWidth: 750 }}> {/* Ensure a minimum width */}
             <TableHead>
               <TableRow>
                 <TableCell
@@ -195,6 +195,8 @@ export const Admin = () => {
                     backgroundColor: '#11009E',
                     color: 'white',
                     textAlign: 'center',
+                    width: '5%', // Adjust width for individual columns
+                    minWidth: '50px', // Ensure columns don't shrink too small
                   }}
                 >
                   No.
@@ -204,6 +206,8 @@ export const Admin = () => {
                     backgroundColor: '#11009E',
                     color: 'white',
                     textAlign: 'center',
+                    width: '20%', // Adjust width for individual columns
+                    minWidth: '150px',
                   }}
                 >
                   Name
@@ -213,6 +217,8 @@ export const Admin = () => {
                     backgroundColor: '#11009E',
                     color: 'white',
                     textAlign: 'center',
+                    width: '15%', // Adjust width for individual columns
+                    minWidth: '120px',
                   }}
                 >
                   Student ID
@@ -222,6 +228,8 @@ export const Admin = () => {
                     backgroundColor: '#11009E',
                     color: 'white',
                     textAlign: 'center',
+                    width: '15%', // Adjust width for individual columns
+                    minWidth: '100px',
                   }}
                 >
                   Degree
@@ -231,6 +239,8 @@ export const Admin = () => {
                     backgroundColor: '#11009E',
                     color: 'white',
                     textAlign: 'center',
+                    width: '15%', // Adjust width for individual columns
+                    minWidth: '100px',
                   }}
                 >
                   Tel
@@ -240,6 +250,8 @@ export const Admin = () => {
                     backgroundColor: '#11009E',
                     color: 'white',
                     textAlign: 'center',
+                    width: '10%', // Adjust width for individual columns
+                    minWidth: '80px',
                   }}
                 >
                   Progress
@@ -249,6 +261,8 @@ export const Admin = () => {
                     backgroundColor: '#11009E',
                     color: 'white',
                     textAlign: 'center',
+                    width: '20%', // Adjust width for individual columns
+                    minWidth: '150px',
                   }}
                 >
                   Edit
@@ -259,8 +273,6 @@ export const Admin = () => {
               {students.map((student) => (
                 <TableRow key={student.stdID}>
                   <TableCell>{student.no}</TableCell>
-                  {console.log(student.no)
-                  }
                   <TableCell>{student.name}</TableCell>
                   <TableCell>{student.stdID}</TableCell>
                   <TableCell>{student.degree}</TableCell>
@@ -296,6 +308,7 @@ export const Admin = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
       </div>
 
     </>

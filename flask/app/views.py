@@ -176,8 +176,8 @@ def generate_random_password(length=12):
 def send_email(email,password):
     try:
         msg = Message(
-            subject="Hello from Thars!!!",
-            body=f"""ทดสอบระบบงับเตง
+            subject="Hello from CS CMU student tracking!!!",
+            body=f"""This is your password for sign in to website http://localhost:3000/login
 email: {email}
 password: {password}""",
             sender="taruuiop@gmail.com",

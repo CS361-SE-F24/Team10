@@ -460,13 +460,13 @@ export const Home = (props) => {
                 stdID={stdID}
                 onProgressUpdate={setProgressPercentage}
               />
-              {currentUser.isAdmin &&
+              {/* {currentUser.isAdmin &&
                 show === "progress" &&
                 progressPercentage === 100 && (
                   <div>
                     <button onClick={uptoAlumni}>Graduated</button>
                   </div>
-                )}
+                )} */}
             </div>
             <div className="DonutChart">
               <DonutChart progress={progressPercentage} />
