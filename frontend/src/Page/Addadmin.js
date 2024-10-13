@@ -93,7 +93,7 @@ export const Addadmin = () => {
         setResponseMessage("Admin added successfully!"); // Set success message
         setLoading(false); // Stop loading
         alert("Admin Already Added")
-        navigate("/admin");
+        navigate("/alladmin");
       })
       .catch((error) => {
         console.error("There was an error sending the data!", error);

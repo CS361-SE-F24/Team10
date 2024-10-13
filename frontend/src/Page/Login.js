@@ -93,7 +93,7 @@ export const Login = ({ setCurrentUser }) => {
                                         name="password"
                                     />
                                     <br />
-                                    <input type="checkbox" onClick={togglePasswordVisibility} /> Remember Me
+                                    {/* <input type="checkbox" onClick={togglePasswordVisibility} /> Remember Me */}
                                     <br />
                                     <br />
                                     <center>

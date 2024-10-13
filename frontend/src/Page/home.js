@@ -6,6 +6,15 @@ import { ProgressBar } from "../Page/progressbar.js";
 import DonutChart from "../Page/DonutChart.js";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import SchoolIcon from '@mui/icons-material/School';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Button from "@mui/material/Button";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 export const Home = (props) => {
   const location = useLocation();
@@ -14,9 +23,9 @@ export const Home = (props) => {
 
   const currentUser = props.currentUser ||
     JSON.parse(localStorage.getItem("currentUser")) || {
-      id: 0,
-      isAdmin: false,
-    };
+    id: 0,
+    isAdmin: false,
+  };
   const navigate = useNavigate();
   const [show, setShow] = useState("progress");
   const [loading, setLoading] = useState(true);
@@ -28,6 +37,11 @@ export const Home = (props) => {
   const [credit, setCredit] = useState(0);
   const [meeting, setMeeting] = useState([]);
   const [topic, setTopic] = useState([]);
+  const [publishToDelete, setPublishToDelete] = useState(null);  // เก็บ ID ของไฟล์ที่เลือกจะลบ
+  const [open, setOpen] = useState(false);  // เก็บสถานะเปิด-ปิดของ Dialog
+
+  const [topicToDelete, setTopicToDelete] = useState(null);  // เก็บ ID ของไฟล์ที่จะลบ
+  const [openT, setOpenT] = useState(false);  // สถานะเปิด-ปิดของ Dialog
 
   const [formData, setFormData] = useState({
     name: "",
@@ -54,6 +68,16 @@ export const Home = (props) => {
 
   const [selectedCourses, setSelectedCourses] = useState("");
   const [courseArray, setCourseArray] = useState([]);
+
+  const handleClickOpen = (publish) => {
+    setPublishToDelete(publish);  // เก็บ publish ที่จะถูกลบ
+    setOpen(true);  // เปิด Dialog
+  };
+
+  const handleClickOpenT = (topic) => {
+    setTopicToDelete(topic);  // เก็บ topic ที่จะลบ
+    setOpenT(true);  // เปิด Dialog
+  };
 
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
@@ -217,6 +241,14 @@ export const Home = (props) => {
     fetchCourses();
   };
 
+  const handleClose = () => {
+    setOpen(false);  // ปิด Dialog
+  };
+
+  const handleCloseT = () => {
+    setOpenT(false);  // ปิด Dialog
+  };
+
   const uptoAlumni = async () => {
     try {
       const response = await axios.post(
@@ -273,7 +305,7 @@ export const Home = (props) => {
       console.error("Error uploading the file:", error);
       alert(
         "File upload failed: " +
-          (error.response?.data?.message || "Unknown error")
+        (error.response?.data?.message || "Unknown error")
       ); // Alert the user in case of error
     }
   };
@@ -326,6 +358,28 @@ export const Home = (props) => {
     }
   };
 
+  const handleDeleteP = async (ID) => {
+    try {
+      await axios.delete(`http://localhost:56733/deletepublish/${ID}`);
+      setOpen(false);  // ปิด Dialog หลังจากลบเสร็จ
+      fetchUploadedFiles();  // โหลดไฟล์ใหม่หลังจากลบเสร็จ
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      alert("An error occurred while trying to delete the file.");
+    }
+  };
+
+  const handleDeleteT = async (ID) => {
+    try {
+      await axios.delete(`http://localhost:56733/deletetopic/${ID}`);  // ลบไฟล์ที่เลือก
+      setOpenT(false);  // ปิด Dialog หลังจากลบเสร็จ
+      fetchUploadedTopic();  // โหลดไฟล์ใหม่หลังจากลบเสร็จ
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      alert("An error occurred while trying to delete the file.");
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   //(progressPercentage);
@@ -370,9 +424,9 @@ export const Home = (props) => {
         <div className="rec">
           <div className="inside">
             {formData.picture ? (
-              <img className="picture" src={formData.picture } alt="User" />
+              <img className="picture" src={formData.picture} alt="User" />
             ) : (
-                <img className="picture" src="pic.png" alt="User" />
+              <img className="picture" src="pic.png" alt="User" />
             )}
             <p>{formData.name}</p>
             <p>รหัสนักศึกษา {formData.stdID}</p>
@@ -406,13 +460,13 @@ export const Home = (props) => {
                 stdID={stdID}
                 onProgressUpdate={setProgressPercentage}
               />
-              {currentUser.isAdmin &&
+              {/* {currentUser.isAdmin &&
                 show === "progress" &&
                 progressPercentage === 100 && (
                   <div>
                     <button onClick={uptoAlumni}>Graduated</button>
                   </div>
-                )}
+                )} */}
             </div>
             <div className="DonutChart">
               <DonutChart progress={progressPercentage} />
@@ -421,14 +475,15 @@ export const Home = (props) => {
               <br />
               <br />
               <div className="box">
+                <br />
                 <p>หน่วยกิตที่ได้รับ {credit}</p>
                 <button onClick={togglePopup} className="popup-button">
                   หน่วยกิตที่ได้รับ
-                </button>
+                </button><br /><br />
               </div>
               <br />
               <div className="box2">
-                <h2>Meetings</h2>
+                <p>Conference</p><br />
                 {meeting.length > 0 ? (
                   <ul>
                     {meeting.map((meetDate, index) => (
@@ -454,7 +509,7 @@ export const Home = (props) => {
                             }
                           >
                             {course.courseID} - {course.planName} (
-                            {course.credit} credits{})
+                            {course.credit} credits{ })
                           </li>
                         ))}
                       </ul>
@@ -466,20 +521,23 @@ export const Home = (props) => {
                     </button>
                   </div>
                 </div>
-                )}
-                {currentUser.isAdmin && show === "progress" && progressPercentage === 100 &&(
-                    <div>
-                    <button onClick={uptoAlumni} className="grad-button">
-                      <SchoolIcon style={{ fontSize: 20, color: 'white', marginRight: '8px' }} /> {/* Adjust size and color */}
-                      Graduated
-                    </button>
-                  </div>
-                  
-                  )}
-              
+              )}
+              {currentUser.isAdmin && show === "progress" && progressPercentage === 100 && (
+                <div>
+                  <button onClick={uptoAlumni} className="grad-button">
+                    <SchoolIcon style={{ fontSize: 20, color: 'white', marginRight: '8px' }} /> {/* Adjust size and color */}
+                    Graduated
+                  </button>
+                </div>
+
+              )}
+
             </div>
+
           </div>
+
         </div>
+
       ) : (
         <div className="box-edit">
           <div className="editprogress-container">
@@ -520,6 +578,7 @@ export const Home = (props) => {
                         >
                           TestEnglish_{stdID}
                         </a>
+                        {/* <DeleteForeverIcon style={{ color: 'red', cursor: 'pointer' }} /> */}
                       </div>
                     </div>
                   )}
@@ -596,7 +655,7 @@ export const Home = (props) => {
                         ผ่าน
                       </label>
                       <div className="file">
-                        <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                        {/* <InsertDriveFileIcon style={{ marginRight: "8px" }} /> */}
                         {/* <p>Uploaded File:</p> */}
                         <a
                           href={`http://localhost:56733/downloadplan/${stdID}/quality`}
@@ -658,30 +717,30 @@ export const Home = (props) => {
               </form>
               <button onClick={togglePopup} className="popup-button">
                 หน่วยกิตที่ได้รับ
-            </button>
-            {showPopup && (
-              <div className="popup-modal">
-                <div className="popup-content">
-                  <h2>Courses</h2>
-                  {/* <h2>{credit}</h2> */}
-                  {courses.length > 0 ? (
-                    <ul>
-                      {courses.map((course, index) => (
-                        <li key={index} className={course.registered ? ("registered"):("notregis")}>
-                          {course.courseID} - {course.planName} (
-                          {course.credit} credits{})
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No courses found for this student.</p>
-                  )}
-                  <button onClick={togglePopup} className="close-popup">
-                    Close
-                  </button>
+              </button>
+              {showPopup && (
+                <div className="popup-modal">
+                  <div className="popup-content">
+                    <h2>Courses</h2>
+                    {/* <h2>{credit}</h2> */}
+                    {courses.length > 0 ? (
+                      <ul>
+                        {courses.map((course, index) => (
+                          <li key={index} className={course.registered ? ("registered") : ("notregis")}>
+                            {course.courseID} - {course.planName} (
+                            {course.credit} credits{ })
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No courses found for this student.</p>
+                    )}
+                    <button onClick={togglePopup} className="close-popup">
+                      Close
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
 
             {/* ส่วนการอัปโหลดไฟล์ */}
@@ -716,7 +775,6 @@ export const Home = (props) => {
               </div>
 
               <p>วิจัยทั้งหมด</p>
-
               {files.map((file) => (
                 <div className="file">
                   <InsertDriveFileIcon style={{ marginRight: "8px" }} />
@@ -726,74 +784,109 @@ export const Home = (props) => {
                   >
                     {file.filename}
                   </a>
+                  {/* <DeleteForeverIcon onClick={() => handleDeleteP(file.id)}
+                    style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
+                  /> */}
+                  <DeleteForeverIcon onClick={() => handleClickOpen(file.id)}
+                    style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
+                  />
                 </div>
               ))}
-              {/* <div>
+              {console.log(open)}
+              <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>ยืนยันการลบ</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    คุณแน่ใจหรือว่าต้องการลบวิจัยเล่มนี้?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    ไม่
+                  </Button>
+                  <Button onClick={() => handleDeleteP(publishToDelete)} color="error">
+                    ใช่
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+              <br />
+
+              <div className="meet">
+              <form onSubmit={addMeeting}>
+                <label>เข้าร่วมประชุม</label>
+                <br /><br/>
+                <input type="date" name="date-meeting" max={new Date().toISOString().split("T")[0]} />
+                <br />
+                <br />
+                <input type="hidden" name="stdID" value={stdID} />
+                <button type="submit" className="button-save">Add meeting</button>
+              </form>
+                <br />
+
+              </div>
+
+
+
+            </div>
+            <div className="upload-topic">
+              <p>เสนอหัวข้อวิจัย</p>
+              <div className="box-research">
                 <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
-                  <label>sdsadasdas</label>
-                  <input type="file" name="file" />
-                  <br />
+                  <div className="file-upload-container">
+                    <input type="file" id="topic-file-upload" name="file" hidden />
+                    <label htmlFor="topic-file-upload" className="file-upload-label">
+                      <div className="file-upload-icon">+</div>
+                      Add Topic File
+                    </label>
+                  </div>
                   <br />
 
                   <input type="hidden" name="stdID" value={stdID} />
-                  <button type="submit">Upload File</button>
+                  <button type="submit" className="button-save">Upload File</button>
                 </form>
-              <h3>Uploaded Files:</h3>
-              <ul>
-                {topic.map((file) => (
-                  <li key={file.id}>
-                    <a
-                      href={`http://localhost:56733/downloadtopic/${file.id}`}
-                      download
-                    >
-                      {file.filename}
-                    </a>
-                  </li>
-                ))}
-              </ul></div> */}
-              <div>
-                <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
-                    <label>Upload Topic</label>
-                    <div className="file-upload-container">
-                        <input type="file" id="topic-file-upload" name="file" hidden />
-                        <label htmlFor="topic-file-upload" className="file-upload-label">
-                            <div className="file-upload-icon">+</div>
-                            Add Topic File
-                        </label>
-                    </div>
-                    <br />
-
-                    <input type="hidden" name="stdID" value={stdID} />
-                    <button type="submit">Upload File</button>
-                </form>
-                <h3>Uploaded Files:</h3>
-                <ul>
-                    {topic.map((file) => (
-                        <li key={file.id}>
-                            <a href={`http://localhost:56733/downloadtopic/${file.id}`} download>
-                                {file.filename}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
               </div>
+
+              <p>หัวข้อที่ถูกนำเสนอ</p>
+              {topic.map((file) => (
+                <div className="file">
+                  <InsertDriveFileIcon style={{ marginRight: "8px" }} />
+                  <a href={`http://localhost:56733/downloadtopic/${file.id}`} download>
+                    {file.filename}
+                  </a>
+                  <DeleteForeverIcon onClick={() => handleClickOpenT(file.id)}
+                    style={{ color: 'red', cursor: 'pointer', fontSize: '30px' }} className="delete-icon"
+                  />
+                </div>
+              ))}
+              <Dialog open={openT} onClose={handleCloseT}>
+                <DialogTitle>ยืนยันการลบ</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    คุณแน่ใจหรือว่าต้องการลบหัวข้อนี้?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseT} color="primary">
+                    ไม่
+                  </Button>
+                  <Button onClick={() => handleDeleteT(topicToDelete)} color="error">
+                    ใช่
+                  </Button>
+                </DialogActions>
+              </Dialog>
+              <br />
 
               
 
-              <form onSubmit={addMeeting}>
-            <label>เข้าร่วมประชุม</label>
-            <br />
-            <input type="date" name="date-meeting" max={new Date().toISOString().split("T")[0]} />
-            <br />
-            <br />
-            <input type="hidden" name="stdID" value={stdID} />
-            <button type="submit">Add meeting</button>
-          </form>
 
               <button onClick={handleUpdate} className="confirm">
                 ยืนยันการแก้ไข
               </button>
+
+
             </div>
+
           </div>
         </div>
       )}

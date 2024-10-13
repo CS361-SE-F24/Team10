@@ -66,7 +66,6 @@ export const Alumni = () => {
             Alumni Board<br />
           </Typography>
         </Box>
-
       </Box>
 
       <Box className="alumni-card-container">
@@ -120,7 +119,7 @@ export const Alumni = () => {
                     onClick={() => handleClickOpen(alumnus)}  // Pass the alumni info to the delete handler
                     sx={{ color: 'red', '&:hover': { color: 'orange' } }}
                   >
-                    <DeleteIcon />
+                    {/* <DeleteIcon /> */}
                   </IconButton>
                 </CardActions>
               </Card>
