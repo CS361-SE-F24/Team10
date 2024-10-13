@@ -483,7 +483,7 @@ export const Home = (props) => {
               </div>
               <br />
               <div className="box2">
-                <p>Meetings</p><br />
+                <p>Conference</p><br />
                 {meeting.length > 0 ? (
                   <ul>
                     {meeting.map((meetDate, index) => (
