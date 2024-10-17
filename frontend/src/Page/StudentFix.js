@@ -277,7 +277,7 @@ export const StudentFixinformation = (props) => {
 
         {/* Submit Button */}
         <button type="submit" className="button_add" disabled={loadingSubmit}>
-          {loadingSubmit ? "Submitting..." : "แก้ไขข้อมูล"}
+          {loadingSubmit ? "Submitting..." : "Update"}
         </button>
       </form>
       <br />

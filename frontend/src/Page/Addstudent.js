@@ -175,7 +175,7 @@ export const Addstudent = () => {
               {/* {errorMessages.picture && <div className="error-message">{errorMessages.picture}</div>} Display error message for picture */}
             </div>
             <div className="form-group">
-              <label htmlFor="name">Name</label><br />
+              <label htmlFor="name" className="set-text">Name (ex.Peter Parker)</label><br />
               <input
                 className={`input_select_text ${errorMessages.name ? 'is-invalid' : ''}`}
                 type="text"
@@ -189,13 +189,13 @@ export const Addstudent = () => {
               {errorMessages.name && <div className="error-message">{errorMessages.name}</div>}
             </div>
             <div className="form-group">
-              <label htmlFor="stdID">Student ID</label><br />
+              <label htmlFor="stdID" className="set-text">Student ID (ex.6505106xx)</label><br />
               <input
                 className={`input_select_text ${errorMessages.stdID ? 'is-invalid' : ''}`}
                 type="text"
                 id="stdID"
                 name="stdID"
-                placeholder="Enter Student ID"
+                placeholder="Enter Student ID (9 digits)"
                 value={formData.stdID}
                 onChange={handleChange}
                 maxLength={9} // Limit input to 9 characters
@@ -204,13 +204,13 @@ export const Addstudent = () => {
               {errorMessages.stdID && <div className="error-message">{errorMessages.stdID}</div>}
             </div>
             <div className="form-group">
-              <label htmlFor="tel">Tel</label><br />
+              <label htmlFor="tel" className="set-text">Tel (ex.0999999999)</label><br />
               <input
                 className={`input_select_text ${errorMessages.tel ? 'is-invalid' : ''}`}
                 type="text"
                 id="tel"
                 name="tel"
-                placeholder="Enter Telephone"
+                placeholder="Enter Phone Number (10 digits)"
                 value={formData.tel}
                 onChange={handleChange}
                 maxLength={10}
@@ -219,13 +219,13 @@ export const Addstudent = () => {
               {errorMessages.tel && <div className="error-message">{errorMessages.tel}</div>}
             </div>
             <div className="form-group">
-              <label htmlFor="email">Email</label><br />
+              <label htmlFor="email" className="set-text">Email (ex.example@cmu.ac.th)</label><br />
               <input
                 className={`input_select_text ${errorMessages.email ? 'is-invalid' : ''}`}
                 type="email"
                 id="email"
                 name="email"
-                placeholder="example@cmu.ac.th"
+                placeholder="Enter CMU Email Account"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -233,7 +233,7 @@ export const Addstudent = () => {
               {errorMessages.email && <div className="error-message">{errorMessages.email}</div>}
             </div>
             <div className="form-group">
-              <label htmlFor="degree">Degree</label><br />
+              <label htmlFor="degree" className="set-text">Degree</label><br />
               <select
                 className={`input_select_text ${errorMessages.degree ? 'is-invalid' : ''}`}
                 id="degree"
@@ -243,16 +243,16 @@ export const Addstudent = () => {
                 required
               >
                 <option value="">Select Degree</option>
-                <option value="Master_Degree (แผน ก แบบ ก 1)">ปริญญาโทแบบ 1(แผน ก แบบ ก 1)</option>
-                <option value="Master_Degree (แผน ก แบบ ก 2)">ปริญญาโทแบบ 2(แผน ก แบบ ก 2)</option>
-                <option value="Master_Degree3 (แผน ข)">ปริญญาโทแบบ 3(แผน ข)</option>
-                <option value="PhD">ปริญญาเอก</option>
+                <option value="Master Degree Plan A1">Master Degree Plan A1</option>
+                <option value="Master Degree Plan A2">Master Degree Plan A2</option>
+                <option value="Master Degree Plan B">Master Degree Plan B</option>
+                <option value="Ph.D Degree">Ph.D Degree</option>
                 {/* <option value="PhD2.2">ปริญญาเอกหลักสูตรแบบ 2.2</option> */}
               </select>
               {errorMessages.degree && <div className="error-message">{errorMessages.degree}</div>}
             </div>
             <div className="form-group">
-              <label htmlFor="advisor">Teacher Advisor</label><br />
+              <label htmlFor="advisor" className="set-text">Teacher Advisor</label><br />
               <select
                 className={`input_select_text ${errorMessages.advisor ? 'is-invalid' : ''}`}
                 id="advisor"
@@ -275,13 +275,14 @@ export const Addstudent = () => {
             {/* Input for custom advisor name */}
             {formData.advisor === 'Other' && (
               <div className="form-group">
-                <label htmlFor="customAdvisor">Enter Advisor Name</label><br />
+                <label htmlFor="customAdvisor" className="set-text">Advisor Name (ex.Michael Jordan)</label><br />
                 <input
                   className={`input_select_text ${errorMessages.customAdvisor ? 'is-invalid' : ''}`}
                   type="text"
                   id="customAdvisor"
                   name="customAdvisor"
                   value={customAdvisor}
+                  placeholder="Enter Advisor Name"
                   onChange={(e) => setCustomAdvisor(e.target.value)} // Update custom advisor input
                   required
                 />
@@ -290,7 +291,7 @@ export const Addstudent = () => {
             )}
 
             <div className="form-group">
-              <label htmlFor="email_advisor">Email Advisor</label><br />
+              <label htmlFor="email_advisor" className="set-text">Email Advisor (ex.example@gmail.com)</label><br />
               <input
                 className={`input_select_text ${errorMessages.email_advisor ? 'is-invalid' : ''}`}
                 type="email"
@@ -303,7 +304,7 @@ export const Addstudent = () => {
               />
               {errorMessages.email_advisor && <div className="error-message">{errorMessages.email_advisor}</div>}
             </div>
-            <button type="submit" className="button_add">เพิ่มนักศึกษา</button>
+            <button type="submit" className="button_add">Add Student</button>
           </form>
         )}
         {/* Displaying the response message */}

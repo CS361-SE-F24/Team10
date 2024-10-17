@@ -17,14 +17,14 @@ class Study_plan(db.Model, SerializerMixin):
     quality_filename = db.Column(db.String)  # File name
     
     study_planID = db.Column(db.Integer, unique=True)
-    nPublish_journal = db.Column(db.Integer)
-    nPublish_proceeding = db.Column(db.Integer)
-    nPublish_conferrence = db.Column(db.Integer)
+    publish_research = db.Column(db.Boolean)
     credit = db.Column(db.Integer)
 
     complete_course = db.Column(db.Boolean)
+    defense_exam = db.Column(db.Boolean)
+    topic = db.Column(db.Boolean)
 
-    def __init__(self, planName, testEng, testEng_filename, comprehension, comprehension_filename, quality, quality_filename, study_planID, nPublish_journal, nPublish_proceeding, nPublish_conferrence, credit, complete_course):
+    def __init__(self, planName, testEng, testEng_filename, comprehension, comprehension_filename, quality, quality_filename, study_planID, publish_research, credit, complete_course, defense_exam, topic):
         self.planName = planName
         self.testEng = testEng
         self.testEng_filename = testEng_filename
@@ -33,8 +33,8 @@ class Study_plan(db.Model, SerializerMixin):
         self.quality = quality
         self.quality_filename = quality_filename
         self.study_planID = study_planID
-        self.nPublish_journal = nPublish_journal
-        self.nPublish_proceeding = nPublish_proceeding
-        self.nPublish_conferrence = nPublish_conferrence
+        self.publish_research = publish_research
         self.credit = credit
         self.complete_course = complete_course
+        self.defense_exam = defense_exam
+        self.topic = topic

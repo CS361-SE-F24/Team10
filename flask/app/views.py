@@ -136,11 +136,11 @@ def addStudent():
         quality=None,  # Set this to the correct file data as needed
         quality_filename=None,  # Set this to the correct file name as needed
         study_planID=data.get('stdID'),  # Assuming stdID is used as the unique study_planID
-        nPublish_journal=0,  # Default value, adjust based on your logic
-        nPublish_proceeding=0,  # Default value, adjust based on your logic
-        nPublish_conferrence=0,  # Default value, adjust based on your logic
+        publish_research = False,  # Default value, adjust based on your logic
         credit=0,  # Default or actual value from your logic
-        complete_course=False  # Default value, adjust as needed
+        complete_course=False,  # Default value, adjust as needed
+        defense_exam=False,
+        topic = False
         )
 
         # Send email with generated password
@@ -390,67 +390,71 @@ def currentstudentplan():
     if study_plan is None:
         return jsonify({"error": "Student not found"}), 404
     count_topic = Pretopic.query.filter_by(stdID=stdID).count()
-    if study_plan.planName == "Master_Degree (แผน ก แบบ ก 1)":
-        if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding >= 1:
-            pass_published = True
-        else:
-            pass_published = False
-        if count_topic >= 2:
-            pass_pretopic = True
-        else:
-            pass_pretopic = False
+    if study_plan.planName == "Master Degree Plan A1":
+        # if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding >= 1:
+        #     pass_published = True
+        # else:
+        #     pass_published = False
+        # if count_topic >= 2:
+        #     pass_pretopic = True
+        # else:
+        #     pass_pretopic = False
         current_data = {
-        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
-        'ตีพิมพ์วิจัย': pass_published,
-        'เสนอหัวข้อ': pass_pretopic,
-        'complete_course': study_plan.complete_course
+        'English_Test': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'Published_Research': study_plan.publish_research,
+        'Propose_a_Research_Topic': study_plan.topic,
+        'Complete_all_course': study_plan.complete_course,
+        'DefenseExamination' : study_plan.defense_exam
         }
-    elif study_plan.planName == "Master_Degree (แผน ก แบบ ก 2)":
-        if study_plan.nPublish_journal >= 1 or study_plan.nPublish_proceeding >= 1:
-            pass_published = True
-        else:
-            pass_published = False
-        if count_topic >= 1:
-            pass_pretopic = True
-        else:
-            pass_pretopic = False
+    elif study_plan.planName == "Master Degree Plan A2":
+        # if study_plan.nPublish_journal >= 1 or study_plan.nPublish_proceeding >= 1:
+        #     pass_published = True
+        # else:
+        #     pass_published = False
+        # if count_topic >= 1:
+        #     pass_pretopic = True
+        # else:
+        #     pass_pretopic = False
         current_data = {
-        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
-        'ตีพิมพ์วิจัย': pass_published,
-        'เสนอหัวข้อ': pass_pretopic,
-        'complete_course': study_plan.complete_course
+        'English_Test': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'Published_Research': study_plan.publish_research,
+        'Propose_a_Research_Topic': study_plan.topic,
+        'Complete_all_course': study_plan.complete_course,
+        'Defense_Examination' : study_plan.defense_exam
         }
-    elif study_plan.planName == "Master_Degree3 (แผน ข)":
-        if study_plan.nPublish_conferrence >= 1:
-            pass_published = True
-        else:
-            pass_published = False
-        if count_topic >= 1:
-            pass_pretopic = True
-        else:
-            pass_pretopic = False
+    elif study_plan.planName == "Master Degree Plan B":
+        # if study_plan.nPublish_conferrence >= 1:
+        #     pass_published = True
+        # else:
+        #     pass_published = False
+        # if count_topic >= 1:
+        #     pass_pretopic = True
+        # else:
+        #     pass_pretopic = False
         current_data = {
-        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
-        'comprehension': get_file_data(study_plan.comprehension, 'comprehension.pdf'),
-        'ตีพิมพ์วิจัย': pass_published,
-        'เสนอหัวข้อ': pass_pretopic,
-        'complete_course': study_plan.complete_course
+        'English_Test': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'Comprehensive_Examination': get_file_data(study_plan.comprehension, 'comprehension.pdf'),
+        'Published_Research': study_plan.publish_research,
+        'Propose_a_Research_Topic': study_plan.topic,
+        'Complete_all_course': study_plan.complete_course,
+        'Defense_Examination' : study_plan.defense_exam
     }
-    elif study_plan.planName == "PhD":
-        if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding >= 2:
-            pass_published = True
-        else:
-            pass_published = False
-        if count_topic >= 3:
-            pass_pretopic = True
-        else:
-            pass_pretopic = False
+    elif study_plan.planName == "Ph.D Degree":
+        # if study_plan.nPublish_journal >= 1 and study_plan.nPublish_proceeding >= 2:
+        #     pass_published = True
+        # else:
+        #     pass_published = False
+        # if count_topic >= 3:
+        #     pass_pretopic = True
+        # else:
+        #     pass_pretopic = False
         current_data = {
-        'testEng': get_file_data(study_plan.testEng, 'testEng.pdf'),
-        'ตีพิมพ์วิจัย': pass_published,
-        'เสนอหัวข้อ': pass_pretopic,
-        'quality': get_file_data(study_plan.quality, 'quality.pdf'),
-        'complete_course': study_plan.complete_course
+        'English_Test': get_file_data(study_plan.testEng, 'testEng.pdf'),
+        'Published_Research': study_plan.publish_research,
+        'Propose_a_Research_Topic': study_plan.topic,
+        'Qualifying_Examination': get_file_data(study_plan.quality, 'quality.pdf'),
+        'Complete_all_course': study_plan.complete_course,
+        'Defense_Examination' : study_plan.defense_exam
     }
 
     return jsonify(current_data), 200
@@ -482,16 +486,6 @@ def upload_file():
     
     # Update the correct publication count based on the types value
     if plan:
-        if types == "journal":
-            plan.nPublish_journal += 1
-        elif types == "proceeding":
-            plan.nPublish_proceeding += 1
-        elif types == "conference":
-            plan.nPublish_conferrence += 1
-        else:
-            return jsonify({'message': "Invalid type"}), 400
-        
-        # Save the new file in the Publish table
         upload = Publish(stdID=stdID, filename=file.filename, file=file.read(), types=types)
         db.session.add(upload)
 
@@ -547,7 +541,7 @@ def get_uploaded_files():
         return jsonify({"message": "stdID is required"}), 400
     try:
         uploads = Publish.query.filter_by(stdID=stdID).all()  # Get all uploads for the given stdID
-        files = [{'id': upload.id, 'filename': upload.filename} for upload in uploads]
+        files = [{'id': upload.id, 'filename': upload.types} for upload in uploads]
         return jsonify({'files': files}), 200
     except Exception as e:
         print("An error occurred:", e)
@@ -566,6 +560,9 @@ def editprogress():
         qualifying_file = request.files.get('QualifyingExam')
         nPublish = request.form.get('nPublish')
         set_complete = request.form.get('Complete_Course')  # New field for setting completion status
+        set_defense = request.form.get('defense_exam')
+        publish_research = request.form.get('Published_Research')
+        topic = request.form.get('Topic')
 
         # Debug print to inspect form data and file uploads
         print({
@@ -575,7 +572,8 @@ def editprogress():
             "comprehensive_file": comprehensive_file,
             "qualifying_file": qualifying_file,
             "nPublish": nPublish,
-            "set_complete": set_complete  # Added for debugging
+            "set_complete": set_complete,  # Added for debugging
+            "set_defense" : set_defense
         })
 
         # Find the study plan by student ID
@@ -609,11 +607,27 @@ def editprogress():
         if nPublish:
             study_plan.nPublish = int(nPublish)
 
+        if publish_research == "true":
+            study_plan.publish_research = True
+        else:
+            study_plan.publish_research = False
+
+        if topic == "true":
+            study_plan.topic = True
+        else:
+            study_plan.topic = False
+
         # Set study plan completion status if provided
         if set_complete == "true":
             study_plan.complete_course = True
         else:
             study_plan.complete_course = False
+
+        if set_defense == "true":
+            study_plan.defense_exam = True
+        else:
+            study_plan.defense_exam = False
+
 
         # Handle Regits_Course
         
@@ -700,10 +714,10 @@ def get_courses_by_stdID():
 
     # Mapping study plan names from the frontend to the backend planName
     planName_map = {
-        "Master_Degree (แผน ก แบบ ก 1)": "M.",
-        "Master_Degree (แผน ก แบบ ก 2)": "M.",
-        "Master_Degree3 (แผน ข)": "M.",
-        "PhD": "Ph.D.",
+        "Master Degree Plan A1": "M.",
+        "Master Degree Plan A2": "M.",
+        "Master Degree Plan B": "M.",
+        "Ph.D Degree": "Ph.D.",
     }
 
     planName = planName_map.get(study_plan.planName, None)
@@ -991,3 +1005,24 @@ def delete_topic(stdID):
         return jsonify({"message": "Publish record deleted successfully"}), 200
     else:
         return jsonify({"error": "Publish record not found"}), 404
+
+
+# @app.route('/uploadsTopic', methods=['GET'])
+# def get_uploaded_topic():
+#     stdID = request.args.get('stdID')  # Get stdID from the request parameters
+#     if not stdID:
+#         return jsonify({"message": "stdID is required"}), 400
+#     try:
+#         uploads = Pretopic.query.filter_by(stdID=stdID).all()  # Get all uploads for the given stdID
+#         files = [{'id': upload.id, 'filename': upload.filename} for upload in uploads]
+#         return jsonify({'files': files}), 200
+#     except Exception as e:
+#         print("An error occurred:", e)
+#         traceback.print_exc()
+#         return jsonify({"message": "An error occurred", "error": str(e)}), 500
+    
+
+# @app.route('/downloadtopic/<upload_id>')
+# def downloadtopic(upload_id):
+#     upload = Pretopic.query.filter_by(id=upload_id).first()
+#     return send_file(BytesIO(upload.file), download_name=upload.filename, as_attachment=True)

@@ -77,8 +77,8 @@ export const Navbar = ({ user = { isAdmin: false }, setCurrentUser }) => {
         className="custom-dialog"
       >
         <DialogTitle>
-          {"คุณแน่ใจใช่หรือไม่ ?"} <br />
-          {"ว่าจะออกจากระบบ"}
+          {"Are you sure"} <br />
+          {"you want to logout ?"}
         </DialogTitle>
         <DialogActions>
           <Button
@@ -94,7 +94,7 @@ export const Navbar = ({ user = { isAdmin: false }, setCurrentUser }) => {
               }
             }}
           >
-            ยืนยัน
+            Logout
           </Button>
 
           <Button
@@ -110,7 +110,7 @@ export const Navbar = ({ user = { isAdmin: false }, setCurrentUser }) => {
               }
             }}
           >
-            ยกเลิก
+            Cancel
           </Button>
 
 

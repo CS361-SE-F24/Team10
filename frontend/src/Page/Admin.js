@@ -155,7 +155,7 @@ export const Admin = () => {
                 },
               }}
             >
-              เพิ่มนักศึกษา
+              Add Student
             </Button>
 
             <Button
@@ -178,7 +178,7 @@ export const Admin = () => {
                 },
               }}
             >
-              รวม admin
+              Admin
             </Button>
           </Box>
 

@@ -64,6 +64,10 @@ export const Home = (props) => {
     QualifyingExam: null,
     credit: 0,
     Complete_Course: false,
+    defense_exam: false,
+    publish_research: false,
+    topic: false
+
   });
 
   const [selectedCourses, setSelectedCourses] = useState("");
@@ -194,6 +198,8 @@ export const Home = (props) => {
       );
       const studentData = response.data;
       // //(studentData);
+      // console.log(studentData);
+      
 
       const convertFile = (fileData) => {
         if (fileData && fileData.file) {
@@ -211,14 +217,20 @@ export const Home = (props) => {
       // Here you can spread the previous state and update the specific fields
       setFormplan((prevPlan) => ({
         ...prevPlan,
-        testEng: convertFile(studentData.testEng) || prevPlan.testEng,
+        testEng: convertFile(studentData.English_Test) || prevPlan.testEng,
         comprehensiveExam:
-          convertFile(studentData.comprehension) || prevPlan.comprehensiveExam,
+          convertFile(studentData.Comprehensive_Examination) || prevPlan.comprehensiveExam,
         QualifyingExam:
-          convertFile(studentData.quality) || prevPlan.QualifyingExam,
+          convertFile(studentData.Qualifying_Examination) || prevPlan.QualifyingExam,
         nPublish: studentData.nPublish,
         Complete_Course:
-          studentData.complete_course || prevPlan.Complete_Course,
+          studentData.Complete_all_course || prevPlan.Complete_Course,
+        defense_exam:
+          studentData.Defense_Examination || prevPlan.defense_exam,
+        publish_research:
+          studentData.Published_Research || prevPlan.publish_research,
+        topic:
+          studentData.Propose_a_Research_Topic || prevPlan.topic
       }));
 
       setLoading(false);
@@ -316,11 +328,15 @@ export const Home = (props) => {
     //(courseArray);
     // Append Complete_Course from the plan object
     formData.append("Complete_Course", plan.Complete_Course); // Append the Complete_Course value
+    formData.append("defense_exam", plan.defense_exam);
     formData.append("Regits_Course", courseArray);
+    formData.append("Published_Research",plan.publish_research);
+    formData.append("Topic",plan.topic)
     // Log the form data for debugging
     const data = Object.fromEntries(formData.entries());
     //("Form Data:", data);
-
+    console.log(data);
+    
     try {
       const response = await axios.post(
         "http://localhost:56733/editprogress",
@@ -398,7 +414,7 @@ export const Home = (props) => {
                 <img className="picture" src="pic.png" alt="User" />
               )}
               <p>{formData.name}</p>
-              <p>รหัสนักศึกษา {formData.stdID}</p>
+              <p>Student ID {formData.stdID}</p>
               <hr />
               <p>{formData.degree}</p>
             </div>
@@ -429,7 +445,7 @@ export const Home = (props) => {
               <img className="picture" src="pic.png" alt="User" />
             )}
             <p>{formData.name}</p>
-            <p>รหัสนักศึกษา {formData.stdID}</p>
+            <p>Student ID {formData.stdID}</p>
             <hr />
             <p>{formData.degree}</p>
           </div>
@@ -446,7 +462,7 @@ export const Home = (props) => {
         {currentUser.isAdmin && show === "progress" && (
           <div>
             <button onClick={handleUpdate} className="editpro">
-              แก้ไข
+              Edit
             </button>
           </div>
         )}
@@ -476,9 +492,9 @@ export const Home = (props) => {
               <br />
               <div className="box">
                 <br />
-                <p>หน่วยกิตที่ได้รับ {credit}</p>
+                <p>Credits Received {credit}</p>
                 <button onClick={togglePopup} className="popup-button">
-                  หน่วยกิตที่ได้รับ
+                  Credits
                 </button><br /><br />
               </div>
               <br />
@@ -548,7 +564,7 @@ export const Home = (props) => {
                 {/* Test English Section */}
                 <div>
                   <p>Test English</p>
-                  {plan.testEng === null ? (
+                  {plan.testEng  === null ? (
                     <>
                       <input
                         type="file"
@@ -557,7 +573,7 @@ export const Home = (props) => {
                         className="editprogress_input"
                       />
                       <label htmlFor="testEng" className="editprogress_label">
-                        ไม่ผ่าน
+                        Unsuccess
                       </label>
                     </>
                   ) : (
@@ -568,7 +584,7 @@ export const Home = (props) => {
                         }}
                         className="editprogress_label_pass"
                       >
-                        ผ่าน
+                        Success
                       </label>
                       <div className="file">
                         <InsertDriveFileIcon style={{ marginRight: "8px" }} />
@@ -599,7 +615,7 @@ export const Home = (props) => {
                         htmlFor="comprehensiveExam"
                         className="editprogress_label"
                       >
-                        ไม่ผ่าน
+                        Unsuccess
                       </label>
                     </>
                   ) : (
@@ -610,7 +626,7 @@ export const Home = (props) => {
                         }
                         className="editprogress_label_pass"
                       >
-                        ผ่าน
+                        Success
                       </label>
                       <div className="file">
                         <InsertDriveFileIcon style={{ marginRight: "8px" }} />
@@ -641,7 +657,7 @@ export const Home = (props) => {
                         htmlFor="QualifyingExam"
                         className="editprogress_label"
                       >
-                        ไม่ผ่าน
+                        Unsuccess
                       </label>
                     </>
                   ) : (
@@ -652,7 +668,7 @@ export const Home = (props) => {
                         }
                         className="editprogress_label_pass"
                       >
-                        ผ่าน
+                        Success
                       </label>
                       <div className="file">
                         {/* <InsertDriveFileIcon style={{ marginRight: "8px" }} /> */}
@@ -680,7 +696,7 @@ export const Home = (props) => {
                           setFormplan({ ...plan, Complete_Course: true })
                         }
                       >
-                        ไม่ผ่าน
+                        Unsuccess
                       </label>
                     </>
                   ) : (
@@ -691,32 +707,61 @@ export const Home = (props) => {
                         }
                         className="editprogress_label_pass"
                       >
-                        ผ่าน
+                        Success
                       </label>
                     </div>
                   )}
                 </div>
-                <br />
-                <br />
+                {/* <br />
+                <br /> */}
+                <div>
+                  <p>Defense Examination</p>
+                  {plan.defense_exam === false ? (
+                    <>
+                      <label
+                        htmlFor="defense_exam"
+                        className="editprogress_label"
+                        onClick={() =>
+                          setFormplan({ ...plan, defense_exam: true })
+                        }
+                      >
+                        Unsuccess
+                      </label>
+                    </>
+                  ) : (
+                    <div>
+                      <label
+                        onClick={() =>
+                          setFormplan({ ...plan, defense_exam: false })
+                        }
+                        className="editprogress_label_pass"
+                      >
+                        Success
+                      </label>
+                    </div>
+                  )}
+                </div>
+                <br/>
 
                 {/* Course Selection */}
-                <label>เลือกตัวที่เรียน</label>
+                <label>Course ID
+                
+                  <br/> (ex.204712)<br/>(ex.204712,204713)</label>
+                
                 <br />
-                <br />
+                {/* <br /> */}
                 <input
                   className="course-id"
                   type="text"
                   onChange={handleInputChange}
-                  placeholder="Enter course IDs separated by commas"
+                  placeholder="Enter Course IDs"
                 />
-                <br />
-                <br />
-                <button className="button-save" type="submit">
+                <button className="button-save1" type="submit">
                   Save Progress
                 </button>
               </form>
               <button onClick={togglePopup} className="popup-button">
-                หน่วยกิตที่ได้รับ
+                Credits
               </button>
               {showPopup && (
                 <div className="popup-modal">
@@ -741,17 +786,43 @@ export const Home = (props) => {
                   </div>
                 </div>
               )}
+              
             </div>
 
             {/* ส่วนการอัปโหลดไฟล์ */}
             <div className="upload-section">
-              <p>วิจัยที่ถูกตีพิมพ์</p>
+              <p>Published Research</p>
               <div className="box-research">
+                
                 <form
                   onSubmit={uploadFile}
                   encType="multipart/form-data"
                   className="choosefile"
                 >
+                  {plan.publish_research === false ? (
+                    <>
+                      <label
+                        htmlFor="defense_exam"
+                        className="editprogress_label"
+                        onClick={() =>
+                          setFormplan({ ...plan, publish_research: true })
+                        }
+                      >
+                        Unsuccess
+                      </label>
+                    </>
+                  ) : (
+                    <div>
+                      <label
+                        onClick={() =>
+                          setFormplan({ ...plan, publish_research: false })
+                        }
+                        className="editprogress_label_pass"
+                      >
+                        Success
+                      </label>
+                    </div>
+                  )}
                   <div className="file-upload-container">
                     <input type="file" id="file-upload" name="file" hidden />
                     <label htmlFor="file-upload" className="file-upload-label">
@@ -762,9 +833,9 @@ export const Home = (props) => {
                   <br />
 
                   <select name="type" className="dropdown" required>
-                    <option value="journal">Journal</option>
-                    <option value="proceeding">Proceeding</option>
-                    <option value="conference">Conference</option>
+                    <option value="Journal">Journal</option>
+                    <option value="Proceeding">Proceeding</option>
+                    {/* <option value="conference">Conference</option> */}
                   </select>
                   <br />
                   <input type="hidden" name="stdID" value={stdID} />
@@ -774,7 +845,7 @@ export const Home = (props) => {
                 </form>
               </div>
 
-              <p>วิจัยทั้งหมด</p>
+              <p>Research</p>
               {files.map((file) => (
                 <div className="file">
                   <InsertDriveFileIcon style={{ marginRight: "8px" }} />
@@ -792,20 +863,30 @@ export const Home = (props) => {
                   />
                 </div>
               ))}
-              {console.log(open)}
+              {/* {console.log(open)} */}
               <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>ยืนยันการลบ</DialogTitle>
+                <DialogTitle>Confirm Delete</DialogTitle>
                 <DialogContent>
                   <DialogContentText>
-                    คุณแน่ใจหรือว่าต้องการลบวิจัยเล่มนี้?
+                    Are you sure you want to delete this research?
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose} color="primary">
-                    ไม่
+                <Button onClick={() => handleDeleteP(publishToDelete)} color="error"
+                  sx={{
+                    backgroundColor: '#f44336', 
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '5px',
+                    fontSize: '16px',
+                    '&:hover': {
+                      backgroundColor: '#e53935'  // สีเมื่อ hover
+                    }
+                  }}>
+                    Delete
                   </Button>
-                  <Button onClick={() => handleDeleteP(publishToDelete)} color="error">
-                    ใช่
+                  <Button onClick={handleClose} color="primary">
+                    Cancel
                   </Button>
                 </DialogActions>
               </Dialog>
@@ -814,7 +895,7 @@ export const Home = (props) => {
 
               <div className="meet">
               <form onSubmit={addMeeting}>
-                <label>เข้าร่วมประชุม</label>
+                <label>Conference</label>
                 <br /><br/>
                 <input type="date" name="date-meeting" max={new Date().toISOString().split("T")[0]} />
                 <br />
@@ -830,9 +911,33 @@ export const Home = (props) => {
 
             </div>
             <div className="upload-topic">
-              <p>เสนอหัวข้อวิจัย</p>
+              <p>Propose a Research Topic</p>
               <div className="box-research">
                 <form onSubmit={uploadTopic} encType="multipart/form-data" className="choosefile">
+                {plan.topic === false ? (
+                    <>
+                      <label
+                        htmlFor="defense_exam"
+                        className="editprogress_label"
+                        onClick={() =>
+                          setFormplan({ ...plan, topic: true })
+                        }
+                      >
+                        Unsuccess
+                      </label>
+                    </>
+                  ) : (
+                    <div>
+                      <label
+                        onClick={() =>
+                          setFormplan({ ...plan, topic: false })
+                        }
+                        className="editprogress_label_pass"
+                      >
+                        Success
+                      </label>
+                    </div>
+                  )}
                   <div className="file-upload-container">
                     <input type="file" id="topic-file-upload" name="file" hidden />
                     <label htmlFor="topic-file-upload" className="file-upload-label">
@@ -847,7 +952,7 @@ export const Home = (props) => {
                 </form>
               </div>
 
-              <p>หัวข้อที่ถูกนำเสนอ</p>
+              <p>Proposed Research Topic</p>
               {topic.map((file) => (
                 <div className="file">
                   <InsertDriveFileIcon style={{ marginRight: "8px" }} />
@@ -860,28 +965,40 @@ export const Home = (props) => {
                 </div>
               ))}
               <Dialog open={openT} onClose={handleCloseT}>
-                <DialogTitle>ยืนยันการลบ</DialogTitle>
+                <DialogTitle>Confirm Delete</DialogTitle>
                 <DialogContent>
                   <DialogContentText>
-                    คุณแน่ใจหรือว่าต้องการลบหัวข้อนี้?
+                  Are you sure you want to delete this research?
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
+                <Button onClick={() => handleDeleteT(topicToDelete)} color="error"
+                  sx={{
+                    backgroundColor: '#f44336', 
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '5px',
+                    fontSize: '16px',
+                    '&:hover': {
+                      backgroundColor: '#e53935'  // สีเมื่อ hover
+                    }
+                  }}>
+                    Delete
+                  </Button>
                   <Button onClick={handleCloseT} color="primary">
-                    ไม่
+                    Cancel
                   </Button>
-                  <Button onClick={() => handleDeleteT(topicToDelete)} color="error">
-                    ใช่
-                  </Button>
+                  
                 </DialogActions>
               </Dialog>
               <br />
 
               
 
-
+              
+          
               <button onClick={handleUpdate} className="confirm">
-                ยืนยันการแก้ไข
+                Confirm
               </button>
 
 
