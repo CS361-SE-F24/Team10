@@ -96,6 +96,7 @@ export const Admin = () => {
                     width: '200px',
                     height: '50px',
                     fontSize: '16px',
+                    alignItems: 'center',
                     '@media (max-width: 900px)': {
                       width: '150px',
                       height: '45px',
