@@ -621,3 +621,43 @@
   border: none;
 }
 
+.editprogress_label1 {
+  width: 250px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer; /* Make it clickable */
+  background-color: #fc6c85;
+  color: white;
+}
+
+.editprogress_label1:hover {
+  /* color: #000000; */
+  /* border: 1px dashed #de0611; */
+  background-color: #bc0009;
+  color: white;
+}
+
+.editprogress_label_pass1{
+  width: 250px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer; /* Make it clickable */
+  background-color: #90ef90;
+  color: white;
+}
+
+.editprogress_label_pass1:hover {
+  /* color: #000000; */
+  /* border: 1px dashed #de0611; */
+  background-color: #02af0e;
+  color: white;
+}
+

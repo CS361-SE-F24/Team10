@@ -803,7 +803,7 @@ export const Home = (props) => {
                     <>
                       <label
                         htmlFor="defense_exam"
-                        className="editprogress_label"
+                        className="editprogress_label1"
                         onClick={() =>
                           setFormplan({ ...plan, publish_research: true })
                         }
@@ -817,12 +817,13 @@ export const Home = (props) => {
                         onClick={() =>
                           setFormplan({ ...plan, publish_research: false })
                         }
-                        className="editprogress_label_pass"
+                        className="editprogress_label_pass1"
                       >
                         Success
                       </label>
                     </div>
                   )}
+                  <br/>
                   <div className="file-upload-container">
                     <input type="file" id="file-upload" name="file" hidden />
                     <label htmlFor="file-upload" className="file-upload-label">
@@ -918,7 +919,7 @@ export const Home = (props) => {
                     <>
                       <label
                         htmlFor="defense_exam"
-                        className="editprogress_label"
+                        className="editprogress_label1"
                         onClick={() =>
                           setFormplan({ ...plan, topic: true })
                         }
@@ -932,12 +933,13 @@ export const Home = (props) => {
                         onClick={() =>
                           setFormplan({ ...plan, topic: false })
                         }
-                        className="editprogress_label_pass"
+                        className="editprogress_label_pass1"
                       >
                         Success
                       </label>
                     </div>
                   )}
+                  <br/>
                   <div className="file-upload-container">
                     <input type="file" id="topic-file-upload" name="file" hidden />
                     <label htmlFor="topic-file-upload" className="file-upload-label">
