@@ -16,12 +16,12 @@ def create_db():
 @cli.command("seed_db")
 def seed_db():
 
-    db.session.add(User(email="taruuiop@gmail.com",password="sarantar",fname="Saran", lname="Jatupornpitakkul",isAdmin=True,picture=None))
-    db.session.add(User(email="Nanticha.mangpun@gmail.com",password="1234",fname="Aom", lname="Nanticha",isAdmin=True,picture=None))
-    db.session.add(User(email="arnarock6696@gmail.com",password="050396696a",fname="Anajak", lname="Chuamuangpahn",isAdmin=True,picture=None))
-    db.session.add(User(email="ningguri@gmail.com",password="ningguri",fname="Atittaya", lname="Kongtaen",isAdmin=True,picture=None))
-    db.session.add(Advisor(name="Kittipich",email="Kittipich@gmail.com"))
-    db.session.add(Advisor(name="Other",email="none@gmail.com"))
+    # db.session.add(User(email="taruuiop@gmail.com",password="sarantar",fname="Saran", lname="Jatupornpitakkul",isAdmin=True,picture=None))
+    # db.session.add(User(email="Nanticha.mangpun@gmail.com",password="1234",fname="Aom", lname="Nanticha",isAdmin=True,picture=None))
+    # db.session.add(User(email="arnarock6696@gmail.com",password="050396696a",fname="Anajak", lname="Chuamuangpahn",isAdmin=True,picture=None))
+    # db.session.add(User(email="ningguri@gmail.com",password="ningguri",fname="Atittaya", lname="Kongtaen",isAdmin=True,picture=None))
+    # db.session.add(Advisor(name="Kittipich",email="Kittipich@gmail.com"))
+    # db.session.add(Advisor(name="Other",email="none@gmail.com"))
     # First set of courses with planName "M."
     courses_m = [
         ("204712", 3), ("204713", 3), ("204711", 3), ("204775", 3),

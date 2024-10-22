@@ -41,6 +41,14 @@ def get_data():
     }
     return jsonify(data)
 
+@app.route('/api/advisors', methods=['GET'])
+def get_advisors():
+    advisors = Advisor.query.all()
+    advisors_data = [{'id': advisor.id, 'name': advisor.name} for advisor in advisors]
+    print("/////////////")
+    print(advisors_data)
+    return jsonify(advisors_data)
+
 
 @app.route('/sent/data', methods=['POST'])
 def post_data():
@@ -404,7 +412,7 @@ def currentstudentplan():
         'Published_Research': study_plan.publish_research,
         'Propose_a_Research_Topic': study_plan.topic,
         'Complete_all_course': study_plan.complete_course,
-        'DefenseExamination' : study_plan.defense_exam
+        'Defense_Examination' : study_plan.defense_exam
         }
     elif study_plan.planName == "Master Degree Plan A2":
         # if study_plan.nPublish_journal >= 1 or study_plan.nPublish_proceeding >= 1:

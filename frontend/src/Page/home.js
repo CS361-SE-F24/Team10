@@ -159,7 +159,7 @@ export const Home = (props) => {
       });
 
       if (response.status === 200) {
-        alert("Meeting added successfully");
+        // alert("Meeting added successfully");
       } else {
         alert("Error adding meeting");
       }
@@ -192,12 +192,17 @@ export const Home = (props) => {
   };
 
   const fetchPlan = async () => {
+    // console.log("sssssss");
+    
     try {
+      // console.log("dddddddd");
       const response = await axios.get(
         `http://localhost:56733/currentstudentplan?stdID=${stdID}`
       );
       const studentData = response.data;
       // //(studentData);
+      
+      
       // console.log(studentData);
       
 
@@ -213,27 +218,23 @@ export const Home = (props) => {
         }
         return null;
       };
-
+      console.log(studentData.Defense_Examination);
+      
       // Here you can spread the previous state and update the specific fields
-      setFormplan((prevPlan) => ({
-        ...prevPlan,
-        testEng: convertFile(studentData.English_Test) || prevPlan.testEng,
-        comprehensiveExam:
-          convertFile(studentData.Comprehensive_Examination) || prevPlan.comprehensiveExam,
-        QualifyingExam:
-          convertFile(studentData.Qualifying_Examination) || prevPlan.QualifyingExam,
-        nPublish: studentData.nPublish,
-        Complete_Course:
-          studentData.Complete_all_course || prevPlan.Complete_Course,
-        defense_exam:
-          studentData.Defense_Examination || prevPlan.defense_exam,
-        publish_research:
-          studentData.Published_Research || prevPlan.publish_research,
-        topic:
-          studentData.Propose_a_Research_Topic || prevPlan.topic
-      }));
-
-      setLoading(false);
+      setFormplan({
+        stdID: studentData.stdID || null,
+        testEng: convertFile(studentData.English_Test) || null,
+        comprehensiveExam: convertFile(studentData.Comprehensive_Examination) || null,
+        QualifyingExam: convertFile(studentData.Qualifying_Examination) || null,
+        nPublish: studentData.nPublish || 0,
+        Complete_Course: studentData.Complete_all_course || false,
+        defense_exam: studentData.Defense_Examination || false,
+        publish_research: studentData.Published_Research || false,
+        topic: studentData.Propose_a_Research_Topic || false
+      });
+      console.log(plan);
+      
+      // setLoading(false);
       setLoading(false);
     } catch (err) {
       setError("Error fetching data");
@@ -251,6 +252,13 @@ export const Home = (props) => {
     // fetchUploadedFiles();
     // fetchPlan();
     fetchCourses();
+    // fetchData();
+    // fetchUploadedFiles();
+    // fetchUploadedTopic();
+    
+    
+    fetchPlan();
+    console.log(plan);
   };
 
   const handleClose = () => {
@@ -287,7 +295,7 @@ export const Home = (props) => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      alert("Upload successful");
+      // alert("Upload successful");
       event.target.reset();
       fetchUploadedFiles(); // Refresh file list after uploading
       fetchUploadedTopic();
@@ -309,7 +317,7 @@ export const Home = (props) => {
           headers: { "Content-Type": "multipart/form-data" }, // Set headers for file upload
         }
       );
-      alert(response.data.message); // Show success message from backend
+      // alert(response.data.message);
       event.target.reset(); // Reset the form after successful upload
       fetchUploadedFiles(); // Refresh file list after uploading
       fetchUploadedTopic();
@@ -345,12 +353,12 @@ export const Home = (props) => {
           headers: { "Content-Type": "multipart/form-data" }, // Ensure it's multipart for file upload
         }
       );
-      alert("Progress updated successfully");
+      alert("Progress updated successfully")
       fetchPlan(); // Refresh the study plan after the update
       fetchCourses();
     } catch (error) {
       setError("Progress update failed");
-      console.error("Error updating progress:", error);
+      // console.error("Error updating progress:", error);
     }
   };
 

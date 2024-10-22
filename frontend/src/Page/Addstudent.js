@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../css/Add.css";
@@ -20,8 +20,20 @@ export const Addstudent = () => {
   const [responseMessage, setResponseMessage] = useState('');
   const [formValid, setFormValid] = useState(true);
   const [errorMessages, setErrorMessages] = useState({});
+  const [advisors, setAdvisors] = useState([]); 
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch advisor data from the backend
+    axios.get('http://localhost:56733/api/advisors')
+      .then((response) => {
+        setAdvisors(response.data);  // Set advisors state with the fetched data
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the advisors!", error);
+      });
+  }, []); 
 
   const isValidEmail = (email) => {
     const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -262,11 +274,11 @@ export const Addstudent = () => {
                 required
               >
                 <option value="">Select Advisor</option>
-                <option value="Kittipich">Kittipich</option>
-                <option value="Jakkarin">Jakkarin</option>
-                <option value="Benjamas">Benjamas</option>
-                <option value="Kamonphop">Kamonphop</option>
-                <option value="Meetip">Meetip</option>
+                {advisors.map((advisor) => (
+                  <option key={advisor.id} value={advisor.name}>
+                    {advisor.name}
+                  </option>
+                ))}
                 <option value="Other">Other</option>
               </select>
               {errorMessages.advisor && <div className="error-message">{errorMessages.advisor}</div>}
